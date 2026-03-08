@@ -15,7 +15,8 @@ import {
   GraduationCap,
   Quote,
   UserCircle,
-  Settings
+  Settings,
+  Mail
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ import { signOut } from "firebase/auth";
 
 const NAV_ITEMS = [
   { name: "Overview", href: "/admin", icon: LayoutDashboard },
+  { name: "Inquiries", href: "/admin/contact", icon: Mail },
   { name: "Profile Settings", href: "/admin/profile", icon: Settings },
   { name: "Technical Skills", href: "/admin/skills", icon: Code2 },
   { name: "Projects", href: "/admin/projects", icon: FolderKanban },
@@ -64,7 +66,7 @@ export function AdminSidebar() {
         </Button>
       </div>
 
-      <nav className="flex-1 px-4 space-y-1.5 mt-4">
+      <nav className="flex-1 px-4 space-y-1.5 mt-4 overflow-y-auto overflow-x-hidden">
         {NAV_ITEMS.map((item) => (
           <Link
             key={item.href}

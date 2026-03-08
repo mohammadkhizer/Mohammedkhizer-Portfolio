@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://mohammedkhizer.com' // Placeholder
+  const baseUrl = 'https://mohammedkhizershaikh.netlify.app'
 
   const routes = [
     '',

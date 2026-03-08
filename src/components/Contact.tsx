@@ -5,24 +5,52 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { Mail, MapPin, Send, Github, Linkedin, Instagram, Phone } from "lucide-react";
+import { Mail, MapPin, Send, Github, Linkedin, Instagram, Phone, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useFirestore, addDocumentNonBlocking } from "@/firebase";
+import { collection } from "firebase/firestore";
 
 export function Contact() {
   const { toast } = useToast();
+  const firestore = useFirestore();
   const [loading, setLoading] = React.useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const subject = formData.get("subject") as string;
+    const message = formData.get("message") as string;
+
+    try {
+      const submissionsRef = collection(firestore, "contactSubmissions");
+      await addDocumentNonBlocking(submissionsRef, {
+        id: crypto.randomUUID(),
+        senderName: name,
+        senderEmail: email,
+        subject: subject || "No Subject",
+        message: message,
+        submissionDate: new Date().toISOString(),
+        isRead: false
+      });
+
       toast({
         title: "Message Sent!",
         description: "Thank you for reaching out. I'll get back to you soon.",
       });
-      (e.target as HTMLFormElement).reset();
-    }, 1500);
+      e.currentTarget.reset();
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Submission Failed",
+        description: "Could not send your message. Please try again later.",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -96,19 +124,23 @@ export function Contact() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-sm font-semibold">Name</label>
-                      <Input placeholder="Mohammed Khizer" required />
+                      <Input name="name" placeholder="Mohammed Khizer" required />
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-semibold">Email</label>
-                      <Input type="email" placeholder="khizer@example.com" required />
+                      <Input name="email" type="email" placeholder="khizer@example.com" required />
                     </div>
                   </div>
                   <div className="space-y-2">
+                    <label className="text-sm font-semibold">Subject (Optional)</label>
+                    <Input name="subject" placeholder="Project Inquiry" />
+                  </div>
+                  <div className="space-y-2">
                     <label className="text-sm font-semibold">Message</label>
-                    <Textarea placeholder="How can I help you today?" className="min-h-[150px]" required />
+                    <Textarea name="message" placeholder="How can I help you today?" className="min-h-[150px]" required />
                   </div>
                   <Button disabled={loading} className="w-full py-6 text-lg font-bold gap-2">
-                    {loading ? "Sending..." : (
+                    {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : (
                       <>
                         <Send className="h-5 w-5" />
                         Send Message

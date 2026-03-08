@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: '/admin/',
     },
-    sitemap: 'https://mohammedkhizer.com/sitemap.xml', // Placeholder
+    sitemap: 'https://mohammedkhizershaikh.netlify.app/sitemap.xml',
   }
 }

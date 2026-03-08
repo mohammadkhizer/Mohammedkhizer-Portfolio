@@ -8,7 +8,7 @@ import { Chatbot } from "@/components/Chatbot";
 import { Toaster } from "@/components/ui/toaster";
 import { CursorHighlighter } from "@/components/CursorHighlighter";
 
-const baseUrl = 'https://mohammedkhizer.com'; // Replace with your production URL
+const baseUrl = 'https://mohammedkhizershaikh.netlify.app';
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
@@ -20,6 +20,9 @@ export const metadata: Metadata = {
   keywords: ['Full-Stack Developer', 'AI/ML Enthusiast', 'Web Development', 'React', 'Next.js', 'Firebase', 'Portfolio', 'Mohammed Khizer Shaikh', 'Ahmedabad Developer'],
   authors: [{ name: 'Mohammed Khizer Shaikh' }],
   creator: 'Mohammed Khizer Shaikh',
+  verification: {
+    google: 'be3bbb85635a85f3',
+  },
   alternates: {
     canonical: '/',
   },
@@ -32,7 +35,7 @@ export const metadata: Metadata = {
     siteName: 'Mohammed Khizer Shaikh Portfolio',
     images: [
       {
-        url: '/og-image.jpg', // Ensure you place an OG image in your public folder eventually
+        url: '/og-image.jpg',
         width: 1200,
         height: 630,
         alt: 'Mohammed Khizer Shaikh Portfolio Preview',
