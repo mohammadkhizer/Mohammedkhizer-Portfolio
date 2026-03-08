@@ -1,0 +1,41 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "profile-pic",
+      "description": "Professional headshot of Mohammed Khizer Shaikh",
+      "imageUrl": "https://picsum.photos/seed/khizer/600/600",
+      "imageHint": "professional man"
+    },
+    {
+      "id": "project-web-apps",
+      "description": "Full-stack web application development",
+      "imageUrl": "https://picsum.photos/seed/webapp/800/600",
+      "imageHint": "web development"
+    },
+    {
+      "id": "project-client-comet",
+      "description": "Sales assistant robot with voice recognition",
+      "imageUrl": "https://picsum.photos/seed/robot/800/600",
+      "imageHint": "robotics ai"
+    },
+    {
+      "id": "project-tech-kurukshetra",
+      "description": "Tech Kurukshetra 2026 official website",
+      "imageUrl": "https://picsum.photos/seed/techk/800/600",
+      "imageHint": "event website"
+    },
+    {
+      "id": "cert-placeholder",
+      "description": "Professional certification badge",
+      "imageUrl": "https://picsum.photos/seed/cert/400/300",
+      "imageHint": "certificate badge"
+    },
+    {
+      "id": "testimonial-avatar",
+      "description": "Client testimonial avatar placeholder",
+      "imageUrl": "https://picsum.photos/seed/client/100/100",
+      "imageHint": "person avatar"
+    }
+  ]
+}

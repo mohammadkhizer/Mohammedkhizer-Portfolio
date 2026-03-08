@@ -1,0 +1,111 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+    --primary: 24.6 95% 53.1%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 10%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 142.1 70.6% 45.3%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 24.6 95% 53.1%;
+    --radius: 0.75rem;
+  }
+  .dark {
+    --background: 0 0% 10%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 13%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 24.6 95% 53.1%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 18%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 142.1 70.6% 45.3%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 24.6 95% 53.1%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply text-foreground transition-colors duration-300 min-h-screen font-body antialiased;
+    background: linear-gradient(135deg, #ffffff 0%, #fff7ed 100%);
+    background-attachment: fixed;
+  }
+  .dark body {
+    background: hsl(var(--background));
+  }
+
+  /* Custom Scrollbar Styles - Desktop Only */
+  @media (min-width: 768px) {
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: hsl(var(--primary) / 0.3);
+      border-radius: 5px;
+      border: 2px solid transparent;
+      background-clip: content-box;
+      transition: background 0.3s ease;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: hsl(var(--primary));
+      background-clip: content-box;
+    }
+
+    /* Firefox */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: hsl(var(--primary) / 0.5) transparent;
+    }
+  }
+}
+
+.glass {
+  @apply bg-background/60 backdrop-blur-md border-border/50;
+}
+
+.animate-blink {
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
