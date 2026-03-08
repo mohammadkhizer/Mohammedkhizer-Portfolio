@@ -7,6 +7,7 @@ import { Footer } from "@/components/Footer";
 import { Chatbot } from "@/components/Chatbot";
 import { Toaster } from "@/components/ui/toaster";
 import { CursorHighlighter } from "@/components/CursorHighlighter";
+import Script from 'next/script';
 
 const baseUrl = 'https://mohammedkhizershaikh.netlify.app';
 
@@ -99,6 +100,21 @@ export default function RootLayout({
         />
       </head>
       <body className="font-body antialiased selection:bg-primary/30">
+        {/* Google Analytics */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-1K7CD5H0ET"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-1K7CD5H0ET');
+          `}
+        </Script>
+
         <FirebaseClientProvider>
           <ThemeProvider>
             <CursorHighlighter />
