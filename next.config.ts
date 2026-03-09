@@ -36,7 +36,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'portfolioimageskhizer.netify.app/',
+        hostname: 'portfolioimageskhizer.netlify.app',
         port: '',
         pathname: '/**',
       },
