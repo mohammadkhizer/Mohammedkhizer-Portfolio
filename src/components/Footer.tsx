@@ -12,7 +12,6 @@ export function Footer() {
     setYear(new Date().getFullYear());
   }, []);
 
-  // Don't show public footer on admin pages
   if (pathname.startsWith('/admin')) {
     return null;
   }
@@ -24,9 +23,9 @@ export function Footer() {
           © {year || "..."} Mohammed Khizer Shaikh. Built with Passion.
         </p>
         <div className="flex flex-wrap justify-center gap-6 md:gap-8 text-sm font-medium text-muted-foreground">
-          <a href="https://www.linkedin.com/in/mohammad-khizer-shaikh-14a362275" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">LinkedIn</a>
-          <a href="https://github.com/mohammadkhizer" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">GitHub</a>
-          <a href="https://www.instagram.com/khizerrrr11/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">Instagram</a>
+          <a href="https://www.linkedin.com/in/mohammad-khizer-shaikh-14a362275" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors" aria-label="LinkedIn Profile">LinkedIn</a>
+          <a href="https://github.com/mohammadkhizer" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors" aria-label="GitHub Profile">GitHub</a>
+          <a href="https://www.instagram.com/khizerrrr11/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors" aria-label="Instagram Profile">Instagram</a>
           <Link href="/projects" className="hover:text-primary transition-colors">Projects</Link>
           <Link href="/contact" className="hover:text-primary transition-colors">Contact</Link>
         </div>

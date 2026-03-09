@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, Download, Loader2 } from "lucide-react";
+import { ChevronDown, Download } from "lucide-react";
 import Link from "next/link";
 import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
 import { collection } from "firebase/firestore";
@@ -40,7 +40,7 @@ export function Hero() {
           <div className="text-lg md:text-2xl text-muted-foreground font-medium min-h-[5rem] sm:min-h-[4rem] md:min-h-[2rem] flex items-center justify-center">
             <p>
               {displayText}
-              <span className="animate-blink inline-block w-1 h-6 md:h-8 bg-primary ml-1" />
+              <span className="animate-blink inline-block w-1 h-6 md:h-8 bg-primary ml-1" aria-hidden="true" />
             </p>
           </div>
           
@@ -58,6 +58,7 @@ export function Hero() {
                 href={profile?.cvDownloadUrl || "#"} 
                 target="_blank" 
                 rel="noopener noreferrer"
+                aria-label="Download CV as PDF"
                 onClick={(e) => {
                   if (!profile?.cvDownloadUrl) {
                     e.preventDefault();
@@ -65,7 +66,7 @@ export function Hero() {
                   }
                 }}
               >
-                <Download className="h-5 w-5" />
+                <Download className="h-5 w-5" aria-hidden="true" />
                 Download CV
               </a>
             </Button>
@@ -74,8 +75,8 @@ export function Hero() {
       </div>
 
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce hidden md:block">
-        <Link href="#about" aria-label="Scroll down">
-          <ChevronDown className="h-8 w-8 text-muted-foreground/50 hover:text-primary transition-colors" />
+        <Link href="#about" aria-label="Scroll down to About section">
+          <ChevronDown className="h-8 w-8 text-muted-foreground/50 hover:text-primary transition-colors" aria-hidden="true" />
         </Link>
       </div>
     </section>

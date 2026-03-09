@@ -13,7 +13,6 @@ export function About({ isPreview = false }: { isPreview?: boolean }) {
     <section id="about" className={`${isPreview ? 'rounded-3xl overflow-hidden' : 'py-24'} bg-transparent py-0`}>
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex flex-col md:flex-row items-center gap-12 md:gap-20">
-          {/* Profile Image Column */}
           <div className="relative w-full max-w-[320px] md:max-w-md flex-shrink-0">
             <div className="absolute -inset-2 bg-gradient-to-tr from-primary/30 to-accent/30 rounded-3xl blur-2xl opacity-40" />
             <div className="relative bg-card rounded-3xl overflow-hidden border border-border/50 shadow-2xl">
@@ -22,6 +21,8 @@ export function About({ isPreview = false }: { isPreview?: boolean }) {
                 alt="Mohammed Khizer Shaikh"
                 width={600}
                 height={600}
+                priority={true}
+                sizes="(max-width: 768px) 320px, 600px"
                 className="w-full h-auto object-cover aspect-square"
                 data-ai-hint={profileImg?.imageHint || "professional man"}
               />
@@ -32,11 +33,10 @@ export function About({ isPreview = false }: { isPreview?: boolean }) {
             </div>
           </div>
           
-          {/* Content Column */}
           <div className="space-y-8 md:space-y-10 max-w-2xl text-center md:text-left">
             <div className="space-y-4 md:space-y-6">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] md:text-xs font-bold uppercase tracking-widest border border-primary/20">
-                <User className="h-3 w-3" />
+                <User className="h-3 w-3" aria-hidden="true" />
                 Who I Am
               </div>
               <h2 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">
@@ -59,12 +59,11 @@ export function About({ isPreview = false }: { isPreview?: boolean }) {
               </p>
             </div>
             
-            {/* Stats/Quick Info Grid */}
             <div className="grid grid-cols-2 gap-4 md:gap-8 pt-4">
               <Card className="glass border border-border/40 shadow-none bg-secondary/5">
                 <CardContent className="p-5 md:p-6 text-center md:text-left space-y-2">
                   <div className="p-2 bg-primary/10 rounded-lg w-fit mx-auto md:mx-0">
-                    <GraduationCap className="h-5 w-5 text-primary" />
+                    <GraduationCap className="h-5 w-5 text-primary" aria-hidden="true" />
                   </div>
                   <div>
                     <h3 className="text-2xl md:text-3xl font-black text-primary">2nd</h3>
@@ -75,7 +74,7 @@ export function About({ isPreview = false }: { isPreview?: boolean }) {
               <Card className="glass border border-border/40 shadow-none bg-secondary/5">
                 <CardContent className="p-5 md:p-6 text-center md:text-left space-y-2">
                   <div className="p-2 bg-accent/10 rounded-lg w-fit mx-auto md:mx-0">
-                    <Award className="h-5 w-5 text-accent" />
+                    <Award className="h-5 w-5 text-accent" aria-hidden="true" />
                   </div>
                   <div>
                     <h3 className="text-2xl md:text-3xl font-black text-accent">10+</h3>
@@ -87,12 +86,12 @@ export function About({ isPreview = false }: { isPreview?: boolean }) {
 
             <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-widest">
                <div className="flex items-center gap-2">
-                 <MapPin className="h-4 w-4 text-primary" />
+                 <MapPin className="h-4 w-4 text-primary" aria-hidden="true" />
                  Ahmedabad, Gujarat
                </div>
-               <div className="hidden sm:block text-border">|</div>
+               <div className="hidden sm:block text-border" aria-hidden="true">|</div>
                <div className="flex items-center gap-2">
-                 <Award className="h-4 w-4 text-primary" />
+                 <Award className="h-4 w-4 text-primary" aria-hidden="true" />
                  Open for Opportunities
                </div>
             </div>

@@ -32,7 +32,7 @@ export function Projects({ isPreview = false }: { isPreview?: boolean }) {
 
         {isLoading ? (
           <div className="flex justify-center py-10">
-            <Loader2 className="h-10 w-10 animate-spin text-primary" />
+            <Loader2 className="h-10 w-10 animate-spin text-primary" aria-hidden="true" />
           </div>
         ) : displayProjects && displayProjects.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
@@ -43,6 +43,7 @@ export function Projects({ isPreview = false }: { isPreview?: boolean }) {
                     src={project.projectImageUrl || webAppPlaceholder?.imageUrl || "https://picsum.photos/seed/project/800/600"}
                     alt={project.title}
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="object-cover"
                     data-ai-hint={webAppPlaceholder?.imageHint || "app screenshot"}
                   />
@@ -67,16 +68,16 @@ export function Projects({ isPreview = false }: { isPreview?: boolean }) {
                 <CardFooter className="p-5 md:p-6 pt-0 flex items-center justify-between border-t border-border/50 mt-auto">
                   <div className="flex gap-4">
                     {project.liveDemoUrl && project.liveDemoUrl !== '#' && (
-                      <Button variant="ghost" size="sm" className="h-8 px-2 text-xs gap-1.5 text-primary hover:text-primary hover:bg-primary/10" asChild>
+                      <Button variant="ghost" size="sm" className="h-8 px-2 text-xs gap-1.5 text-primary hover:text-primary hover:bg-primary/10" asChild aria-label={`View live demo for ${project.title}`}>
                         <a href={project.liveDemoUrl} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="h-3 w-3" /> Demo
+                          <ExternalLink className="h-3 w-3" aria-hidden="true" /> Demo
                         </a>
                       </Button>
                     )}
                     {project.githubRepoUrl && project.githubRepoUrl !== '#' && (
-                      <Button variant="ghost" size="sm" className="h-8 px-2 text-xs gap-1.5 text-muted-foreground hover:text-foreground hover:bg-secondary" asChild>
+                      <Button variant="ghost" size="sm" className="h-8 px-2 text-xs gap-1.5 text-muted-foreground hover:text-foreground hover:bg-secondary" asChild aria-label={`View source code for ${project.title} on GitHub`}>
                         <a href={project.githubRepoUrl} target="_blank" rel="noopener noreferrer">
-                          <Github className="h-3 w-3" /> Code
+                          <Github className="h-3 w-3" aria-hidden="true" /> Code
                         </a>
                       </Button>
                     )}
