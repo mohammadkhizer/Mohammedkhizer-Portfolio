@@ -1,12 +1,12 @@
 'use server';
 /**
  * @fileOverview A chatbot flow for Mohammed Khizer Shaikh's portfolio.
- *
- * - chatWithAI - Handles user queries about Khizer's background, skills, and projects.
+ * Version: v1.0.1 (Includes Rate Limiting & Sanitization)
  */
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
+import { isRateLimited, sanitizeInput } from '@/lib/security';
 
 const ChatInputSchema = z.object({
   message: z.string().describe("The user's question about Khizer."),
@@ -16,7 +16,6 @@ const ChatInputSchema = z.object({
   })).optional(),
 });
 
-// Tool to provide the LLM with live project data for more accurate responses
 const getProjectDetails = ai.defineTool(
   {
     name: 'getProjectDetails',
@@ -54,6 +53,14 @@ const getProjectDetails = ai.defineTool(
 );
 
 export async function chatWithAI(input: z.infer<typeof ChatInputSchema>): Promise<string> {
+  // 1. Rate Limiting Check
+  if (await isRateLimited()) {
+    return "Rate limit exceeded. Please wait a minute before sending another message.";
+  }
+
+  // 2. Input Sanitization
+  const safeMessage = sanitizeInput(input.message);
+
   const response = await ai.generate({
     system: `You are the Portfolio Assistant for Mohammed Khizer Shaikh.
     You help visitors learn about him. Be professional, friendly, and concise.
@@ -70,18 +77,17 @@ export async function chatWithAI(input: z.infer<typeof ChatInputSchema>): Promis
     - If someone asks for his email: work.mkhizer@gmail.com.
     - If someone asks for his LinkedIn: https://www.linkedin.com/in/mohammad-khizer-shaikh-14a362275.
     - Keep answers under 3 sentences unless asked for details.`,
-    prompt: input.message,
+    prompt: safeMessage,
     tools: [getProjectDetails],
     history: input.history?.map(h => ({
       role: h.role,
-      content: [{ text: h.text }],
+      content: [{ text: sanitizeInput(h.text) }],
     })),
   });
 
   return response.text;
 }
 
-// Define as a flow for Genkit dev tools
 export const chatFlow = ai.defineFlow(
   {
     name: 'chatFlow',
