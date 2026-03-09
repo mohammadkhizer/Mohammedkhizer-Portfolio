@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -15,15 +16,16 @@ export function About({ isPreview = false }: { isPreview?: boolean }) {
         <div className="flex flex-col md:flex-row items-center gap-12 md:gap-20">
           <div className="relative w-full max-w-[320px] md:max-w-md flex-shrink-0">
             <div className="absolute -inset-2 bg-gradient-to-tr from-primary/30 to-accent/30 rounded-3xl blur-2xl opacity-40" />
-            <div className="relative bg-card rounded-3xl overflow-hidden border border-border/50 shadow-2xl">
+            <div className="relative bg-card rounded-3xl overflow-hidden border border-border/50 shadow-2xl aspect-square">
               <Image
                 src={profileImg?.imageUrl || "https://techaura26.netlify.app/Assets/khizer.jpeg"}
                 alt="Mohammed Khizer Shaikh"
                 width={600}
                 height={600}
-                priority={true}
-                sizes="(max-width: 768px) 320px, 600px"
-                className="w-full h-auto object-cover aspect-square"
+                priority={true} // Priority loading for LCP
+                loading="eager"
+                sizes="(max-width: 768px) 320px, 450px"
+                className="w-full h-auto object-cover"
                 data-ai-hint={profileImg?.imageHint || "professional man"}
               />
               <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent text-white md:hidden">
@@ -77,7 +79,7 @@ export function About({ isPreview = false }: { isPreview?: boolean }) {
                     <Award className="h-5 w-5 text-accent" aria-hidden="true" />
                   </div>
                   <div>
-                    <h3 className="text-2xl md:text-3xl font-black text-accent">6+</h3>
+                    <h3 className="text-2xl md:text-3xl font-black text-accent">10+</h3>
                     <p className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest font-bold">Certifications</p>
                   </div>
                 </CardContent>
