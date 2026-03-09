@@ -78,7 +78,7 @@ export function About({ isPreview = false }: { isPreview?: boolean }) {
                     <Award className="h-5 w-5 text-accent" />
                   </div>
                   <div>
-                    <h3 className="text-2xl md:text-3xl font-black text-accent">10+</h3>
+                    <h3 className="text-2xl md:text-3xl font-black text-accent">6+</h3>
                     <p className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest font-bold">Certifications</p>
                   </div>
                 </CardContent>
