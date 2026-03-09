@@ -28,12 +28,12 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
-    ],
-  },
-  experimental: {
-    allowedDevOrigins: [
-      '9000-firebase-studio-1772946874637.cluster-bg6uurscprhn6qxr6xwtrhvkf6.cloudworkstations.dev',
-      '*.cloudworkstations.dev',
+      {
+        protocol: 'https',
+        hostname: 'techaura26.netlify.app',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 };
