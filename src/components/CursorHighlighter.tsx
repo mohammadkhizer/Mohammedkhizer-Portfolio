@@ -6,12 +6,14 @@ import { useIsMobile } from "@/hooks/use-mobile";
 export function CursorHighlighter() {
   const isMobile = useIsMobile();
   const [isVisible, setIsVisible] = React.useState(false);
+  const [mounted, setMounted] = React.useState(false);
   const outerRef = React.useRef<HTMLDivElement>(null);
   const innerRef = React.useRef<HTMLDivElement>(null);
   const mousePos = React.useRef({ x: 0, y: 0 });
   const rafId = React.useRef<number>(null);
 
   React.useEffect(() => {
+    setMounted(true);
     if (isMobile) return;
 
     const updatePosition = (e: MouseEvent) => {
@@ -21,8 +23,6 @@ export function CursorHighlighter() {
 
     const animate = () => {
       if (outerRef.current && innerRef.current) {
-        // Outer glow with slight delay/smoothing via CSS transition-transform in class
-        // or we can manually interpolate here for maximum control
         outerRef.current.style.transform = `translate3d(${mousePos.current.x}px, ${mousePos.current.y}px, 0) translate3d(-50%, -50%, 0)`;
         innerRef.current.style.transform = `translate3d(${mousePos.current.x}px, ${mousePos.current.y}px, 0) translate3d(-50%, -50%, 0)`;
       }
@@ -45,7 +45,7 @@ export function CursorHighlighter() {
     };
   }, [isMobile, isVisible]);
 
-  if (isMobile) return null;
+  if (!mounted || isMobile) return null;
 
   return (
     <div className={isVisible ? "opacity-100" : "opacity-0 transition-opacity duration-300"}>

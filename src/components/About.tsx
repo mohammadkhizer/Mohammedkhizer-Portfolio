@@ -18,7 +18,7 @@ export function About({ isPreview = false }: { isPreview?: boolean }) {
             <div className="absolute -inset-2 bg-gradient-to-tr from-primary/30 to-accent/30 rounded-3xl blur-2xl opacity-40" />
             <div className="relative bg-card rounded-3xl overflow-hidden border border-border/50 shadow-2xl">
               <Image
-                src={profileImg?.imageUrl || "https://picsum.photos/seed/khizer/600/600"}
+                src={profileImg?.imageUrl || "https://techaura26.netlify.app/Assets/khizer.jpeg"}
                 alt="Mohammed Khizer Shaikh"
                 width={600}
                 height={600}
