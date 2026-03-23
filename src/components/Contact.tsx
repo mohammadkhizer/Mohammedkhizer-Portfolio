@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -9,36 +10,58 @@ import { Mail, MapPin, Send, Github, Linkedin, Instagram, Phone, Loader2, Shield
 import { useToast } from "@/hooks/use-toast";
 import { useFirestore, addDocumentNonBlocking } from "@/firebase";
 import { collection } from "firebase/firestore";
-// We use a server-side rate limit check via a separate action usually, 
-// but for MVP we'll focus on sanitization here and assume the backend handles the rest.
+import { isRateLimited } from "@/lib/security";
+import { sanitizeInput } from "@/lib/utils";
 
 export function Contact() {
   const { toast } = useToast();
   const firestore = useFirestore();
   const [loading, setLoading] = React.useState(false);
 
-  // Helper to sanitize on client before sending (Defense in Depth)
-  const sanitize = (str: string) => str.replace(/[<>]/g, "").trim();
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    // Capture the form element immediately before any async await calls
+    // to prevent 'e.currentTarget' from becoming null after the await.
+    const formElement = e.currentTarget;
+    
     setLoading(true);
 
-    const formData = new FormData(e.currentTarget);
-    const name = sanitize(formData.get("name") as string);
-    const email = sanitize(formData.get("email") as string);
-    const subject = sanitize(formData.get("subject") as string);
-    const message = sanitize(formData.get("message") as string);
-
-    if (!name || !email || !message) {
-      toast({ variant: "destructive", title: "Missing Fields", description: "Please fill out all required fields." });
-      setLoading(false);
-      return;
-    }
-
     try {
+      // 1. Check Rate Limit via Server Action
+      const limited = await isRateLimited();
+      if (limited) {
+        toast({
+          variant: "destructive",
+          title: "Too Many Requests",
+          description: "Please wait a moment before sending another message.",
+        });
+        setLoading(false);
+        return;
+      }
+
+      const formData = new FormData(formElement);
+      
+      // 2. Sanitize inputs on the client
+      const name = sanitizeInput(formData.get("name") as string);
+      const email = sanitizeInput(formData.get("email") as string);
+      const subject = sanitizeInput(formData.get("subject") as string);
+      const message = sanitizeInput(formData.get("message") as string);
+
+      if (!name || !email || !message) {
+        toast({ 
+          variant: "destructive", 
+          title: "Missing Fields", 
+          description: "Please fill out all required fields." 
+        });
+        setLoading(false);
+        return;
+      }
+
       const submissionsRef = collection(firestore, "contactSubmissions");
-      await addDocumentNonBlocking(submissionsRef, {
+      
+      // 3. Perform the Firestore write (Non-Blocking Pattern)
+      addDocumentNonBlocking(submissionsRef, {
         id: crypto.randomUUID(),
         senderName: name,
         senderEmail: email,
@@ -46,19 +69,21 @@ export function Contact() {
         message: message,
         submissionDate: new Date().toISOString(),
         isRead: false,
-        version: "v1" // API Versioning for data schema
+        apiVersion: 1
       });
 
       toast({
         title: "Message Sent!",
         description: "Thank you for reaching out. I'll get back to you soon.",
       });
-      e.currentTarget.reset();
+      
+      // Reset the form
+      formElement.reset();
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Submission Failed",
-        description: "Could not send your message. Please try again later.",
+        title: "Submission Error",
+        description: "Something went wrong. Please try again later.",
       });
     } finally {
       setLoading(false);
@@ -164,7 +189,7 @@ export function Contact() {
                     )}
                   </Button>
                   <p className="text-[10px] text-center text-muted-foreground italic">
-                    All inputs are sanitized to protect against XSS and injection attacks.
+                    All inputs are sanitized and protected by IP-based rate limiting.
                   </p>
                 </form>
               </CardContent>

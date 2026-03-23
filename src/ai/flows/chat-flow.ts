@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview A chatbot flow for Mohammed Khizer Shaikh's portfolio.
@@ -6,7 +7,8 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import { isRateLimited, sanitizeInput } from '@/lib/security';
+import { isRateLimited } from '@/lib/security';
+import { sanitizeInput } from '@/lib/utils';
 
 const ChatInputSchema = z.object({
   message: z.string().describe("The user's question about Khizer."),
@@ -53,7 +55,7 @@ const getProjectDetails = ai.defineTool(
 );
 
 export async function chatWithAI(input: z.infer<typeof ChatInputSchema>): Promise<string> {
-  // 1. Rate Limiting Check
+  // 1. Rate Limiting Check (Server-Side)
   if (await isRateLimited()) {
     return "Rate limit exceeded. Please wait a minute before sending another message.";
   }
