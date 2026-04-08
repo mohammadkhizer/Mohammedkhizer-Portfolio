@@ -5,4 +5,4 @@ config();
 import './flows/chat-flow';
 import './flows/recommend-projects-flow';
 
-console.log('Genkit flows registered for development.');
+// Genkit flows registered - no console output to prevent leakage

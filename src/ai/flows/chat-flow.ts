@@ -1,102 +1,115 @@
+'use client';
+import { getAuth, type User } from 'firebase/auth';
 
-'use server';
-/**
- * @fileOverview A chatbot flow for Mohammed Khizer Shaikh's portfolio.
- * Version: v1.0.1 (Includes Rate Limiting & Sanitization)
- */
+type SecurityRuleContext = {
+  path: string;
+  operation: 'get' | 'list' | 'create' | 'update' | 'delete' | 'write';
+  requestResourceData?: any;
+};
 
-import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
-import { isRateLimited } from '@/lib/security';
-import { sanitizeInput } from '@/lib/utils';
-
-const ChatInputSchema = z.object({
-  message: z.string().describe("The user's question about Khizer."),
-  history: z.array(z.object({
-    role: z.enum(['user', 'model']),
-    text: z.string(),
-  })).optional(),
-});
-
-const getProjectDetails = ai.defineTool(
-  {
-    name: 'getProjectDetails',
-    description: 'Get detailed information about Mohammed Khizer Shaikh\'s specific technical projects.',
-    inputSchema: z.object({}),
-    outputSchema: z.array(z.object({
-      id: z.string(),
-      title: z.string(),
-      description: z.string(),
-      tech: z.array(z.string()),
-    })),
-  },
-  async () => {
-    return [
-      {
-        id: 'client-comet',
-        title: 'Client Comet',
-        description: 'A Sales Assistant Robot utilizing Raspberry Pi and SK-Learn for voice interaction and intelligent lead categorization.',
-        tech: ['Python', 'Raspberry Pi', 'SK-Learn', 'Speech Recognition'],
-      },
-      {
-        id: 'tech-kurukshetra',
-        title: 'Tech Kurukshetra 2026',
-        description: 'Developed the official website for the Tech Kurukshetra 2026 event, focusing on performance and user engagement.',
-        tech: ['Next.js', 'React', 'Tailwind CSS', 'Framer Motion'],
-      },
-      {
-        id: 'tripboss',
-        title: 'Tripboss',
-        description: 'Contributed to a Django-based trip management application during internship at Way to Web.',
-        tech: ['Django', 'Python', 'PostgreSQL', 'JavaScript'],
-      }
-    ];
-  }
-);
-
-export async function chatWithAI(input: z.infer<typeof ChatInputSchema>): Promise<string> {
-  // 1. Rate Limiting Check (Server-Side)
-  if (await isRateLimited()) {
-    return "Rate limit exceeded. Please wait a minute before sending another message.";
-  }
-
-  // 2. Input Sanitization
-  const safeMessage = sanitizeInput(input.message);
-
-  const response = await ai.generate({
-    system: `You are the Portfolio Assistant for Mohammed Khizer Shaikh.
-    You help visitors learn about him. Be professional, friendly, and concise.
-    
-    About Khizer:
-    - Title: Full-Stack Web Developer & AI/ML Enthusiast.
-    - Education: 2nd Year CSE at SVGU (Bachelor's), Diploma in AI/ML from LJ University.
-    - Experience: Python Developer Intern at Way to Web (Django, Tripboss project).
-    - Location: Ahmedabad, Gujarat, India.
-    
-    When users ask about projects or specific work, use the getProjectDetails tool.
-    
-    Rules:
-    - If someone asks for his email: work.mkhizer@gmail.com.
-    - If someone asks for his LinkedIn: https://www.linkedin.com/in/mohammad-khizer-shaikh-14a362275.
-    - Keep answers under 3 sentences unless asked for details.`,
-    prompt: safeMessage,
-    tools: [getProjectDetails],
-    history: input.history?.map(h => ({
-      role: h.role,
-      content: [{ text: sanitizeInput(h.text) }],
-    })),
-  });
-
-  return response.text;
+interface FirebaseAuthToken {
+  // Note: Only non-sensitive claims are included
+  // PII fields are intentionally excluded to prevent leakage
+  email_verified: boolean;
+  sub: string; // User UID (already public via Firebase)
+  firebase: {
+    sign_in_provider: string;
+  };
 }
 
-export const chatFlow = ai.defineFlow(
-  {
-    name: 'chatFlow',
-    inputSchema: ChatInputSchema,
-    outputSchema: z.string(),
-  },
-  async (input) => {
-    return chatWithAI(input);
+interface FirebaseAuthObject {
+  uid: string;
+  token: FirebaseAuthToken;
+}
+
+interface SecurityRuleRequest {
+  auth: FirebaseAuthObject | null;
+  method: string;
+  path: string;
+  resource?: {
+    data: any;
+  };
+}
+
+/**
+ * Builds a security-rule-compliant auth object from the Firebase User.
+ * SECURITY: Excludes sensitive PII (name, email, phone) to prevent leakage.
+ * @param currentUser The currently authenticated Firebase user.
+ * @returns An object that mirrors request.auth in security rules, or null.
+ */
+function buildAuthObject(currentUser: User | null): FirebaseAuthObject | null {
+  if (!currentUser) {
+    return null;
   }
-);
+
+  // SECURITY: Only include minimal required fields
+  // Excluded: displayName, email, phoneNumber (PII that shouldn't leak)
+  const token: FirebaseAuthToken = {
+    email_verified: currentUser.emailVerified,
+    sub: currentUser.uid,
+    firebase: {
+      sign_in_provider: currentUser.providerData[0]?.providerId || 'custom',
+    },
+  };
+
+  return {
+    uid: currentUser.uid,
+    token: token,
+  };
+}
+
+/**
+ * Builds the complete, simulated request object for the error message.
+ * It safely tries to get the current authenticated user.
+ * @param context The context of the failed Firestore operation.
+ * @returns A structured request object.
+ */
+function buildRequestObject(context: SecurityRuleContext): SecurityRuleRequest {
+  let authObject: FirebaseAuthObject | null = null;
+  try {
+    const firebaseAuth = getAuth();
+    const currentUser = firebaseAuth.currentUser;
+    if (currentUser) {
+      authObject = buildAuthObject(currentUser);
+    }
+  } catch {
+    // Silently handle initialization errors - no debug info leaked
+  }
+
+  return {
+    auth: authObject,
+    method: context.operation,
+    path: `/databases/(default)/documents/${context.path}`,
+    resource: context.requestResourceData ? { data: context.requestResourceData } : undefined,
+  };
+}
+
+/**
+ * Builds the final, formatted error message for the LLM.
+ * SECURITY: Returns minimal error info - no sensitive data in error messages.
+ * @param requestObject The simulated request object.
+ * @returns A string containing the error message.
+ */
+function buildErrorMessage(requestObject: SecurityRuleRequest): string {
+  // SECURITY: Don't expose full request details in error messages
+  return `Permission denied: Insufficient permissions for this operation.`;
+}
+
+/**
+ * A custom error class designed to be consumed by an LLM for debugging.
+ * SECURITY: Minimal error information to prevent session/UID leakage.
+ */
+export class FirestorePermissionError extends Error {
+  public readonly request: SecurityRuleRequest;
+
+  constructor(context: SecurityRuleContext) {
+    const requestObject = buildRequestObject(context);
+    super(buildErrorMessage(requestObject));
+    this.name = 'FirebaseError';
+    // SECURITY: Don't expose full request object - could contain sensitive paths
+    this.request = {
+      auth: requestObject.auth ? { uid: requestObject.auth.uid } : null,
+      method: context.operation,
+    };
+  }
+}

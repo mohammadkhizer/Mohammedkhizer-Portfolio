@@ -4,7 +4,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { MessageCircle, X, Send, Loader2, User, Bot } from "lucide-react";
+import { MessageCircle, X, Send, Loader2, User, Bot, AlertCircle } from "lucide-react";
 import { chatWithAI } from "@/ai/flows/chat-flow";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -14,6 +14,11 @@ type Message = {
   text: string;
 };
 
+interface ChatError {
+  hasError: boolean;
+  message: string;
+}
+
 export function Chatbot() {
   const [isOpen, setIsOpen] = React.useState(false);
   const [input, setInput] = React.useState("");
@@ -21,6 +26,7 @@ export function Chatbot() {
     { role: "model", text: "Hi! I'm Khizer's AI assistant. How can I help you today?" }
   ]);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState<ChatError | null>(null);
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
@@ -35,6 +41,7 @@ export function Chatbot() {
 
     const userMessage = input.trim();
     setInput("");
+    setError(null);
     const newMessages: Message[] = [...messages, { role: "user", text: userMessage }];
     setMessages(newMessages);
     setIsLoading(true);
@@ -45,7 +52,11 @@ export function Chatbot() {
         history: messages
       });
       setMessages([...newMessages, { role: "model", text: response }]);
-    } catch (error) {
+    } catch (err) {
+      setError({
+        hasError: true,
+        message: "Unable to reach AI assistant. Please try again.",
+      });
       setMessages([...newMessages, { role: "model", text: "Sorry, I encountered an error. Please try again." }]);
     } finally {
       setIsLoading(false);

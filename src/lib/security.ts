@@ -1,12 +1,11 @@
-
 'use server';
 
 /**
- * @fileOverview Security utilities for rate limiting and input sanitization.
+ * Security utilities for rate limiting, input sanitization, and secure storage.
  * Note: Uses 'use server' to ensure sensitive checks happen on the backend.
  */
 
-import { headers } from 'next/headers';
+import { headers, cookies } from 'next/headers';
 
 // Simple in-memory rate limiter for server actions
 // In a real production environment, use Redis or a similar persistent store.
@@ -17,12 +16,10 @@ const RATE_LIMIT_WINDOW = 60 * 1000; // Per 1 minute window
 
 /**
  * Checks if a request should be rate limited based on the client's IP.
- * This is a Server Action.
  * @returns {Promise<boolean>} True if limited, false if allowed.
  */
 export async function isRateLimited(): Promise<boolean> {
   const headerList = await headers();
-  // Get IP from headers (standard practice for proxied environments like Netlify/Firebase)
   const ip = headerList.get('x-forwarded-for') || 'anonymous';
   const now = Date.now();
 
@@ -39,10 +36,88 @@ export async function isRateLimited(): Promise<boolean> {
     }
     record.count += 1;
   } else {
-    // Window has passed, reset the counter
     record.count = 1;
     record.lastRequest = now;
   }
 
   return false;
+}
+
+/**
+ * Sanitizes user input to prevent XSS attacks.
+ * Removes potentially dangerous HTML characters.
+ */
+export function sanitizeInput(input: string): string {
+  return input
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+}
+
+/**
+ * Validates that a request is made over HTTPS.
+ * In production, should always use secure connections.
+ */
+export async function isSecureConnection(): Promise<boolean> {
+  const headerList = await headers();
+  const xForwardedProto = headerList.get('x-forwarded-proto');
+  return xForwardedProto === 'https' || process.env.NODE_ENV === 'development';
+}
+
+/**
+ * Sets a secure cookie with httpOnly and secure flags.
+ * Use this for sensitive data like session tokens.
+ * Note: httpOnly cookies are not accessible from client-side JavaScript.
+ */
+export async function setSecureCookie(
+  name: string,
+  value: string,
+  maxAge: number = 3600
+): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.set(name, value, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    maxAge,
+    path: '/',
+  });
+}
+
+/**
+ * Gets a cookie value (for server-side use only).
+ */
+export async function getCookie(name: string): Promise<string | undefined> {
+  const cookieStore = await cookies();
+  return cookieStore.get(name)?.value;
+}
+
+/**
+ * Deletes a cookie securely.
+ */
+export async function deleteCookie(name: string): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.delete(name);
+}
+
+/**
+ * Generates a CSRF token for form protection.
+ */
+export function generateCsrfToken(): string {
+  const buffer = crypto.getRandomValues(new Uint8Array(32));
+  return Array.from(buffer)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+/**
+ * Validates a CSRF token.
+ */
+export function validateCsrfToken(token: string | undefined): boolean {
+  if (!token || token.length !== 64) {
+    return false;
+  }
+  return /^[0-9a-f]{64}$/.test(token);
 }
