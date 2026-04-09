@@ -11,6 +11,7 @@ const rateLimitMap = new Map<string, { count: number; lastRequest: number }>();
 
 const RATE_LIMIT_THRESHOLD = 5; // Max 5 requests
 const RATE_LIMIT_WINDOW = 60 * 1000; // Per 1 minute window
+const MAX_MAP_SIZE = 10000; // Prevent memory bloat
 
 /**
  * Checks if a request should be rate limited based on the client's IP.
@@ -22,6 +23,11 @@ export async function isRateLimited(): Promise<boolean> {
   const now = Date.now();
 
   const record = rateLimitMap.get(ip);
+
+  // Clean up old entries periodically to prevent memory bloat
+  if (rateLimitMap.size > MAX_MAP_SIZE) {
+    rateLimitMap.clear();
+  }
 
   if (!record) {
     rateLimitMap.set(ip, { count: 1, lastRequest: now });
@@ -118,4 +124,28 @@ export function validateCsrfToken(token: string | undefined): boolean {
     return false;
   }
   return /^[0-9a-f]{64}$/.test(token);
+}
+
+/**
+ * Sanitizes AI input to prevent prompt injection attacks.
+ * Removes patterns that could manipulate AI behavior.
+ */
+export function sanitizeAiInput(input: string): string {
+  const patterns = [
+    /ignore\s+(previous|above|prior)/gi,
+    /forget\s+(everything|all|instructions)/gi,
+    /you\s+are\s+(now|no\s+longer)/gi,
+    /system\s*(prompt|instruction)/gi,
+    /override\s+(your|the)\s+(rules|instructions)/gi,
+    /bypass\s+(security|filters|restrictions)/gi,
+    /act\s+as\s+(a|an)/gi,
+    /disable\s+(your|the)\s+(safety|filters)/gi,
+  ];
+
+  let sanitized = input;
+  patterns.forEach((pattern) => {
+    sanitized = sanitized.replace(pattern, '[REDACTED]');
+  });
+
+  return sanitized.trim();
 }

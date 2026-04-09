@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Sparkles, Loader2, ArrowRight, AlertCircle } from "lucide-react";
 import { recommendProjects, type RecommendProjectsOutput } from "@/ai/flows/recommend-projects-flow";
 import { UI_LABELS } from "@/lib/constants";
+import { sanitizeAiInput } from "@/lib/security";
 
 interface AIAssistantError {
   hasError: boolean;
@@ -27,7 +28,7 @@ export function AIAssistant() {
     setLoading(true);
     setError(null);
     try {
-      const data = await recommendProjects({ interest });
+      const data = await recommendProjects({ interest: sanitizeAiInput(interest) });
       setResults(data);
     } catch (err) {
       setError({

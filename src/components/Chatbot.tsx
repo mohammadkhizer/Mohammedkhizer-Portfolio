@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/componen
 import { MessageCircle, X, Send, Loader2, User, Bot, AlertCircle } from "lucide-react";
 import { chatWithAI } from "@/ai/flows/chat-flow";
 import { cn } from "@/lib/utils";
+import { sanitizeAiInput } from "@/lib/security";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 type Message = {
@@ -48,7 +49,7 @@ export function Chatbot() {
 
     try {
       const response = await chatWithAI({
-        message: userMessage,
+        message: sanitizeAiInput(userMessage),
         history: messages
       });
       setMessages([...newMessages, { role: "model", text: response }]);

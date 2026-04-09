@@ -10,13 +10,19 @@ import { Mail, MapPin, Send, Github, Linkedin, Instagram, Phone, Loader2, Shield
 import { useToast } from "@/hooks/use-toast";
 import { useFirestore, addDocumentNonBlocking } from "@/firebase";
 import { collection } from "firebase/firestore";
-import { isRateLimited } from "@/lib/security";
+import { isRateLimited, validateCsrfToken, generateCsrfToken } from "@/lib/security";
 import { sanitizeInput } from "@/lib/utils";
 
 export function Contact() {
   const { toast } = useToast();
   const firestore = useFirestore();
   const [loading, setLoading] = React.useState(false);
+  const [csrfToken, setCsrfToken] = React.useState<string | null>(null);
+
+  // Generate CSRF token on mount
+  React.useEffect(() => {
+    setCsrfToken(generateCsrfToken());
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -41,18 +47,53 @@ export function Contact() {
       }
 
       const formData = new FormData(formElement);
-      
+
       // 2. Sanitize inputs on the client
       const name = sanitizeInput(formData.get("name") as string);
       const email = sanitizeInput(formData.get("email") as string);
       const subject = sanitizeInput(formData.get("subject") as string);
       const message = sanitizeInput(formData.get("message") as string);
 
+      // 3. Validate required fields
       if (!name || !email || !message) {
-        toast({ 
-          variant: "destructive", 
-          title: "Missing Fields", 
-          description: "Please fill out all required fields." 
+        toast({
+          variant: "destructive",
+          title: "Missing Fields",
+          description: "Please fill out all required fields."
+        });
+        setLoading(false);
+        return;
+      }
+
+      // 4. Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        toast({
+          variant: "destructive",
+          title: "Invalid Email",
+          description: "Please enter a valid email address."
+        });
+        setLoading(false);
+        return;
+      }
+
+      // 5. Validate input lengths
+      if (name.length > 100 || email.length > 255 || subject.length > 200 || message.length > 2000) {
+        toast({
+          variant: "destructive",
+          title: "Input Too Long",
+          description: "Please keep your message within reasonable limits."
+        });
+        setLoading(false);
+        return;
+      }
+
+      // 6. Validate CSRF token
+      if (!csrfToken || !validateCsrfToken(csrfToken)) {
+        toast({
+          variant: "destructive",
+          title: "Security Error",
+          description: "Please refresh the page and try again."
         });
         setLoading(false);
         return;
@@ -162,6 +203,9 @@ export function Contact() {
             <Card className="glass border-border/40 p-8">
               <CardContent className="p-0">
                 <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* CSRF Token Hidden Field */}
+                  <input type="hidden" name="csrfToken" value={csrfToken || ""} />
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-sm font-semibold" htmlFor="name">Name</label>
