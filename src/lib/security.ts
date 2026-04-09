@@ -1,8 +1,6 @@
-'use server';
-
 /**
  * Security utilities for rate limiting, input sanitization, and secure storage.
- * Note: Uses 'use server' to ensure sensitive checks happen on the backend.
+ * Note: Functions that access server-only APIs (headers, cookies) are async.
  */
 
 import { headers, cookies } from 'next/headers';
