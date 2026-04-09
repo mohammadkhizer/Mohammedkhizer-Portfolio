@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Sparkles, Loader2, ArrowRight, AlertCircle } from "lucide-react";
 import { recommendProjects, type RecommendProjectsOutput } from "@/ai/flows/recommend-projects-flow";
 import { UI_LABELS } from "@/lib/constants";
-import { sanitizeAiInput } from "@/lib/security";
+import { sanitizeAiInput } from "@/lib/security-client";
 
 interface AIAssistantError {
   hasError: boolean;

@@ -10,7 +10,8 @@ import { Mail, MapPin, Send, Github, Linkedin, Instagram, Phone, Loader2, Shield
 import { useToast } from "@/hooks/use-toast";
 import { useFirestore, addDocumentNonBlocking } from "@/firebase";
 import { collection } from "firebase/firestore";
-import { isRateLimited, validateCsrfToken, generateCsrfToken } from "@/lib/security";
+import { isRateLimited } from "@/lib/security";
+import { validateCsrfToken, generateCsrfToken } from "@/lib/security-client";
 import { sanitizeInput } from "@/lib/utils";
 
 export function Contact() {
