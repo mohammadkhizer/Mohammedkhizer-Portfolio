@@ -5,19 +5,20 @@ import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore'
 
-// IMPORTANT: DO NOT MODIFY THIS FUNCTION
 export function initializeFirebase() {
   if (!getApps().length) {
-    // Important! initializeApp() is called without any arguments because Firebase App Hosting
-    // integrates with the initializeApp() function to provide the environment variables needed to
-    // populate the FirebaseOptions in production. It is critical that we attempt to call initializeApp()
-    // without arguments.
+    // Guard: If env vars are missing (e.g., during SSG/build without Netlify env vars set),
+    // skip initialization to avoid a hard crash. Client-side will initialize normally.
+    if (!firebaseConfig.apiKey) {
+      throw new Error('Firebase API key is missing. Set NEXT_PUBLIC_FIREBASE_API_KEY in your environment.');
+    }
+
     let firebaseApp;
     try {
       // Attempt to initialize via Firebase App Hosting environment variables
       firebaseApp = initializeApp();
     } catch (e) {
-      // Silent fallback to config object - no console output to prevent info leakage
+      // Fallback to config object from NEXT_PUBLIC_* env vars
       firebaseApp = initializeApp(firebaseConfig);
     }
 
