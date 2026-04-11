@@ -26,7 +26,7 @@ const PROFICIENCY_MAP: Record<string, number> = {
 
 export function Skills({ isPreview = false }: { isPreview?: boolean }) {
   const firestore = useFirestore();
-  const skillsRef = useMemoFirebase(() => collection(firestore, "skills"), [firestore]);
+  const skillsRef = useMemoFirebase(() => firestore ? collection(firestore, "skills") : null, [firestore]);
   const { data: skills, isLoading } = useCollection(skillsRef);
 
   const groupedSkills = React.useMemo(() => {

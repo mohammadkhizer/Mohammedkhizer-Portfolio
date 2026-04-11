@@ -100,6 +100,16 @@ export function Contact() {
         return;
       }
 
+      if (!firestore) {
+        toast({
+          variant: "destructive",
+          title: "Service Unavailable",
+          description: "Firebase is not yet initialized. Please refresh and try again.",
+        });
+        setLoading(false);
+        return;
+      }
+
       const submissionsRef = collection(firestore, "contactSubmissions");
       
       // 3. Perform the Firestore write (Non-Blocking Pattern)

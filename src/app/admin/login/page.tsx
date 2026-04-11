@@ -31,6 +31,12 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     try {
+      if (!auth) {
+        toast({ variant: "destructive", title: "Not Ready", description: "Firebase is still loading. Please wait a moment." });
+        setLoading(false);
+        return;
+      }
+
       const response = await fetch("/api/rate-limit", { method: "POST" });
       const result = await response.json();
 

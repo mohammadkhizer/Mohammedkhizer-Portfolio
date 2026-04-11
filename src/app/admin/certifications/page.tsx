@@ -16,7 +16,7 @@ export default function CertificationsManagement() {
   const [url, setUrl] = React.useState("");
   const [editingId, setEditingId] = React.useState<string | null>(null);
 
-  const certsRef = useMemoFirebase(() => collection(firestore, "certifications"), [firestore]);
+  const certsRef = useMemoFirebase(() => firestore ? collection(firestore, "certifications") : null, [firestore]);
   const { data: certs, isLoading } = useCollection(certsRef);
 
   const handleSubmit = (e: React.FormEvent) => {

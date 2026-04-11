@@ -18,7 +18,7 @@ export default function ExperienceManagement() {
   const [description, setDescription] = React.useState("");
   const [editingId, setEditingId] = React.useState<string | null>(null);
 
-  const experienceRef = useMemoFirebase(() => collection(firestore, "experiences"), [firestore]);
+  const experienceRef = useMemoFirebase(() => firestore ? collection(firestore, "experiences") : null, [firestore]);
   const { data: experiences, isLoading } = useCollection(experienceRef);
 
   const handleSubmit = (e: React.FormEvent) => {

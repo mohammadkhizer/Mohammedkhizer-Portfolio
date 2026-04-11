@@ -12,9 +12,14 @@ export function Hero() {
   const fullText = "Full-Stack Web Developer & AI/ML Enthusiast";
   
   const firestore = useFirestore();
-  const profileRef = useMemoFirebase(() => collection(firestore, "userProfiles"), [firestore]);
+  // Guard: firestore is null before Firebase initializes (SSR / first render)
+  const profileRef = useMemoFirebase(
+    () => firestore ? collection(firestore, "userProfiles") : null,
+    [firestore]
+  );
   const { data: profiles, isLoading: isProfileLoading } = useCollection(profileRef);
   const profile = profiles?.[0];
+
 
   React.useEffect(() => {
     let current = 0;

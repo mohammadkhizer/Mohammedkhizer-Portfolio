@@ -9,10 +9,10 @@ import { collection } from "firebase/firestore";
 export function Experience({ isPreview = false }: { isPreview?: boolean }) {
   const firestore = useFirestore();
   
-  const experienceRef = useMemoFirebase(() => collection(firestore, "experiences"), [firestore]);
+  const experienceRef = useMemoFirebase(() => firestore ? collection(firestore, "experiences") : null, [firestore]);
   const { data: experiences, isLoading: isExpLoading } = useCollection(experienceRef);
 
-  const educationRef = useMemoFirebase(() => collection(firestore, "educations"), [firestore]);
+  const educationRef = useMemoFirebase(() => firestore ? collection(firestore, "educations") : null, [firestore]);
   const { data: education, isLoading: isEduLoading } = useCollection(educationRef);
 
   const displayExperiences = isPreview ? experiences?.slice(0, 2) : experiences;

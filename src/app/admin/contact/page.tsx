@@ -28,7 +28,7 @@ export default function ContactManagement() {
   const { toast } = useToast();
   const [deletingId, setDeletingId] = React.useState<string | null>(null);
   
-  const contactRef = useMemoFirebase(() => collection(firestore, "contactSubmissions"), [firestore]);
+  const contactRef = useMemoFirebase(() => firestore ? collection(firestore, "contactSubmissions") : null, [firestore]);
   const { data: submissions, isLoading } = useCollection(contactRef);
 
   const sortedSubmissions = React.useMemo(() => {

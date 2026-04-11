@@ -22,7 +22,7 @@ export default function TestimonialsManagement() {
   const [imageUrl, setImageUrl] = React.useState("");
   const [editingId, setEditingId] = React.useState<string | null>(null);
 
-  const testimonialsRef = useMemoFirebase(() => collection(firestore, "testimonials"), [firestore]);
+  const testimonialsRef = useMemoFirebase(() => firestore ? collection(firestore, "testimonials") : null, [firestore]);
   const { data: testimonials, isLoading } = useCollection(testimonialsRef);
 
   const handleSubmit = (e: React.FormEvent) => {

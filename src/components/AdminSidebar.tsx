@@ -46,7 +46,7 @@ export function AdminSidebar() {
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);
 
   const handleLogout = () => {
-    signOut(auth);
+    if (auth) signOut(auth);
   };
 
   // Close mobile sidebar on navigation

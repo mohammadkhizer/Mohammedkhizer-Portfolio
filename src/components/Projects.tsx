@@ -12,7 +12,7 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 export function Projects({ isPreview = false }: { isPreview?: boolean }) {
   const firestore = useFirestore();
-  const projectsRef = useMemoFirebase(() => collection(firestore, "projects"), [firestore]);
+  const projectsRef = useMemoFirebase(() => firestore ? collection(firestore, "projects") : null, [firestore]);
   const { data: projects, isLoading } = useCollection(projectsRef);
 
   const displayProjects = isPreview ? projects?.slice(0, 3) : projects;

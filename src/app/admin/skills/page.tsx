@@ -25,7 +25,7 @@ export default function SkillsManagement() {
   const [proficiency, setProficiency] = React.useState("Advanced");
   const [editingId, setEditingId] = React.useState<string | null>(null);
 
-  const skillsRef = useMemoFirebase(() => collection(firestore, "skills"), [firestore]);
+  const skillsRef = useMemoFirebase(() => firestore ? collection(firestore, "skills") : null, [firestore]);
   const { data: skills, isLoading } = useCollection(skillsRef);
 
   const handleSubmit = (e: React.FormEvent) => {

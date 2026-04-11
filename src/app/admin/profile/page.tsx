@@ -15,7 +15,7 @@ export default function ProfileManagement() {
   const firestore = useFirestore();
   const { toast } = useToast();
   
-  const profileRef = useMemoFirebase(() => collection(firestore, "userProfiles"), [firestore]);
+  const profileRef = useMemoFirebase(() => firestore ? collection(firestore, "userProfiles") : null, [firestore]);
   const { data: profiles, isLoading } = useCollection(profileRef);
   const profile = profiles?.[0];
 

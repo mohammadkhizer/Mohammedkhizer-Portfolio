@@ -20,7 +20,7 @@ export default function EducationManagement() {
   const [description, setDescription] = React.useState("");
   const [editingId, setEditingId] = React.useState<string | null>(null);
 
-  const educationRef = useMemoFirebase(() => collection(firestore, "educations"), [firestore]);
+  const educationRef = useMemoFirebase(() => firestore ? collection(firestore, "educations") : null, [firestore]);
   const { data: educations, isLoading } = useCollection(educationRef);
 
   const handleSubmit = (e: React.FormEvent) => {

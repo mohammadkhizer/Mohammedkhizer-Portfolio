@@ -10,7 +10,7 @@ import { collection } from "firebase/firestore";
 
 export function Certifications() {
   const firestore = useFirestore();
-  const certsRef = useMemoFirebase(() => collection(firestore, "certifications"), [firestore]);
+  const certsRef = useMemoFirebase(() => firestore ? collection(firestore, "certifications") : null, [firestore]);
   const { data: certs, isLoading } = useCollection(certsRef);
 
   return (

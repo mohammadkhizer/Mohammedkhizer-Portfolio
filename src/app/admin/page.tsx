@@ -23,13 +23,13 @@ import { Button } from "@/components/ui/button";
 export default function AdminDashboard() {
   const firestore = useFirestore();
 
-  const skillsRef = useMemoFirebase(() => collection(firestore, "skills"), [firestore]);
-  const projectsRef = useMemoFirebase(() => collection(firestore, "projects"), [firestore]);
-  const experienceRef = useMemoFirebase(() => collection(firestore, "experiences"), [firestore]);
-  const educationRef = useMemoFirebase(() => collection(firestore, "educations"), [firestore]);
-  const certsRef = useMemoFirebase(() => collection(firestore, "certifications"), [firestore]);
-  const contactRef = useMemoFirebase(() => collection(firestore, "contactSubmissions"), [firestore]);
-  const testimonialsRef = useMemoFirebase(() => collection(firestore, "testimonials"), [firestore]);
+  const skillsRef = useMemoFirebase(() => firestore ? collection(firestore, "skills") : null, [firestore]);
+  const projectsRef = useMemoFirebase(() => firestore ? collection(firestore, "projects") : null, [firestore]);
+  const experienceRef = useMemoFirebase(() => firestore ? collection(firestore, "experiences") : null, [firestore]);
+  const educationRef = useMemoFirebase(() => firestore ? collection(firestore, "educations") : null, [firestore]);
+  const certsRef = useMemoFirebase(() => firestore ? collection(firestore, "certifications") : null, [firestore]);
+  const contactRef = useMemoFirebase(() => firestore ? collection(firestore, "contactSubmissions") : null, [firestore]);
+  const testimonialsRef = useMemoFirebase(() => firestore ? collection(firestore, "testimonials") : null, [firestore]);
 
   const { data: skills } = useCollection(skillsRef);
   const { data: projects } = useCollection(projectsRef);

@@ -30,7 +30,7 @@ export default function ProjectsManagement() {
   const [imageUrl, setImageUrl] = React.useState("https://picsum.photos/seed/project/800/600");
   const [editingId, setEditingId] = React.useState<string | null>(null);
 
-  const projectsRef = useMemoFirebase(() => collection(firestore, "projects"), [firestore]);
+  const projectsRef = useMemoFirebase(() => firestore ? collection(firestore, "projects") : null, [firestore]);
   const { data: projects, isLoading } = useCollection(projectsRef);
 
   const handleSubmit = (e: React.FormEvent) => {

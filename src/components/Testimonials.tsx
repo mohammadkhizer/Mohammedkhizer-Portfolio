@@ -10,7 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export function Testimonials({ isPreview = false }: { isPreview?: boolean }) {
   const firestore = useFirestore();
-  const testimonialsRef = useMemoFirebase(() => collection(firestore, "testimonials"), [firestore]);
+  const testimonialsRef = useMemoFirebase(() => firestore ? collection(firestore, "testimonials") : null, [firestore]);
   const { data: testimonials, isLoading } = useCollection(testimonialsRef);
 
   const displayTestimonials = isPreview ? testimonials?.slice(0, 3) : testimonials;
