@@ -149,7 +149,7 @@ export default function ProjectsManagement() {
                 <Input value={title} onChange={(e) => setTitle(e.target.value)} required />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description">Short Description</Label>
                 <Textarea value={description} onChange={(e) => setDescription(e.target.value)} required />
               </div>
               <div className="space-y-2">

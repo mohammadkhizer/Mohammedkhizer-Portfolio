@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -65,22 +66,25 @@ export function Projects({ isPreview = false }: { isPreview?: boolean }) {
                     ))}
                   </div>
                 </CardContent>
-                <CardFooter className="p-5 md:p-6 pt-0 flex items-center justify-between border-t border-border/50 mt-auto">
-                  <div className="flex gap-4">
+                <CardFooter className="p-5 md:p-6 pb-4 pt-4 flex flex-row items-center justify-between border-t border-border/10 mt-auto bg-card rounded-b-xl">
+                  <div className="flex gap-1.5">
                     {project.liveDemoUrl && project.liveDemoUrl !== '#' && (
-                      <Button variant="ghost" size="sm" className="h-8 px-2 text-xs gap-1.5 text-primary hover:text-primary hover:bg-primary/10" asChild aria-label={`View live demo for ${project.title}`}>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-primary hover:text-primary hover:bg-primary/10 transition-colors" asChild aria-label={`View live demo for ${project.title}`}>
                         <a href={project.liveDemoUrl} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="h-3 w-3" aria-hidden="true" /> Demo
+                          <ExternalLink className="h-4 w-4" aria-hidden="true" />
                         </a>
                       </Button>
                     )}
                     {project.githubRepoUrl && project.githubRepoUrl !== '#' && (
-                      <Button variant="ghost" size="sm" className="h-8 px-2 text-xs gap-1.5 text-muted-foreground hover:text-foreground hover:bg-secondary" asChild aria-label={`View source code for ${project.title} on GitHub`}>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors" asChild aria-label={`View source for ${project.title} on GitHub`}>
                         <a href={project.githubRepoUrl} target="_blank" rel="noopener noreferrer">
-                          <Github className="h-3 w-3" aria-hidden="true" /> Code
+                          <Github className="h-4 w-4" aria-hidden="true" />
                         </a>
                       </Button>
                     )}
+                  </div>
+                  <div className="flex gap-1.5 flex-grow justify-end">
+                    {/* Link to detail pages removed as per request to remove dynamic routing */}
                   </div>
                 </CardFooter>
               </Card>
