@@ -11,7 +11,6 @@ import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
-import { isRateLimited } from "@/lib/security";
 
 export default function LoginPage() {
   const [email, setEmail] = React.useState("");
@@ -32,13 +31,14 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      // Check rate limit to prevent brute force attacks
-      const limited = await isRateLimited();
-      if (limited) {
+      const response = await fetch("/api/rate-limit", { method: "POST" });
+      const result = await response.json();
+
+      if (!response.ok || result.limited) {
         toast({
           variant: "destructive",
           title: "Too Many Attempts",
-          description: "Please wait a moment before trying again.",
+          description: result.message || "Please wait a moment before trying again.",
         });
         setLoading(false);
         return;

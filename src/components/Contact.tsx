@@ -10,7 +10,6 @@ import { Mail, MapPin, Send, Github, Linkedin, Instagram, Phone, Loader2, Shield
 import { useToast } from "@/hooks/use-toast";
 import { useFirestore, addDocumentNonBlocking } from "@/firebase";
 import { collection } from "firebase/firestore";
-import { isRateLimited } from "@/lib/security";
 import { validateCsrfToken, generateCsrfToken } from "@/lib/security-client";
 import { sanitizeInput } from "@/lib/utils";
 
@@ -35,13 +34,14 @@ export function Contact() {
     setLoading(true);
 
     try {
-      // 1. Check Rate Limit via Server Action
-      const limited = await isRateLimited();
-      if (limited) {
+      const response = await fetch("/api/rate-limit", { method: "POST" });
+      const result = await response.json();
+
+      if (!response.ok || result.limited) {
         toast({
           variant: "destructive",
           title: "Too Many Requests",
-          description: "Please wait a moment before sending another message.",
+          description: result.message || "Please wait a moment before sending another message.",
         });
         setLoading(false);
         return;
