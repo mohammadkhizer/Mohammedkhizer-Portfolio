@@ -1,8 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { useFirestore, useCollection, useMemoFirebase, addDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking } from "@/firebase";
-import { collection, doc } from "firebase/firestore";
+import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
+import { collection } from "firebase/firestore";
+import { manageProject, deleteProject } from "@/actions/projects";
+import { refreshCsrfToken } from "@/actions/contact";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,6 +24,7 @@ import {
 } from "lucide-react";
 
 export default function ProjectsManagement() {
+  const { toast } = useToast();
   const firestore = useFirestore();
   const [title, setTitle] = React.useState("");
   const [description, setDescription] = React.useState("");
@@ -29,31 +33,55 @@ export default function ProjectsManagement() {
   const [githubUrl, setGithubUrl] = React.useState("");
   const [imageUrl, setImageUrl] = React.useState("https://picsum.photos/seed/project/800/600");
   const [editingId, setEditingId] = React.useState<string | null>(null);
+  const [loading, setLoading] = React.useState(false);
+  const [csrfToken, setCsrfToken] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    refreshCsrfToken().then(token => setCsrfToken(token));
+  }, []);
 
   const projectsRef = useMemoFirebase(() => firestore ? collection(firestore, "projects") : null, [firestore]);
   const { data: projects, isLoading } = useCollection(projectsRef);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !description) return;
+    setLoading(true);
 
-    const projectData = {
-      title,
-      description,
-      projectImageUrl: imageUrl || "https://picsum.photos/seed/project/800/600",
-      liveDemoUrl: demoUrl,
-      githubRepoUrl: githubUrl,
-      skillIds: techStack.split(",").map(s => s.trim())
-    };
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('description', description);
+    formData.append('techStack', techStack);
+    formData.append('demoUrl', demoUrl);
+    formData.append('githubUrl', githubUrl);
+    formData.append('imageUrl', imageUrl);
+    if (csrfToken) formData.append('csrfToken', csrfToken);
 
-    if (editingId) {
-      updateDocumentNonBlocking(doc(firestore, "projects", editingId), projectData);
-      setEditingId(null);
-    } else {
-      addDocumentNonBlocking(projectsRef, { ...projectData, id: crypto.randomUUID() });
+    try {
+      const result = await manageProject(formData, editingId);
+
+      if (result.success) {
+        toast({
+          title: editingId ? "Project Updated" : "Project Created",
+          description: `The project "${title}" has been successfully saved.`,
+        });
+        resetForm();
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Error Saving Project",
+          description: result.error || "Something went wrong.",
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Connection Error",
+        description: "Failed to connect to the server. Please check your internet connection.",
+      });
+    } finally {
+      setLoading(false);
     }
-
-    resetForm();
   };
 
   const resetForm = () => {
@@ -76,9 +104,30 @@ export default function ProjectsManagement() {
     setImageUrl(project.projectImageUrl || "https://picsum.photos/seed/project/800/600");
   };
 
-  const handleDelete = (id: string) => {
-    const docRef = doc(firestore, "projects", id);
-    deleteDocumentNonBlocking(docRef);
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Are you sure you want to delete "${name}"?`)) return;
+    
+    try {
+      const result = await deleteProject(id);
+      if (result.success) {
+        toast({
+          title: "Project Deleted",
+          description: `The project "${name}" has been removed.`,
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Error Deleting Project",
+          description: result.error || "Failed to delete the project.",
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Connection Error",
+        description: "Failed to connect to the server.",
+      });
+    }
   };
 
   return (
@@ -122,9 +171,9 @@ export default function ProjectsManagement() {
                 <Input type="url" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
               </div>
               <div className="flex gap-2">
-                <Button type="submit" className="flex-1">
-                  {editingId ? <Pencil className="h-4 w-4 mr-2" /> : <Plus className="h-4 w-4 mr-2" />}
-                  {editingId ? "Update Project" : "Create Project"}
+                <Button type="submit" className="flex-1" disabled={loading}>
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : (editingId ? <Pencil className="h-4 w-4 mr-2" /> : <Plus className="h-4 w-4 mr-2" />)}
+                  {loading ? (editingId ? "Updating..." : "Creating...") : (editingId ? "Update Project" : "Create Project")}
                 </Button>
                 {editingId && (
                   <Button type="button" variant="outline" onClick={resetForm}>
@@ -154,7 +203,7 @@ export default function ProjectsManagement() {
                     <Button variant="secondary" size="icon" onClick={() => handleEdit(project)} className="h-8 w-8">
                       <Pencil className="h-4 w-4" />
                     </Button>
-                    <Button variant="destructive" size="icon" onClick={() => handleDelete(project.id)} className="h-8 w-8">
+                    <Button variant="destructive" size="icon" onClick={() => handleDelete(project.id, project.title)} className="h-8 w-8">
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>

@@ -35,14 +35,58 @@ const MIN_LOG_LEVEL: LogLevel =
   (IS_PRODUCTION ? 'warn' : 'debug');
 
 /**
+ * Scrubs sensitive information from context (PII, tokens, etc.)
+ */
+/**
+ * Scrubs sensitive information from context (PII, tokens, etc.) recursively.
+ */
+function scrubSensitiveData(data: Record<string, unknown>): Record<string, unknown> {
+  const sensitiveKeys = ['email', 'password', 'token', 'apiKey', 'secret', 'uid', 'sub', 'address', 'phone', 'auth', 'credential'];
+  
+  const scrub = (obj: any): any => {
+    if (obj === null || typeof obj !== 'object') {
+      return obj;
+    }
+
+    if (Array.isArray(obj)) {
+      return obj.map(scrub);
+    }
+
+    const scrubbed: Record<string, any> = {};
+    for (const key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        if (sensitiveKeys.some(sk => key.toLowerCase().includes(sk.toLowerCase()))) {
+          scrubbed[key] = '[REDACTED]';
+        } else {
+          scrubbed[key] = scrub(obj[key]);
+        }
+      }
+    }
+    return scrubbed;
+  };
+
+  return scrub(data);
+}
+
+/**
  * Formats a log entry with timestamp and structured data.
  */
 function formatLogEntry(level: LogLevel, message: string, context?: Record<string, unknown>): LogEntry {
+  let processedContext = context;
+  
+  if (IS_PRODUCTION && context) {
+    processedContext = scrubSensitiveData(context);
+    // Remove stack traces in production info logs
+    if (level !== 'error' && processedContext.stack) {
+       delete processedContext.stack;
+    }
+  }
+
   return {
     level,
     message,
     timestamp: new Date().toISOString(),
-    context,
+    context: processedContext,
   };
 }
 

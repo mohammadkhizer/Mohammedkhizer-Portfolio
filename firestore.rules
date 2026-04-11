@@ -1,0 +1,110 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─────────────────────────────────────────────────────
+    // Helper: Check if the authenticated user is an admin.
+    // Grants access if the user is the master UID OR if they
+    // have an entry in the 'admins' collection with isAdmin == true.
+    // ─────────────────────────────────────────────────────
+    function isAdmin() {
+      return request.auth != null && (
+        request.auth.uid == "eg1KGzcz7fNQSwZL79FMkQUSjVh2" ||
+        (exists(/databases/$(database)/documents/admins/$(request.auth.uid)) &&
+         get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.isAdmin == true)
+      );
+    }
+
+    // ─────────────────────────────────────────────────────
+    // Admin Config Collection
+    // Only the master UID can create/update admin records.
+    // Admins can read their own record.
+    // ─────────────────────────────────────────────────────
+    match /admins/{userId} {
+      allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      allow write: if request.auth != null && request.auth.uid == "eg1KGzcz7fNQSwZL79FMkQUSjVh2";
+    }
+
+    // ─────────────────────────────────────────────────────
+    // Projects Collection — public read, admin-only write
+    // ─────────────────────────────────────────────────────
+    match /projects/{projectId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────
+    // Skills Collection — public read, admin-only write
+    // ─────────────────────────────────────────────────────
+    match /skills/{skillId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────
+    // Experience Collection — public read, admin-only write
+    // ─────────────────────────────────────────────────────
+    match /experience/{expId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────
+    // Education Collection — public read, admin-only write
+    // ─────────────────────────────────────────────────────
+    match /education/{eduId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────
+    // Certifications Collection — public read, admin-only write
+    // ─────────────────────────────────────────────────────
+    match /certifications/{certId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────
+    // Testimonials Collection — public read, admin-only write
+    // ─────────────────────────────────────────────────────
+    match /testimonials/{testimonialId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────
+    // Contact Submissions Collection
+    // Anyone can create (submit contact form), but with strict
+    // field validation and size limits enforced server-side.
+    // Only admins can read, update, or delete submissions.
+    // ─────────────────────────────────────────────────────
+    match /contactSubmissions/{submissionId} {
+      allow read, update, delete: if isAdmin();
+      allow create: if true
+        // Enforce required fields exist
+        && request.resource.data.keys().hasAll(['senderName', 'senderEmail', 'message', 'submissionDate', 'isRead'])
+        // Enforce field types
+        && request.resource.data.senderName is string
+        && request.resource.data.senderEmail is string
+        && request.resource.data.message is string
+        && request.resource.data.submissionDate is string
+        && request.resource.data.isRead is bool
+        // Enforce maximum string lengths to prevent abuse
+        && request.resource.data.senderName.size() <= 100
+        && request.resource.data.senderEmail.size() <= 255
+        && request.resource.data.message.size() <= 2000
+        && (!request.resource.data.keys().hasAny(['subject']) || (
+          request.resource.data.subject is string &&
+          request.resource.data.subject.size() <= 200
+        ));
+    }
+
+    // ─────────────────────────────────────────────────────
+    // Deny all other collections by default
+    // ─────────────────────────────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

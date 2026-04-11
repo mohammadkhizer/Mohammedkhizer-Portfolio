@@ -95,3 +95,35 @@ export async function deleteCookie(name: string): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete(name);
 }
+/**
+ * Generates a cryptographically secure CSRF token.
+ */
+export async function generateServerCsrfToken(): Promise<string> {
+  const buffer = new Uint8Array(32);
+  crypto.getRandomValues(buffer);
+  return Array.from(buffer)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+/**
+ * Validates a CSRF token against a stored cookie.
+ * @param token The token provided by the client.
+ * @returns {Promise<boolean>} True if valid.
+ */
+export async function validateServerCsrfToken(token: string): Promise<boolean> {
+  const cookieStore = await cookies();
+  const storedToken = cookieStore.get('csrf_token')?.value;
+  
+  if (!storedToken || !token) return false;
+  return storedToken === token;
+}
+
+/**
+ * Sets a CSRF token cookie.
+ */
+export async function setCsrfCookie(): Promise<string> {
+  const token = await generateServerCsrfToken();
+  await setSecureCookie('csrf_token', token, 3600); // 1 hour
+  return token;
+}

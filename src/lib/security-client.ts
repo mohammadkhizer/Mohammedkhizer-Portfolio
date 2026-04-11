@@ -16,29 +16,6 @@ export function sanitizeInput(input: string): string {
     .replace(/'/g, '&#x27;');
 }
 
-/**
- * Generates a CSRF token for form protection.
- * Note: This generates a client-side token. For server-side validation,
- * use the server action that validates against server-stored tokens.
- */
-export function generateCsrfToken(): string {
-  const buffer = crypto.getRandomValues(new Uint8Array(32));
-  return Array.from(buffer)
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
-}
-
-/**
- * Validates a CSRF token format.
- * This only validates the token format, not its authenticity.
- * For full validation, use server-side validation.
- */
-export function validateCsrfToken(token: string | undefined): boolean {
-  if (!token || token.length !== 64) {
-    return false;
-  }
-  return /^[0-9a-f]{64}$/.test(token);
-}
 
 /**
  * Sanitizes AI input to prevent prompt injection attacks.

@@ -8,20 +8,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Mail, MapPin, Send, Github, Linkedin, Instagram, Phone, Loader2, ShieldCheck } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useFirestore, addDocumentNonBlocking } from "@/firebase";
-import { collection } from "firebase/firestore";
-import { validateCsrfToken, generateCsrfToken } from "@/lib/security-client";
-import { sanitizeInput } from "@/lib/utils";
+import { refreshCsrfToken, submitContactForm } from "@/actions/contact";
 
 export function Contact() {
   const { toast } = useToast();
-  const firestore = useFirestore();
   const [loading, setLoading] = React.useState(false);
   const [csrfToken, setCsrfToken] = React.useState<string | null>(null);
 
-  // Generate CSRF token on mount
+  // Generate/Fetch CSRF token from server on mount
   React.useEffect(() => {
-    setCsrfToken(generateCsrfToken());
+    refreshCsrfToken().then(token => setCsrfToken(token));
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -33,109 +29,37 @@ export function Contact() {
     
     setLoading(true);
 
+    const formData = new FormData(formElement);
+    
+    // Add CSRF token explicitly if not using a hidden input or to be sure
+    if (csrfToken) formData.set('csrfToken', csrfToken);
+
     try {
-      const response = await fetch("/api/rate-limit", { method: "POST" });
-      const result = await response.json();
+      const result = await submitContactForm(formData);
 
-      if (!response.ok || result.limited) {
+      if (!result.success) {
         toast({
           variant: "destructive",
-          title: "Too Many Requests",
-          description: result.message || "Please wait a moment before sending another message.",
+          title: "Submission Error",
+          description: result.error || "Something went wrong. Please try again.",
         });
         setLoading(false);
         return;
       }
-
-      const formData = new FormData(formElement);
-
-      // 2. Sanitize inputs on the client
-      const name = sanitizeInput(formData.get("name") as string);
-      const email = sanitizeInput(formData.get("email") as string);
-      const subject = sanitizeInput(formData.get("subject") as string);
-      const message = sanitizeInput(formData.get("message") as string);
-
-      // 3. Validate required fields
-      if (!name || !email || !message) {
-        toast({
-          variant: "destructive",
-          title: "Missing Fields",
-          description: "Please fill out all required fields."
-        });
-        setLoading(false);
-        return;
-      }
-
-      // 4. Validate email format
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        toast({
-          variant: "destructive",
-          title: "Invalid Email",
-          description: "Please enter a valid email address."
-        });
-        setLoading(false);
-        return;
-      }
-
-      // 5. Validate input lengths
-      if (name.length > 100 || email.length > 255 || subject.length > 200 || message.length > 2000) {
-        toast({
-          variant: "destructive",
-          title: "Input Too Long",
-          description: "Please keep your message within reasonable limits."
-        });
-        setLoading(false);
-        return;
-      }
-
-      // 6. Validate CSRF token
-      if (!csrfToken || !validateCsrfToken(csrfToken)) {
-        toast({
-          variant: "destructive",
-          title: "Security Error",
-          description: "Please refresh the page and try again."
-        });
-        setLoading(false);
-        return;
-      }
-
-      if (!firestore) {
-        toast({
-          variant: "destructive",
-          title: "Service Unavailable",
-          description: "Firebase is not yet initialized. Please refresh and try again.",
-        });
-        setLoading(false);
-        return;
-      }
-
-      const submissionsRef = collection(firestore, "contactSubmissions");
-      
-      // 3. Perform the Firestore write (Non-Blocking Pattern)
-      addDocumentNonBlocking(submissionsRef, {
-        id: crypto.randomUUID(),
-        senderName: name,
-        senderEmail: email,
-        subject: subject || "No Subject",
-        message: message,
-        submissionDate: new Date().toISOString(),
-        isRead: false,
-        apiVersion: 1
-      });
 
       toast({
         title: "Message Sent!",
         description: "Thank you for reaching out. I'll get back to you soon.",
       });
       
-      // Reset the form
       formElement.reset();
+      // Optionally refresh token after submission
+      refreshCsrfToken().then(token => setCsrfToken(token));
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Submission Error",
-        description: "Something went wrong. Please try again later.",
+        description: "An unexpected error occurred. Please try again later.",
       });
     } finally {
       setLoading(false);
