@@ -1,7 +1,9 @@
+"use server";
+
 /**
  * Server-only security utilities.
  * These functions access Next.js server-only APIs (headers, cookies).
- * DO NOT import this file from Client Components.
+ * DO NOT import this file from Client Components unless you mean to use them as Server Actions.
  */
 
 import { headers, cookies } from 'next/headers';
