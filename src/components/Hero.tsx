@@ -10,7 +10,7 @@ import { collection } from "firebase/firestore";
 export function Hero() {
   const [displayText, setDisplayText] = React.useState("");
   const fullText = "Full-Stack Web Developer & AI/ML Enthusiast";
-  
+
   const firestore = useFirestore();
   // Guard: firestore is null before Firebase initializes (SSR / first render)
   const profileRef = useMemoFirebase(
@@ -35,7 +35,7 @@ export function Hero() {
     <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden py-20">
       <div className="absolute top-1/4 left-1/4 w-72 h-72 md:w-96 md:h-96 bg-primary/10 rounded-full blur-[80px] md:blur-[120px] -z-10 animate-pulse" />
       <div className="absolute bottom-1/4 right-1/4 w-72 h-72 md:w-96 md:h-96 bg-accent/10 rounded-full blur-[80px] md:blur-[120px] -z-10 animate-pulse delay-700" />
-      
+
       <div className="container mx-auto px-4 sm:px-6 text-center z-10">
         <div className="space-y-6 md:space-y-8 animate-fade-in-up">
           <h2 className="text-primary text-xs md:text-sm font-bold tracking-[0.3em] uppercase opacity-80">Welcome to my space</h2>
@@ -48,20 +48,20 @@ export function Hero() {
               <span className="animate-blink inline-block w-1 h-6 md:h-8 bg-primary ml-1" aria-hidden="true" />
             </p>
           </div>
-          
+
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
             <Button size="lg" className="w-full sm:w-auto px-10 rounded-full text-base md:text-lg font-bold shadow-lg shadow-primary/20" asChild>
               <Link href="/projects">View Projects</Link>
             </Button>
-            <Button 
-              size="lg" 
-              variant="outline" 
+            <Button
+              size="lg"
+              variant="outline"
               className="w-full sm:w-auto px-10 rounded-full text-base md:text-lg font-bold flex items-center gap-2"
               asChild
             >
-              <a 
-                href={profile?.cvDownloadUrl || "#"} 
-                target="_blank" 
+              <a
+                href={profile?.cvDownloadUrl || "https://portfolioimageskhizer.netlify.app/Mohammed-Khizer-Shaikh-CV-2.pdf"}
+                target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Download CV as PDF"
                 onClick={(e) => {
