@@ -33,6 +33,7 @@ export const dbAdmin = dbAdminInstance! || {
   collection: () => ({
     doc: () => ({ 
       get: async () => ({ exists: false, data: () => null, id: 'mock-id' }),
+      set: async () => {},
       update: async () => {}, 
       delete: async () => {} 
     }),

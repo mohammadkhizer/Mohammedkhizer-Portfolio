@@ -34,11 +34,11 @@ export function Certifications() {
                 <CardContent className="p-0">
                   <div className="relative aspect-[4/3] overflow-hidden bg-secondary/20">
                     <Image
-                      src={`https://picsum.photos/seed/${cert.id}/400/300`}
+                      src={cert.imageUrl || `https://picsum.photos/seed/${cert.id}/400/300`}
                       alt={cert.name}
                       fill
                       className="object-cover group-hover:scale-110 transition-transform duration-500"
-                      data-ai-hint="certificate badge"
+                      unoptimized={!!cert.imageUrl}
                     />
                     <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
