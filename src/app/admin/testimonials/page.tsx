@@ -27,14 +27,14 @@ export default function TestimonialsManagement() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!clientName || !testimonialText) return;
+    if (!clientName || !testimonialText || !firestore || !testimonialsRef) return;
 
     const testimonialData = {
       clientName,
       clientTitle,
       testimonialText,
       rating: parseInt(rating),
-      clientImageUrl: imageUrl || `https://picsum.photos/seed/${clientName}/200/200`
+      clientImageUrl: imageUrl || ""
     };
 
     if (editingId) {
@@ -66,6 +66,7 @@ export default function TestimonialsManagement() {
   };
 
   const handleDelete = (id: string) => {
+    if (!firestore) return;
     deleteDocumentNonBlocking(doc(firestore, "testimonials", id));
   };
 
@@ -136,7 +137,7 @@ export default function TestimonialsManagement() {
               {testimonials.map((test) => (
                 <div key={test.id} className="p-5 rounded-2xl border bg-card hover:border-primary/40 transition-all group flex gap-5 items-start">
                   <Avatar className="h-14 w-14 shrink-0 border-2 border-primary/10">
-                    <AvatarImage src={test.clientImageUrl} />
+                    {test.clientImageUrl && <AvatarImage src={test.clientImageUrl} />}
                     <AvatarFallback className="bg-primary/5 text-primary"><User /></AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
