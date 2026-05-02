@@ -31,18 +31,7 @@ To run this project locally, follow these steps:
    npm install
    ```
 
-3. **Environment Setup:**
-   Create a `.env` file in the root directory and populate it with your Firebase configuration. It should look like this:
-   ```env
-   NEXT_PUBLIC_FIREBASE_PROJECT_ID="your_project_id"
-   NEXT_PUBLIC_FIREBASE_APP_ID="your_app_id"
-   NEXT_PUBLIC_FIREBASE_API_KEY="your_api_key"
-   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="your_auth_domain"
-   FIREBASE_CLIENT_EMAIL="your_client_email"
-   FIREBASE_PRIVATE_KEY="your_private_key"
-   ```
-
-4. **Run the Development Server:**
+3. **Run the Development Server:**
    ```bash
    npm run dev
    ```
