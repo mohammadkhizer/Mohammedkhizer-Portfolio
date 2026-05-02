@@ -14,6 +14,15 @@ export function Contact() {
   const { toast } = useToast();
   const [loading, setLoading] = React.useState(false);
   const [csrfToken, setCsrfToken] = React.useState<string | null>(null);
+  const [cooldown, setCooldown] = React.useState(0);
+
+  // Handle cooldown timer
+  React.useEffect(() => {
+    if (cooldown > 0) {
+      const timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [cooldown]);
 
   // Generate/Fetch CSRF token from server on mount
   React.useEffect(() => {
@@ -26,6 +35,15 @@ export function Contact() {
     // Capture the form element immediately before any async await calls
     // to prevent 'e.currentTarget' from becoming null after the await.
     const formElement = e.currentTarget;
+    
+    if (cooldown > 0) {
+      toast({
+        variant: "destructive",
+        title: "Rate Limited",
+        description: `Please wait ${cooldown} seconds before sending another message.`,
+      });
+      return;
+    }
     
     setLoading(true);
 
@@ -43,6 +61,9 @@ export function Contact() {
           title: "Submission Error",
           description: result.error || "Something went wrong. Please try again.",
         });
+        if (result.error?.includes("Too many requests") || result.error?.includes("rate limit")) {
+          setCooldown(60);
+        }
         setLoading(false);
         return;
       }
@@ -51,6 +72,8 @@ export function Contact() {
         title: "Message Sent!",
         description: "Thank you for reaching out. I'll get back to you soon.",
       });
+      
+      setCooldown(60); // Enforce 60-second cooldown on success
       
       formElement.reset();
       // Optionally refresh token after submission
@@ -159,8 +182,10 @@ export function Contact() {
                     <label className="text-sm font-semibold" htmlFor="message">Message</label>
                     <Textarea id="message" name="message" placeholder="How can I help you today?" className="min-h-[150px]" required />
                   </div>
-                  <Button disabled={loading} className="w-full py-6 text-lg font-bold gap-2">
-                    {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : (
+                  <Button disabled={loading || cooldown > 0} className="w-full py-6 text-lg font-bold gap-2">
+                    {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : cooldown > 0 ? (
+                      `Please wait ${cooldown}s`
+                    ) : (
                       <>
                         <Send className="h-5 w-5" />
                         Send Message
