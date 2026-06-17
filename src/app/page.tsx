@@ -9,7 +9,7 @@ import { Skills } from "@/components/Skills";
 import { Projects } from "@/components/Projects";
 import { Experience } from "@/components/Experience";
 import { Testimonials } from "@/components/Testimonials";
-import { getProjects, getSkills, getExperience } from "@/lib/db";
+import { getProjects, getSkills, getExperience, getTestimonials } from "@/lib/db";
 
 export default async function HomePage() {
   const [projects, skills, experience, testimonials] = await Promise.all([
