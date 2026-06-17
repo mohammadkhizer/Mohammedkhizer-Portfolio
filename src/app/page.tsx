@@ -38,7 +38,7 @@ export default async function HomePage() {
 
         {/* Sections rendered with server-fetched data */}
         <section className="space-y-8 md:space-y-12">
-          <Skills isPreview={true} initialData={skills as any} />
+          <Skills isPreview={true} initialData={skills as never} />
           <div className="flex justify-center px-4">
             <Button asChild variant="outline" className="w-full sm:w-auto rounded-full h-12 px-8">
               <Link href="/skills" className="flex items-center justify-center gap-2">
@@ -49,7 +49,7 @@ export default async function HomePage() {
         </section>
 
         <section className="space-y-8 md:space-y-12">
-          <Projects isPreview={true} initialData={projects as any} />
+          <Projects isPreview={true} initialData={projects as never} />
           <div className="flex justify-center px-4">
             <Button asChild variant="outline" className="w-full sm:w-auto rounded-full h-12 px-8">
               <Link href="/projects" className="flex items-center justify-center gap-2">
@@ -60,7 +60,7 @@ export default async function HomePage() {
         </section>
 
         <section className="space-y-8 md:space-y-12">
-          <Experience isPreview={true} initialExperiences={experience as any} />
+          <Experience isPreview={true} initialExperiences={experience as never} />
           <div className="flex justify-center px-4">
             <Button asChild variant="outline" className="w-full sm:w-auto rounded-full h-12 px-8">
               <Link href="/experience" className="flex items-center justify-center gap-2">
@@ -71,7 +71,7 @@ export default async function HomePage() {
         </section>
 
         <section className="space-y-8 md:space-y-12">
-          <Testimonials isPreview={true} initialData={testimonials as any} />
+          <Testimonials isPreview={true} initialData={testimonials as never} />
         </section>
       </div>
     </main>

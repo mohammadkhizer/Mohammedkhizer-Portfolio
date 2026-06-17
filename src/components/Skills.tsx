@@ -44,7 +44,16 @@ export function Skills({
 
   const groupedSkills = React.useMemo(() => {
     if (!skills) return [];
-    const groups: Record<string, any> = {};
+
+    interface GroupData {
+      title: string;
+      icon: React.ReactNode;
+      skills: string[];
+      proficiencyTotal: number;
+      count: number;
+    }
+
+    const groups: Record<string, GroupData> = {};
     
     skills.forEach((skill) => {
       const category = skill.category || "General";
@@ -62,7 +71,7 @@ export function Skills({
       groups[category].count += 1;
     });
 
-    return Object.values(groups).map((group: any) => ({
+    return Object.values(groups).map((group) => ({
       ...group,
       proficiency: Math.round(group.proficiencyTotal / group.count),
     }));

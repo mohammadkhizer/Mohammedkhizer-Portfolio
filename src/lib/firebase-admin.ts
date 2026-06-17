@@ -45,11 +45,11 @@ export const dbAdmin = dbAdminInstance! || {
       }) 
     })
   })
-} as any;
+} as unknown as admin.firestore.Firestore;
 
 // Export authAdmin
 export const authAdmin = authAdminInstance! || {
   verifyIdToken: async () => { throw new Error('Auth Admin not initialized') },
   getUser: async () => { throw new Error('Auth Admin not initialized') }
-} as any;
+} as unknown as admin.auth.Auth;
 

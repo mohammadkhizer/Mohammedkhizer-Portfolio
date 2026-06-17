@@ -12,7 +12,7 @@ export default async function ProjectsPage() {
   
   return (
     <main className="py-12 space-y-24">
-      <Projects initialData={projects as any} />
+      <Projects initialData={projects as never} />
     </main>
   );
 }

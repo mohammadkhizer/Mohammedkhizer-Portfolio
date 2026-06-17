@@ -11,7 +11,13 @@ export function middleware(request: NextRequest) {
   const sessionToken = request.cookies.get('fb_session')?.value;
 
   // 1. Protection for /admin routes
-  if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login') && !pathname.startsWith('/admin/signup')) {
+  // Allow public admin auth pages (login, signup, password reset flow)
+  const isPublicAdminRoute =
+    pathname.startsWith('/admin/login') ||
+    pathname.startsWith('/admin/signup') ||
+    pathname.startsWith('/admin/auth/');
+
+  if (pathname.startsWith('/admin') && !isPublicAdminRoute) {
     if (!sessionToken) {
       // Redirect to login if no session cookie is found
       const loginUrl = new URL('/admin/login', request.url);
@@ -71,6 +77,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * - sitemap.xml, robots.txt (SEO files)
      */
-    '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|images|fonts).*)',
   ],
 };

@@ -6,7 +6,17 @@ import { collection, doc } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
+
+interface Education {
+  id: string;
+  degree: string;
+  institutionName: string;
+  location?: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+}
 import { Label } from "@/components/ui/label";
 import { Trash2, Plus, Loader2, GraduationCap, Calendar, Pencil, X, MapPin } from "lucide-react";
 
@@ -21,7 +31,7 @@ export default function EducationManagement() {
   const [editingId, setEditingId] = React.useState<string | null>(null);
 
   const educationRef = useMemoFirebase(() => firestore ? collection(firestore, "educations") : null, [firestore]);
-  const { data: educations, isLoading } = useCollection(educationRef);
+  const { data: educations, isLoading } = useCollection<Education>(educationRef);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,7 +67,7 @@ export default function EducationManagement() {
     setEditingId(null);
   };
 
-  const handleEdit = (edu: any) => {
+  const handleEdit = (edu: Education) => {
     setEditingId(edu.id);
     setDegree(edu.degree);
     setInstitution(edu.institutionName);

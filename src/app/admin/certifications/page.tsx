@@ -10,6 +10,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
+
+interface Certification {
+  id: string;
+  name: string;
+  issuingBody: string;
+  credentialUrl: string;
+  imageUrl?: string;
+}
+
 import { Trash2, Plus, Loader2, Award, ExternalLink, Pencil, X, Inbox, PlusCircle } from "lucide-react";
 
 export default function CertificationsManagement() {
@@ -28,7 +39,7 @@ export default function CertificationsManagement() {
   }, []);
 
   const certsRef = useMemoFirebase(() => firestore ? collection(firestore, "certifications") : null, [firestore]);
-  const { data: certs, isLoading } = useCollection(certsRef);
+  const { data: certs, isLoading } = useCollection<Certification>(certsRef);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,7 +91,7 @@ export default function CertificationsManagement() {
     setEditingId(null);
   };
 
-  const handleEdit = (cert: any) => {
+  const handleEdit = (cert: Certification) => {
     setEditingId(cert.id);
     setName(cert.name);
     setIssuer(cert.issuingBody);
@@ -177,7 +188,7 @@ export default function CertificationsManagement() {
                       <div className="flex items-center gap-3 text-primary mb-2">
                         {cert.imageUrl ? (
                           <div className="h-10 w-10 relative overflow-hidden rounded-lg border bg-background">
-                            <img src={cert.imageUrl} alt="" className="object-cover w-full h-full" />
+                            <Image src={cert.imageUrl} alt="" fill className="object-cover" />
                           </div>
                         ) : (
                           <Award className="h-5 w-5" />

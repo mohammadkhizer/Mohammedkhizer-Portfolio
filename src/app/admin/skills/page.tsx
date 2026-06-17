@@ -18,6 +18,13 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
+interface Skill {
+  id: string;
+  name: string;
+  category: string;
+  proficiency: string;
+}
+
 export default function SkillsManagement() {
   const firestore = useFirestore();
   const [nameInput, setNameInput] = React.useState("");
@@ -26,7 +33,7 @@ export default function SkillsManagement() {
   const [editingId, setEditingId] = React.useState<string | null>(null);
 
   const skillsRef = useMemoFirebase(() => firestore ? collection(firestore, "skills") : null, [firestore]);
-  const { data: skills, isLoading } = useCollection(skillsRef);
+  const { data: skills, isLoading } = useCollection<Skill>(skillsRef);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,7 +74,7 @@ export default function SkillsManagement() {
     setProficiency("Advanced");
   };
 
-  const handleEdit = (skill: any) => {
+  const handleEdit = (skill: Skill) => {
     setEditingId(skill.id);
     setNameInput(skill.name);
     setCategory(skill.category);

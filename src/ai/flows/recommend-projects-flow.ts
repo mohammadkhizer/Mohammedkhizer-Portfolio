@@ -12,6 +12,13 @@ import { z } from 'genkit';
 import { sanitizeAiInput } from '@/lib/security-client';
 import { getProjects } from '@/lib/db';
 
+interface ProjectData {
+  id: string;
+  title?: string;
+  description?: string;
+  skillIds?: string[];
+}
+
 const RecommendProjectsInputSchema = z.object({
   interest: z.string().describe("The user's interests or industry they are looking for projects in."),
 });
@@ -72,13 +79,13 @@ const recommendProjectsFlow = ai.defineFlow(
     inputSchema: RecommendProjectsInputSchema,
     outputSchema: RecommendProjectsOutputSchema,
   },
-  async (input) => {
+  async (input: RecommendProjectsInput) => {
     try {
       // Sanitize user input before it reaches the prompt
       const sanitizedInterest = sanitizeAiInput(input.interest);
       
       // Fetch live projects from Firestore
-      const liveProjects = await getProjects() as any[];
+      const liveProjects = await getProjects() as ProjectData[];
       
       if (!liveProjects || liveProjects.length === 0) {
         return { recommendations: [] };
@@ -108,7 +115,7 @@ const recommendProjectsFlow = ai.defineFlow(
       console.error('AI Flow Error:', error);
       
       // Fallback: Simple keyword match if AI fails
-      const liveProjects = await getProjects() as any[];
+      const liveProjects = await getProjects() as ProjectData[];
       const keyword = input.interest.toLowerCase();
       
       const matches = liveProjects

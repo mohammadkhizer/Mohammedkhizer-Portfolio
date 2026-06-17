@@ -6,6 +6,7 @@ import { useAuth, useUser } from "@/firebase";
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
@@ -61,11 +62,12 @@ export default function LoginPage() {
 
       
       router.push("/admin");
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as Error;
       toast({
         variant: "destructive",
         title: "Login Failed",
-        description: error.message || "Please check your credentials.",
+        description: err.message || "Please check your credentials.",
       });
     } finally {
       setLoading(false);
@@ -92,11 +94,12 @@ export default function LoginPage() {
 
       
       router.push("/admin");
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as Error;
       toast({
         variant: "destructive",
         title: "Google Login Failed",
-        description: error.message || "Failed to sign in with Google.",
+        description: err.message || "Failed to sign in with Google.",
       });
     } finally {
       setLoading(false);
@@ -124,13 +127,17 @@ export default function LoginPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input 
-                id="password" 
-                type="password" 
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                <Link href="/admin/auth/forgot-password" className="text-xs text-primary hover:underline">
+                  Forgot password?
+                </Link>
+              </div>
+              <PasswordInput
+                id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required 
+                required
               />
             </div>
           </CardContent>
@@ -172,7 +179,7 @@ export default function LoginPage() {
               Sign in with Google
             </Button>
             <p className="text-center text-sm text-muted-foreground">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link href="/admin/signup" className="text-primary hover:underline font-medium">
                 Sign Up
               </Link>

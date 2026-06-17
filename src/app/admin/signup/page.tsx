@@ -6,6 +6,7 @@ import { useAuth, useUser } from "@/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Loader2, AlertCircle } from "lucide-react";
@@ -52,11 +53,12 @@ export default function SignupPage() {
         description: "Your account has been created. Please ensure you are authorized as an admin in the database.",
       });
       router.push("/admin");
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as Error;
       toast({
         variant: "destructive",
         title: "Signup Failed",
-        description: error.message || "An error occurred during signup.",
+        description: err.message || "An error occurred during signup.",
       });
     } finally {
       setLoading(false);
@@ -92,13 +94,12 @@ export default function SignupPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input 
-                id="password" 
-                type="password" 
+              <PasswordInput
+                id="password"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required 
+                required
               />
             </div>
           </CardContent>

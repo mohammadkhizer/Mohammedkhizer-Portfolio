@@ -70,7 +70,7 @@ export function Testimonials({
                   </div>
 
                   <p className="text-base md:text-lg text-foreground/80 leading-relaxed font-medium italic">
-                    "{testimonial.testimonialText}"
+                    &ldquo;{testimonial.testimonialText}&rdquo;
                   </p>
                   
                   <div className="flex items-center gap-4 pt-6 border-t border-border/40 mt-auto">

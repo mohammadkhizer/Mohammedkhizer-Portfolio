@@ -50,7 +50,10 @@ export function Chatbot() {
     try {
       const response = await chatWithAI({
         message: sanitizeAiInput(userMessage),
-        history: messages
+        history: messages.map(msg => ({
+          role: msg.role,
+          content: msg.text
+        }))
       });
       setMessages([...newMessages, { role: "model", text: response }]);
     } catch (err) {

@@ -22,7 +22,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [isProvisioning, setIsProvisioning] = React.useState(false);
   const [provisionError, setProvisionError] = React.useState<ProvisionError | null>(null);
 
-  const isAuthPage = pathname === "/admin/login" || pathname === "/admin/signup";
+  const isAuthPage =
+    pathname === "/admin/login" ||
+    pathname === "/admin/signup" ||
+    pathname.startsWith("/admin/auth/");
 
   const adminDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;

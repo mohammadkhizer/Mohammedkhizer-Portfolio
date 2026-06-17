@@ -6,7 +6,16 @@ import { collection, doc } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
+
+interface Experience {
+  id: string;
+  jobTitle: string;
+  companyName: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+}
 import { Label } from "@/components/ui/label";
 import { Trash2, Plus, Loader2, Briefcase, Calendar, Pencil, X } from "lucide-react";
 
@@ -19,7 +28,7 @@ export default function ExperienceManagement() {
   const [editingId, setEditingId] = React.useState<string | null>(null);
 
   const experienceRef = useMemoFirebase(() => firestore ? collection(firestore, "experiences") : null, [firestore]);
-  const { data: experiences, isLoading } = useCollection(experienceRef);
+  const { data: experiences, isLoading } = useCollection<Experience>(experienceRef);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,7 +61,7 @@ export default function ExperienceManagement() {
     setEditingId(null);
   };
 
-  const handleEdit = (exp: any) => {
+  const handleEdit = (exp: Experience) => {
     setEditingId(exp.id);
     setRole(exp.jobTitle);
     setCompany(exp.companyName);

@@ -33,10 +33,6 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  if (pathname.startsWith('/admin')) {
-    return null;
-  }
-
   React.useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = 'hidden';
@@ -47,6 +43,10 @@ export function Navbar() {
       document.body.style.overflow = 'unset';
     };
   }, [isMobileMenuOpen]);
+
+  if (pathname.startsWith('/admin')) {
+    return null;
+  }
 
   return (
     <>

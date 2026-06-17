@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import { isAdmin, getAuthenticatedUser } from '../security';
 
 
@@ -22,7 +22,7 @@ vi.mock('../firebase-admin', () => ({
     collection: mockCollection,
   },
   authAdmin: {
-    verifySessionCookie: vi.fn(async (token) => {
+    verifySessionCookie: vi.fn(async (token: string) => {
       if (token === 'valid-token') return { uid: 'user-123', email: 'test@example.com' };
       throw new Error('Invalid token');
     }),
@@ -47,7 +47,7 @@ describe('Security Utilities', () => {
   describe('getAuthenticatedUser', () => {
     it('should return null if no session cookie exists', async () => {
       const { cookies } = await import('next/headers');
-      (cookies as any).mockImplementationOnce(async () => ({
+      (cookies as Mock).mockImplementationOnce(async () => ({
         get: vi.fn().mockReturnValue(undefined),
       }));
 
@@ -57,7 +57,7 @@ describe('Security Utilities', () => {
 
     it('should return user info if valid session cookie exists', async () => {
       const { cookies } = await import('next/headers');
-      (cookies as any).mockImplementationOnce(async () => ({
+      (cookies as Mock).mockImplementationOnce(async () => ({
         get: vi.fn().mockReturnValue({ value: 'valid-token' }),
       }));
 
@@ -69,13 +69,13 @@ describe('Security Utilities', () => {
   describe('isAdmin', () => {
     it('should return true for master UID', async () => {
       const { cookies } = await import('next/headers');
-      (cookies as any).mockImplementationOnce(async () => ({
+      (cookies as Mock).mockImplementationOnce(async () => ({
         get: vi.fn().mockReturnValue({ value: 'valid-token' }),
       }));
 
       // Override verifySessionCookie to return master-uid
       const { authAdmin } = await import('../firebase-admin');
-      (authAdmin.verifySessionCookie as any).mockResolvedValueOnce({ uid: 'master-uid' });
+      (authAdmin.verifySessionCookie as Mock).mockResolvedValueOnce({ uid: 'master-uid' });
 
       const result = await isAdmin();
       expect(result).toBe(true);
@@ -83,12 +83,12 @@ describe('Security Utilities', () => {
 
     it('should return false if user is not in admin collection', async () => {
       const { cookies } = await import('next/headers');
-      (cookies as any).mockImplementationOnce(async () => ({
+      (cookies as Mock).mockImplementationOnce(async () => ({
         get: vi.fn().mockReturnValue({ value: 'valid-token' }),
       }));
 
       // Access the mock from the module scope if possible, or via import
-      mockDocGet.mockResolvedValueOnce({ exists: false } as any);
+      mockDocGet.mockResolvedValueOnce({ exists: false } as never);
 
       const result = await isAdmin();
       expect(result).toBe(false);

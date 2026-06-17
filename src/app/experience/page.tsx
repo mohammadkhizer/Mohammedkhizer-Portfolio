@@ -16,8 +16,8 @@ export default async function ExperiencePage() {
 
   return (
     <main className="py-12 space-y-12">
-      <Experience initialExperiences={experience as any} />
-      <Certifications initialData={certifications as any} />
+      <Experience initialExperiences={experience as never} />
+      <Certifications initialData={certifications as never} />
     </main>
   );
 }

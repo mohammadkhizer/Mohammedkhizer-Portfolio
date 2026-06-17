@@ -20,6 +20,9 @@ const baseUrl = 'https://mohammedkhizershaikh.netlify.app';
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
+  icons: {
+    icon: "/favicon.ico",
+  },
   title: {
     default: 'Mohammed Khizer Shaikh | Full-Stack Developer & AI Enthusiast',
     template: '%s | Mohammed Khizer Shaikh'

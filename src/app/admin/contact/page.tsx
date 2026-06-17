@@ -4,6 +4,17 @@ import * as React from "react";
 import { useFirestore, useCollection, useMemoFirebase, deleteDocumentNonBlocking, updateDocumentNonBlocking } from "@/firebase";
 import { collection, doc } from "firebase/firestore";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+
+interface Submission {
+  id: string;
+  isRead: boolean;
+  senderName: string;
+  senderEmail: string;
+  subject: string;
+  message: string;
+  submissionDate: string;
+}
 import { Button } from "@/components/ui/button";
 import { 
   Trash2, 
@@ -29,7 +40,7 @@ export default function ContactManagement() {
   const [deletingId, setDeletingId] = React.useState<string | null>(null);
   
   const contactRef = useMemoFirebase(() => firestore ? collection(firestore, "contactSubmissions") : null, [firestore]);
-  const { data: submissions, isLoading } = useCollection(contactRef);
+  const { data: submissions, isLoading } = useCollection<Submission>(contactRef);
 
   const sortedSubmissions = React.useMemo(() => {
     if (!submissions) return [];
@@ -48,7 +59,7 @@ export default function ContactManagement() {
     });
   };
 
-  const toggleReadStatus = (submission: any) => {
+  const toggleReadStatus = (submission: Submission) => {
     if (!firestore) return;
     updateDocumentNonBlocking(doc(firestore!, "contactSubmissions", submission.id), {
       isRead: !submission.isRead
@@ -172,7 +183,7 @@ export default function ContactManagement() {
                   <div className="flex items-start gap-4">
                     <MessageSquare className="h-4 w-4 text-primary shrink-0 mt-1 opacity-60 group-hover/msg:opacity-100 transition-opacity" />
                     <p className="text-sm leading-relaxed whitespace-pre-wrap text-foreground/90 italic">
-                      "{sub.message}"
+                      &ldquo;{sub.message}&rdquo;
                     </p>
                   </div>
                 </div>

@@ -12,7 +12,7 @@ export default async function SkillsPage() {
   
   return (
     <main className="py-12">
-      <Skills initialData={skills as any} />
+      <Skills initialData={skills as never} />
     </main>
   );
 }

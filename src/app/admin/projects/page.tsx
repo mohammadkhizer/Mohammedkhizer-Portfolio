@@ -11,6 +11,17 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import Image from "next/image";
+
+interface Project {
+  id: string;
+  title: string;
+  description: string;
+  skillIds?: string[];
+  liveDemoUrl?: string;
+  githubRepoUrl?: string;
+  projectImageUrl?: string;
+}
 import { 
   Trash2, 
   Plus, 
@@ -41,7 +52,7 @@ export default function ProjectsManagement() {
   }, []);
 
   const projectsRef = useMemoFirebase(() => firestore ? collection(firestore, "projects") : null, [firestore]);
-  const { data: projects, isLoading } = useCollection(projectsRef);
+  const { data: projects, isLoading } = useCollection<Project>(projectsRef);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,7 +105,7 @@ export default function ProjectsManagement() {
     setEditingId(null);
   };
 
-  const handleEdit = (project: any) => {
+  const handleEdit = (project: Project) => {
     setEditingId(project.id);
     setTitle(project.title);
     setDescription(project.description);
@@ -194,10 +205,11 @@ export default function ProjectsManagement() {
             projects.map((project) => (
               <Card key={project.id} className="group overflow-hidden flex flex-col">
                 <div className="relative aspect-video bg-secondary/20 flex items-center justify-center overflow-hidden">
-                  <img 
+                  <Image 
                     src={project.projectImageUrl || "https://picsum.photos/seed/project/800/600"} 
                     alt={project.title} 
-                    className="object-cover w-full h-full group-hover:scale-110 transition-transform" 
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform" 
                   />
                   <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <Button variant="secondary" size="icon" onClick={() => handleEdit(project)} className="h-8 w-8">

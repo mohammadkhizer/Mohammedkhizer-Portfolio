@@ -43,29 +43,29 @@ const MIN_LOG_LEVEL: LogLevel =
 function scrubSensitiveData(data: Record<string, unknown>): Record<string, unknown> {
   const sensitiveKeys = ['email', 'password', 'token', 'apiKey', 'secret', 'uid', 'sub', 'address', 'phone', 'auth', 'credential'];
   
-  const scrub = (obj: any): any => {
+  const scrub = (obj: unknown): unknown => {
     if (obj === null || typeof obj !== 'object') {
       return obj;
     }
 
     if (Array.isArray(obj)) {
-      return obj.map(scrub);
+      return obj.map(item => scrub(item));
     }
 
-    const scrubbed: Record<string, any> = {};
+    const scrubbed: Record<string, unknown> = {};
     for (const key in obj) {
       if (Object.prototype.hasOwnProperty.call(obj, key)) {
         if (sensitiveKeys.some(sk => key.toLowerCase().includes(sk.toLowerCase()))) {
           scrubbed[key] = '[REDACTED]';
         } else {
-          scrubbed[key] = scrub(obj[key]);
+          scrubbed[key] = scrub((obj as Record<string, unknown>)[key]);
         }
       }
     }
     return scrubbed;
   };
 
-  return scrub(data);
+  return scrub(data) as Record<string, unknown>;
 }
 
 /**

@@ -13,6 +13,15 @@ import { Trash2, Plus, Loader2, Quote, Pencil, X, User, Star, PlusCircle, Inbox 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 
+interface Testimonial {
+  id: string;
+  clientName: string;
+  clientTitle: string;
+  testimonialText: string;
+  rating?: number | string;
+  clientImageUrl?: string;
+}
+
 export default function TestimonialsManagement() {
   const firestore = useFirestore();
   const [clientName, setClientName] = React.useState("");
@@ -23,7 +32,7 @@ export default function TestimonialsManagement() {
   const [editingId, setEditingId] = React.useState<string | null>(null);
 
   const testimonialsRef = useMemoFirebase(() => firestore ? collection(firestore, "testimonials") : null, [firestore]);
-  const { data: testimonials, isLoading } = useCollection(testimonialsRef);
+  const { data: testimonials, isLoading } = useCollection<Testimonial>(testimonialsRef);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,7 +65,7 @@ export default function TestimonialsManagement() {
     setEditingId(null);
   };
 
-  const handleEdit = (test: any) => {
+  const handleEdit = (test: Testimonial) => {
     setEditingId(test.id);
     setClientName(test.clientName);
     setClientTitle(test.clientTitle);
@@ -161,7 +170,7 @@ export default function TestimonialsManagement() {
                       </div>
                     </div>
                     <p className="text-xs mt-4 text-muted-foreground italic line-clamp-3 leading-relaxed border-t border-border/50 pt-4">
-                      "{test.testimonialText}"
+                      &ldquo;{test.testimonialText}&rdquo;
                     </p>
                   </div>
                 </div>
