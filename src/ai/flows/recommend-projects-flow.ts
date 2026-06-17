@@ -10,51 +10,7 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 import { sanitizeAiInput } from '@/lib/security-client';
-
-const projects = [
-  {
-    id: 'e-commerce-ai-recommendations',
-    name: 'E-commerce Platform with AI Recommendations',
-    description: 'A full-stack e-commerce solution featuring product listings, shopping cart, secure checkout, and a personalized recommendation engine powered by machine learning algorithms based on user behavior and preferences.',
-    techStack: ['Next.js', 'TypeScript', 'Firebase', 'PostgreSQL', 'Python', 'TensorFlow', 'Genkit', 'Machine Learning'],
-    industry: ['Retail', 'E-commerce', 'AI/ML', 'Data Science'],
-  },
-  {
-    id: 'healthcare-analytics-dashboard',
-    name: 'Healthcare Data Analytics Dashboard',
-    description: 'Developed an interactive dashboard to visualize and analyze patient health records, identify trends, and predict potential health risks. Integrates with various data sources and provides real-time insights for healthcare professionals.',
-    techStack: ['React', 'D3.js', 'Node.js', 'MongoDB', 'AWS', 'Data Visualization', 'Big Data'],
-    industry: ['Healthcare', 'Data Analytics', 'Business Intelligence'],
-  },
-  {
-    id: 'real-time-chat-application',
-    name: 'Real-time Chat Application',
-    description: 'A scalable real-time chat application with features like private messaging, group chats, emoji support, and file sharing. Built with WebSockets for instant communication.',
-    techStack: ['Next.js', 'Socket.IO', 'Express.js', 'Redis', 'WebSockets'],
-    industry: ['Communication', 'Social Media', 'Real-time Applications'],
-  },
-  {
-    id: 'portfolio-website-generator',
-    name: 'Portfolio Website Generator',
-    description: 'A tool that allows users to quickly generate personalized portfolio websites by filling out a form. Supports various templates and custom themes. Built with a focus on user experience and rapid deployment.',
-    techStack: ['React', 'Next.js', 'Generative AI', 'Content Management', 'Tailwind CSS'],
-    industry: ['Web Development', 'Personal Branding', 'Design Tools'],
-  },
-  {
-    id: 'ai-content-summarizer',
-    name: 'AI-Powered Content Summarizer',
-    description: 'An application that takes long articles or documents and generates concise summaries using advanced natural language processing (NLP) models. Useful for researchers and content creators.',
-    techStack: ['Python', 'Hugging Face Transformers', 'NLP', 'FastAPI', 'React'],
-    industry: ['Content Creation', 'Education', 'AI/ML', 'Research'],
-  },
-  {
-    id: 'decentralized-finance-platform',
-    name: 'Decentralized Finance (DeFi) Platform',
-    description: 'A secure and transparent DeFi platform enabling peer-to-peer lending, borrowing, and yield farming using blockchain technology and smart contracts.',
-    techStack: ['Solidity', 'Ethereum', 'React', 'Web3.js', 'Truffle'],
-    industry: ['Blockchain', 'Fintech', 'Decentralized Finance'],
-  },
-];
+import { getProjects } from '@/lib/db';
 
 const RecommendProjectsInputSchema = z.object({
   interest: z.string().describe("The user's interests or industry they are looking for projects in."),
@@ -117,14 +73,59 @@ const recommendProjectsFlow = ai.defineFlow(
     outputSchema: RecommendProjectsOutputSchema,
   },
   async (input) => {
-    // Sanitize user input before it reaches the prompt
-    const sanitizedInterest = sanitizeAiInput(input.interest);
-    
-    const projectsJson = JSON.stringify(projects, null, 2);
-    const { output } = await recommendProjectsPrompt({ 
-      interest: sanitizedInterest, 
-      projectsJson 
-    });
-    return output!;
+    try {
+      // Sanitize user input before it reaches the prompt
+      const sanitizedInterest = sanitizeAiInput(input.interest);
+      
+      // Fetch live projects from Firestore
+      const liveProjects = await getProjects() as any[];
+      
+      if (!liveProjects || liveProjects.length === 0) {
+        return { recommendations: [] };
+      }
+
+      // Format projects for the LLM (compact JSON to save tokens)
+      const contextData = liveProjects.map(p => ({
+        id: p.id,
+        title: p.title || 'Untitled',
+        description: p.description || 'No description',
+        techStack: p.skillIds || []
+      }));
+
+      const projectsJson = JSON.stringify(contextData, null, 2);
+      
+      const { output } = await recommendProjectsPrompt({ 
+        interest: sanitizedInterest, 
+        projectsJson 
+      });
+
+      if (!output) {
+        throw new Error('AI output was empty');
+      }
+
+      return output;
+    } catch (error) {
+      console.error('AI Flow Error:', error);
+      
+      // Fallback: Simple keyword match if AI fails
+      const liveProjects = await getProjects() as any[];
+      const keyword = input.interest.toLowerCase();
+      
+      const matches = liveProjects
+        .filter(p => 
+          p.title?.toLowerCase().includes(keyword) || 
+          p.description?.toLowerCase().includes(keyword) ||
+          p.skillIds?.some((s: string) => s.toLowerCase().includes(keyword))
+        )
+        .slice(0, 3)
+        .map(p => ({
+          projectId: p.id,
+          name: p.title || 'Project',
+          reason: 'Matched based on your interests in the portfolio.'
+        }));
+
+      return { recommendations: matches };
+    }
   }
 );
+

@@ -5,13 +5,22 @@ import * as React from "react";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Award, ExternalLink, Loader2 } from "lucide-react";
-import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
-import { collection } from "firebase/firestore";
 
-export function Certifications() {
-  const firestore = useFirestore();
-  const certsRef = useMemoFirebase(() => firestore ? collection(firestore, "certifications") : null, [firestore]);
-  const { data: certs, isLoading } = useCollection(certsRef);
+
+
+export interface Certification {
+  id: string;
+  name: string;
+  issuingBody: string;
+  imageUrl?: string;
+  credentialUrl?: string;
+  date: string;
+}
+
+export function Certifications({ initialData = [] }: { initialData?: Certification[] }) {
+  const certs = initialData;
+  const isLoading = false;
+
 
   return (
     <section id="certifications" className="py-24 bg-secondary/30">

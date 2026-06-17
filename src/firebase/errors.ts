@@ -44,11 +44,12 @@ function buildAuthObject(currentUser: User | null): FirebaseAuthObject | null {
     return null;
   }
 
+  // SECURITY: Excludes sensitive PII (name, email, phone) to prevent leakage.
   const token: FirebaseAuthToken = {
-    name: currentUser.displayName,
-    email: currentUser.email,
+    name: null,
+    email: null,
     email_verified: currentUser.emailVerified,
-    phone_number: currentUser.phoneNumber,
+    phone_number: null,
     sub: currentUser.uid,
     firebase: {
       identities: currentUser.providerData.reduce((acc, p) => {

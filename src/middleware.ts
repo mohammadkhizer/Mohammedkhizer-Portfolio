@@ -7,9 +7,19 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  const sessionToken = request.cookies.get('fb_session')?.value;
+
+  // 1. Protection for /admin routes
+  if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login') && !pathname.startsWith('/admin/signup')) {
+    if (!sessionToken) {
+      // Redirect to login if no session cookie is found
+      const loginUrl = new URL('/admin/login', request.url);
+      return NextResponse.redirect(loginUrl);
+    }
+  }
+
   const response = NextResponse.next();
-
-
 
   // Prevent clickjacking attacks
   response.headers.set('X-Frame-Options', 'DENY');
@@ -39,7 +49,6 @@ export function middleware(request: NextRequest) {
   response.headers.set('Permissions-Policy', permissionsPolicy.join(', '));
 
   // Cache control for sensitive pages
-  const pathname = request.nextUrl.pathname;
   if (pathname.startsWith('/admin')) {
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     response.headers.set('Pragma', 'no-cache');
@@ -51,6 +60,7 @@ export function middleware(request: NextRequest) {
 
   return response;
 }
+
 
 export const config = {
   matcher: [

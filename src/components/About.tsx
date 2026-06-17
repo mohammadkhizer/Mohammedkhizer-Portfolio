@@ -1,8 +1,6 @@
-
-"use client";
-
 import * as React from "react";
 import Image from "next/image";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { User, Award, GraduationCap, MapPin } from "lucide-react";
 import { PlaceHolderImages } from "@/lib/placeholder-images";

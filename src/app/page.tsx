@@ -1,31 +1,24 @@
 
-"use client";
 
-import dynamic from "next/dynamic";
 import { Hero } from "@/components/Hero";
 import { About } from "@/components/About";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { Skills } from "@/components/Skills";
+import { Projects } from "@/components/Projects";
+import { Experience } from "@/components/Experience";
+import { Testimonials } from "@/components/Testimonials";
+import { getProjects, getSkills, getExperience } from "@/lib/db";
 
-// Dynamic imports for components below the fold to reduce initial JS bundle
-const Skills = dynamic(() => import("@/components/Skills").then(mod => mod.Skills), {
-  loading: () => <div className="h-96 flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary/20" /></div>
-});
+export default async function HomePage() {
+  const [projects, skills, experience, testimonials] = await Promise.all([
+    getProjects(),
+    getSkills(),
+    getExperience(),
+    getTestimonials(),
+  ]);
 
-const Projects = dynamic(() => import("@/components/Projects").then(mod => mod.Projects), {
-  loading: () => <div className="h-96 flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary/20" /></div>
-});
-
-const Experience = dynamic(() => import("@/components/Experience").then(mod => mod.Experience), {
-  loading: () => <div className="h-96 flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary/20" /></div>
-});
-
-const Testimonials = dynamic(() => import("@/components/Testimonials").then(mod => mod.Testimonials), {
-  loading: () => <div className="h-64 flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary/20" /></div>
-});
-
-export default function HomePage() {
   return (
     <main className="overflow-x-hidden">
       <Hero />
@@ -43,9 +36,9 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Dynamic sections below the fold */}
+        {/* Sections rendered with server-fetched data */}
         <section className="space-y-8 md:space-y-12">
-          <Skills isPreview={true} />
+          <Skills isPreview={true} initialData={skills as any} />
           <div className="flex justify-center px-4">
             <Button asChild variant="outline" className="w-full sm:w-auto rounded-full h-12 px-8">
               <Link href="/skills" className="flex items-center justify-center gap-2">
@@ -56,7 +49,7 @@ export default function HomePage() {
         </section>
 
         <section className="space-y-8 md:space-y-12">
-          <Projects isPreview={true} />
+          <Projects isPreview={true} initialData={projects as any} />
           <div className="flex justify-center px-4">
             <Button asChild variant="outline" className="w-full sm:w-auto rounded-full h-12 px-8">
               <Link href="/projects" className="flex items-center justify-center gap-2">
@@ -67,7 +60,7 @@ export default function HomePage() {
         </section>
 
         <section className="space-y-8 md:space-y-12">
-          <Experience isPreview={true} />
+          <Experience isPreview={true} initialExperiences={experience as any} />
           <div className="flex justify-center px-4">
             <Button asChild variant="outline" className="w-full sm:w-auto rounded-full h-12 px-8">
               <Link href="/experience" className="flex items-center justify-center gap-2">
@@ -78,9 +71,10 @@ export default function HomePage() {
         </section>
 
         <section className="space-y-8 md:space-y-12">
-          <Testimonials isPreview={true} />
+          <Testimonials isPreview={true} initialData={testimonials as any} />
         </section>
       </div>
     </main>
   );
 }
+

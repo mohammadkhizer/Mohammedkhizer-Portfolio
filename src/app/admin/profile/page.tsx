@@ -47,17 +47,20 @@ export default function ProfileManagement() {
       updatedAt: new Date().toISOString()
     };
 
+    if (!firestore) return;
+
     try {
       if (profile?.id) {
-        updateDocumentNonBlocking(doc(firestore, "userProfiles", profile.id), profileData);
+        updateDocumentNonBlocking(doc(firestore!, "userProfiles", profile.id), profileData);
       } else {
-        setDocumentNonBlocking(doc(firestore, "userProfiles", "main-profile"), { ...profileData, id: "main-profile" }, { merge: true });
+        setDocumentNonBlocking(doc(firestore!, "userProfiles", "main-profile"), { ...profileData, id: "main-profile" }, { merge: true });
       }
       toast({
         title: "Profile Updated",
         description: "Your public information has been saved successfully.",
       });
     } catch (error) {
+
       toast({
         variant: "destructive",
         title: "Update Failed",

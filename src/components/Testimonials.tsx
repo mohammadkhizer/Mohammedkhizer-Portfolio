@@ -1,19 +1,33 @@
 
 "use client";
 
-import * as React from "react";
-import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
-import { collection } from "firebase/firestore";
 import { Quote, Loader2, Star, User } from "lucide-react";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-export function Testimonials({ isPreview = false }: { isPreview?: boolean }) {
-  const firestore = useFirestore();
-  const testimonialsRef = useMemoFirebase(() => firestore ? collection(firestore, "testimonials") : null, [firestore]);
-  const { data: testimonials, isLoading } = useCollection(testimonialsRef);
 
-  const displayTestimonials = isPreview ? testimonials?.slice(0, 3) : testimonials;
+export interface Testimonial {
+  id: string;
+  clientName: string;
+  clientTitle: string;
+  clientImageUrl?: string;
+  testimonialText: string;
+  rating?: number;
+}
+
+export function Testimonials({ 
+  isPreview = false,
+  initialData = []
+}: { 
+  isPreview?: boolean;
+  initialData?: Testimonial[];
+}) {
+  const testimonials = initialData;
+  const isLoading = false;
+
+  const displayTestimonials = isPreview ? testimonials.slice(0, 3) : testimonials;
+
 
   if (!isLoading && (!displayTestimonials || displayTestimonials.length === 0)) {
     return null;

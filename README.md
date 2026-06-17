@@ -1,47 +1,128 @@
-# Mohammed Khizer Shaikh | Portfolio
+# Mohammed Khizer Shaikh — Portfolio
 
-A modern, highly secure, and performance-optimized Next.js portfolio website built by Mohammed Khizer Shaikh. This application showcases my professional journey, technical projects, and skills as a Full-Stack Developer and AI/ML Enthusiast.
+> A production-grade, AI-powered portfolio built with **Next.js 15**, **Firebase**, and **Google Genkit**.
 
-## ✨ Key Features
-- **Dynamic Projects & Experience:** Showcases real-world web applications and machine learning models.
-- **Server Actions & Security:** Form submissions and data handling utilize native Next.js Server Actions with strict IP-based rate limiting and CSRF protection.
-- **Responsive & Modern UI:** Built with Tailwind CSS and Shadcn UI components for an accessible, mobile-first design.
-- **Authentication:** Secure Firebase-powered authentication for admin-only content management, featuring Google Sign-In and robust routing protection.
-- **State-of-the-Art SEO:** Fully optimized with dynamic sitemaps, semantic JSON-LD schema, OpenGraph sharing tags, and IndexNow API integration.
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://mohammedkhizershaikh.netlify.app)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org)
+[![Sentry](https://img.shields.io/badge/Sentry-Monitored-purple)](https://sentry.io)
 
-## 🚀 Tech Stack
-- **Framework:** Next.js 15 (App Router)
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS + Shadcn UI
-- **Database/Auth:** Firebase (Authentication, Firestore)
-- **Deployment:** Netlify / Vercel
+## 🏗️ Architecture
 
-## 🛠 Getting Started
+This portfolio uses a **Server-First** architecture:
 
-To run this project locally, follow these steps:
+- **Server Components** render all portfolio content (Projects, Skills, Experience) for instant load times and maximum SEO.
+- **Firebase Admin SDK** handles all privileged data access server-side — no client-side Firestore reads.
+- **ISR Caching** (`unstable_cache`) with tag-based revalidation provides sub-second page loads with 1-hour data freshness.
+- **Sentry** provides full-stack observability across client, server, and edge runtimes.
+- **Genkit AI** powers intelligent project recommendations with a keyword-match fallback for high availability.
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/mohammadkhizer/Mohammedkhizer-Portfolio.git
-   cd Mohammedkhizer-Portfolio
-   ```
+See [docs/architecture.md](docs/architecture.md) for detailed diagrams.
 
-2. **Install Dependencies:**
-   ```bash
-   npm install
-   ```
+## 🚀 Getting Started
 
-3. **Run the Development Server:**
-   ```bash
-   npm run dev
-   ```
-   Open [http://localhost:3000](http://localhost:3000) to view the application in your browser.
+### Prerequisites
 
-## 🤝 Let's Connect
-Looking for a collaborator or want to discuss technology? 
-- [LinkedIn Profile](https://www.linkedin.com/in/mohammad-khizer-shaikh-14a362275)
-- [GitHub Profile](https://github.com/mohammadkhizer)
-- [Email Me](mailto:work.mkhizer@gmail.com)
+- Node.js >= 18
+- npm >= 9
+- Firebase project with Firestore enabled
+- Google AI API key (for Genkit)
 
----
-*Designed & Engineered by Mohammed Khizer Shaikh*
+### Environment Variables
+
+Copy `.env.example` to `.env` and fill in the values:
+
+```bash
+cp .env.example .env
+```
+
+Required variables:
+
+| Variable | Description |
+|---|---|
+| `FIREBASE_PROJECT_ID` | Your Firebase project ID |
+| `FIREBASE_CLIENT_EMAIL` | Service account email |
+| `FIREBASE_PRIVATE_KEY` | Service account private key |
+| `MASTER_UID` | Admin user UID for privileged operations |
+| `GOOGLE_GENAI_API_KEY` | Google AI API key for Genkit |
+| `NEXT_PUBLIC_SENTRY_DSN` | Sentry DSN for error tracking |
+
+### Installation
+
+```bash
+npm install
+```
+
+### Development
+
+```bash
+npm run dev          # Start Next.js dev server
+npm run genkit:dev   # Start Genkit dev UI
+```
+
+### Production Build
+
+```bash
+npm run build
+npm run start
+```
+
+## 📁 Project Structure
+
+```
+src/
+├── ai/                  # Genkit AI flows and configuration
+│   ├── flows/           # AI recommendation flows
+│   └── genkit.ts        # Genkit initialization
+├── app/                 # Next.js App Router pages
+│   ├── about/
+│   ├── contact/
+│   ├── experience/
+│   ├── projects/
+│   ├── layout.tsx       # Root layout with SEO metadata
+│   ├── loading.tsx      # Global skeleton (Boneyard) preloader
+│   ├── page.tsx         # Home page (Server Component)
+│   ├── sitemap.ts       # Dynamic sitemap generation
+│   └── robots.ts        # SEO robots.txt
+├── components/          # React components
+│   ├── ui/              # shadcn/ui primitives
+│   ├── Hero.tsx
+│   ├── About.tsx
+│   ├── Projects.tsx
+│   ├── Skills.tsx
+│   └── ...
+├── lib/                 # Utilities
+│   ├── db.ts            # Server-side Firestore queries (cached)
+│   ├── firebase-admin.ts # Admin SDK initialization
+│   ├── security-client.ts # Input sanitization
+│   └── constants.ts     # Application constants
+└── firebase/            # Client-side Firebase (auth only)
+```
+
+## 🔒 Security
+
+- **Zero-Trust Data Access**: All Firestore reads go through the Admin SDK on the server.
+- **Master UID Verification**: Admin operations are gated by a server-side environment variable.
+- **Content Security Policy**: Strict CSP headers block XSS, clickjacking, and data exfiltration.
+- **AI Prompt Hardening**: User inputs are sanitized before reaching LLM prompts, with injection detection.
+
+## 📊 Monitoring
+
+- **Sentry**: Client, server, and edge error tracking with session replays.
+- **Google Analytics**: Page views and user engagement tracking.
+- **Performance**: ISR caching, image optimization, and code splitting for Core Web Vitals.
+
+## 📝 Scripts
+
+| Script | Description |
+|---|---|
+| `npm run dev` | Start development server |
+| `npm run build` | Production build |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
+| `npm run typecheck` | Run TypeScript compiler check |
+| `npm run genkit:dev` | Start Genkit development UI |
+
+## 📄 License
+
+This project is licensed under the MIT License — see [LICENSE](LICENSE) for details.

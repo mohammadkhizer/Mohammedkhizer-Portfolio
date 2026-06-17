@@ -1,6 +1,6 @@
 'use server';
 
-import { isRateLimited, validateServerCsrfToken } from '@/lib/security';
+import { isRateLimited, validateServerCsrfToken, isAdmin } from '@/lib/security';
 import { sanitizeInput } from '@/lib/utils';
 import { dbAdmin } from '@/lib/firebase-admin';
 import { revalidatePath } from 'next/cache';
@@ -31,7 +31,13 @@ export async function manageProject(formData: FormData, editingId: string | null
   const techStackRaw = formData.get('techStack') as string;
   const techStack = techStackRaw ? techStackRaw.split(',').map(s => sanitizeInput(s.trim())) : [];
   
-  // 4. Basic Validation
+  // 4. Authorization Check
+  const authorized = await isAdmin();
+  if (!authorized) {
+    return { success: false, error: 'Administrative privileges required.' };
+  }
+
+  // 5. Basic Validation
   if (!title || !description) {
     return { success: false, error: 'Title and description are required.' };
   }
@@ -74,6 +80,11 @@ export async function deleteProject(id: string) {
     return { success: false, error: 'Too many requests.' };
   }
 
+  const authorized = await isAdmin();
+  if (!authorized) {
+    return { success: false, error: 'Administrative privileges required.' };
+  }
+
   try {
     await dbAdmin.collection('projects').doc(id).delete();
     revalidatePath('/admin/projects');
@@ -83,3 +94,4 @@ export async function deleteProject(id: string) {
     return { success: false, error: 'Failed to delete project.' };
   }
 }
+

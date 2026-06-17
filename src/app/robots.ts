@@ -1,12 +1,16 @@
-import { MetadataRoute } from 'next'
+import { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
+  const baseUrl = 'https://mohammedkhizershaikh.netlify.app';
+
   return {
-    rules: {
-      userAgent: '*',
-      allow: '/',
-      disallow: '/admin/',
-    },
-    sitemap: 'https://mohammedkhizershaikh.netlify.app/sitemap.xml',
-  }
+    rules: [
+      {
+        userAgent: '*',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/monitoring/'],
+      },
+    ],
+    sitemap: `${baseUrl}/sitemap.xml`,
+  };
 }

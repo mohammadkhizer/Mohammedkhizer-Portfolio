@@ -35,6 +35,8 @@ export default function SkillsManagement() {
     // Split by comma and clean up whitespace
     const names = nameInput.split(",").map(n => n.trim()).filter(n => n !== "");
 
+    if (!firestore || !skillsRef) return;
+
     if (editingId) {
       // In edit mode, we update the single document with the first name provided
       const skillData = {
@@ -43,7 +45,7 @@ export default function SkillsManagement() {
         proficiency,
         iconName: "Code2"
       };
-      updateDocumentNonBlocking(doc(firestore, "skills", editingId), skillData);
+      updateDocumentNonBlocking(doc(firestore!, "skills", editingId), skillData);
       setEditingId(null);
     } else {
       // In create mode, we can add multiple documents
@@ -55,9 +57,10 @@ export default function SkillsManagement() {
           iconName: "Code2",
           id: crypto.randomUUID()
         };
-        addDocumentNonBlocking(skillsRef, skillData);
+        addDocumentNonBlocking(skillsRef!, skillData);
       });
     }
+
 
     setNameInput("");
     setCategory("");
@@ -79,9 +82,11 @@ export default function SkillsManagement() {
   };
 
   const handleDelete = (id: string) => {
-    const docRef = doc(firestore, "skills", id);
+    if (!firestore) return;
+    const docRef = doc(firestore!, "skills", id);
     deleteDocumentNonBlocking(docRef);
   };
+
 
   // Live preview of names being added
   const namePreview = React.useMemo(() => {

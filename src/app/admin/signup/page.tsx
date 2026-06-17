@@ -12,6 +12,8 @@ import { Loader2, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { createSession } from "@/actions/auth";
+
 
 export default function SignupPage() {
   const [email, setEmail] = React.useState("");
@@ -32,7 +34,19 @@ export default function SignupPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      if (!auth) {
+        toast({ variant: "destructive", title: "Not Ready", description: "Firebase is still loading. Please wait a moment." });
+        setLoading(false);
+        return;
+      }
+      await createUserWithEmailAndPassword(auth!, email, password);
+
+      // Sync auth state to server session
+      if (auth.currentUser) {
+        const idToken = await auth.currentUser.getIdToken();
+        await createSession(idToken);
+      }
+
       toast({
         title: "Account Created",
         description: "Your account has been created. Please ensure you are authorized as an admin in the database.",

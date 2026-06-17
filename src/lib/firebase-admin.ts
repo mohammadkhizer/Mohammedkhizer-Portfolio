@@ -1,6 +1,7 @@
 import * as admin from 'firebase-admin';
 
 let dbAdminInstance: admin.firestore.Firestore;
+let authAdminInstance: admin.auth.Auth;
 
 if (!admin.apps.length) {
   try {
@@ -16,6 +17,7 @@ if (!admin.apps.length) {
         databaseURL: `https://${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID}.firebaseio.com`,
       });
       dbAdminInstance = admin.firestore();
+      authAdminInstance = admin.auth();
     } else {
        console.warn('Firebase Admin: Missing FIREBASE_PRIVATE_KEY. Not initializing.');
     }
@@ -24,11 +26,10 @@ if (!admin.apps.length) {
   }
 } else {
   dbAdminInstance = admin.firestore();
+  authAdminInstance = admin.auth();
 }
 
-// If it failed to initialize, dbAdminInstance might be undefined.
-// We export a silent mock object so Next.js Dev Server doesn't trigger an Error Overlay.
-// It simply acts as if the database is completely empty.
+// Export dbAdmin
 export const dbAdmin = dbAdminInstance! || {
   collection: () => ({
     doc: () => ({ 
@@ -45,3 +46,10 @@ export const dbAdmin = dbAdminInstance! || {
     })
   })
 } as any;
+
+// Export authAdmin
+export const authAdmin = authAdminInstance! || {
+  verifyIdToken: async () => { throw new Error('Auth Admin not initialized') },
+  getUser: async () => { throw new Error('Auth Admin not initialized') }
+} as any;
+

@@ -7,17 +7,33 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Github, Loader2 } from "lucide-react";
-import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
-import { collection } from "firebase/firestore";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 
-export function Projects({ isPreview = false }: { isPreview?: boolean }) {
-  const firestore = useFirestore();
-  const projectsRef = useMemoFirebase(() => firestore ? collection(firestore, "projects") : null, [firestore]);
-  const { data: projects, isLoading } = useCollection(projectsRef);
 
-  const displayProjects = isPreview ? projects?.slice(0, 3) : projects;
+
+export interface Project {
+  id: string;
+  title: string;
+  description: string;
+  projectImageUrl?: string;
+  liveDemoUrl?: string;
+  githubRepoUrl?: string;
+  skillIds?: string[];
+  createdAt?: string;
+}
+
+export function Projects({ 
+  isPreview = false, 
+  initialData = [] 
+}: { 
+  isPreview?: boolean;
+  initialData?: Project[];
+}) {
+  const displayProjects = isPreview ? initialData.slice(0, 3) : initialData;
+  const isLoading = false;
+
   const webAppPlaceholder = PlaceHolderImages.find(img => img.id === 'project-web-apps');
+
 
   return (
     <section id="projects" className={`${isPreview ? '' : 'py-24'}`}>

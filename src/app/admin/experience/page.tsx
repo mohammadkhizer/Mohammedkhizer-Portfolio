@@ -23,7 +23,7 @@ export default function ExperienceManagement() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!role || !company) return;
+    if (!role || !company || !firestore || !experienceRef) return;
 
     const expData = {
       jobTitle: role,
@@ -35,10 +35,10 @@ export default function ExperienceManagement() {
     };
 
     if (editingId) {
-      updateDocumentNonBlocking(doc(firestore, "experiences", editingId), expData);
+      updateDocumentNonBlocking(doc(firestore!, "experiences", editingId), expData);
       setEditingId(null);
     } else {
-      addDocumentNonBlocking(experienceRef, { ...expData, id: crypto.randomUUID() });
+      addDocumentNonBlocking(experienceRef!, { ...expData, id: crypto.randomUUID() });
     }
 
     resetForm();
@@ -61,8 +61,10 @@ export default function ExperienceManagement() {
   };
 
   const handleDelete = (id: string) => {
-    deleteDocumentNonBlocking(doc(firestore, "experiences", id));
+    if (!firestore) return;
+    deleteDocumentNonBlocking(doc(firestore!, "experiences", id));
   };
+
 
   return (
     <div className="space-y-8">

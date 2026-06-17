@@ -1,6 +1,6 @@
 'use server';
 
-import { isRateLimited, validateServerCsrfToken } from '@/lib/security';
+import { isRateLimited, validateServerCsrfToken, isAdmin } from '@/lib/security';
 import { sanitizeInput } from '@/lib/utils';
 import { dbAdmin } from '@/lib/firebase-admin';
 import { revalidatePath } from 'next/cache';
@@ -28,7 +28,13 @@ export async function manageCertification(formData: FormData, editingId: string 
   const credentialUrl = sanitizeInput(formData.get('credentialUrl') as string);
   const imageUrl = sanitizeInput(formData.get('imageUrl') as string);
   
-  // 4. Basic Validation
+  // 4. Authorization Check
+  const authorized = await isAdmin();
+  if (!authorized) {
+    return { success: false, error: 'Administrative privileges required.' };
+  }
+
+  // 5. Basic Validation
   if (!name || !issuer) {
     return { success: false, error: 'Name and Issuing Body are required.' };
   }
@@ -69,6 +75,10 @@ export async function deleteCertification(id: string) {
   const limited = await isRateLimited();
   if (limited) {
     return { success: false, error: 'Too many requests.' };
+  }
+  const authorized = await isAdmin();
+  if (!authorized) {
+    return { success: false, error: 'Administrative privileges required.' };
   }
 
   try {

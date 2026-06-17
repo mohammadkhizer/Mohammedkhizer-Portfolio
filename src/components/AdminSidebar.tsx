@@ -38,6 +38,8 @@ const NAV_ITEMS = [
   { name: "Testimonials", href: "/admin/testimonials", icon: Quote },
 ];
 
+import { logoutAction } from "@/actions/auth";
+
 export function AdminSidebar() {
   const pathname = usePathname();
   const auth = useAuth();
@@ -45,9 +47,14 @@ export function AdminSidebar() {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);
 
-  const handleLogout = () => {
-    if (auth) signOut(auth);
+  const handleLogout = async () => {
+    if (auth) {
+      await signOut(auth);
+      await logoutAction();
+      window.location.href = "/admin/login";
+    }
   };
+
 
   // Close mobile sidebar on navigation
   React.useEffect(() => {

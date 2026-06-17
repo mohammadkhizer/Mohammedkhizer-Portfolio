@@ -39,8 +39,8 @@ export default function ContactManagement() {
   }, [submissions]);
 
   const confirmDelete = (id: string) => {
-    if (!id) return;
-    deleteDocumentNonBlocking(doc(firestore, "contactSubmissions", id));
+    if (!id || !firestore) return;
+    deleteDocumentNonBlocking(doc(firestore!, "contactSubmissions", id));
     setDeletingId(null);
     toast({
       title: "Inquiry Deleted",
@@ -49,10 +49,12 @@ export default function ContactManagement() {
   };
 
   const toggleReadStatus = (submission: any) => {
-    updateDocumentNonBlocking(doc(firestore, "contactSubmissions", submission.id), {
+    if (!firestore) return;
+    updateDocumentNonBlocking(doc(firestore!, "contactSubmissions", submission.id), {
       isRead: !submission.isRead
     });
   };
+
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto pb-20">

@@ -5,8 +5,7 @@ import * as React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Code2, Database, Layout, Server, Sparkles, Terminal, Loader2 } from "lucide-react";
-import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
-import { collection } from "firebase/firestore";
+
 
 const ICON_MAP: Record<string, React.ReactNode> = {
   "Programming": <Code2 className="h-6 w-6 text-primary" />,
@@ -24,10 +23,24 @@ const PROFICIENCY_MAP: Record<string, number> = {
   "Basic": 50,
 };
 
-export function Skills({ isPreview = false }: { isPreview?: boolean }) {
-  const firestore = useFirestore();
-  const skillsRef = useMemoFirebase(() => firestore ? collection(firestore, "skills") : null, [firestore]);
-  const { data: skills, isLoading } = useCollection(skillsRef);
+
+export interface Skill {
+  id: string;
+  name: string;
+  category: string;
+  proficiency: "Expert" | "Advanced" | "Intermediate" | "Basic";
+}
+
+export function Skills({ 
+  isPreview = false, 
+  initialData = [] 
+}: { 
+  isPreview?: boolean;
+  initialData?: Skill[];
+}) {
+  const skills = initialData;
+  const isLoading = false;
+
 
   const groupedSkills = React.useMemo(() => {
     if (!skills) return [];

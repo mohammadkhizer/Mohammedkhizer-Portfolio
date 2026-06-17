@@ -3,17 +3,41 @@
 
 import * as React from "react";
 import { Briefcase, GraduationCap, Loader2 } from "lucide-react";
-import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
-import { collection } from "firebase/firestore";
 
-export function Experience({ isPreview = false }: { isPreview?: boolean }) {
-  const firestore = useFirestore();
-  
-  const experienceRef = useMemoFirebase(() => firestore ? collection(firestore, "experiences") : null, [firestore]);
-  const { data: experiences, isLoading: isExpLoading } = useCollection(experienceRef);
 
-  const educationRef = useMemoFirebase(() => firestore ? collection(firestore, "educations") : null, [firestore]);
-  const { data: education, isLoading: isEduLoading } = useCollection(educationRef);
+
+export interface ExperienceItem {
+  id: string;
+  jobTitle: string;
+  companyName: string;
+  startDate: string;
+  endDate?: string;
+  description: string;
+}
+
+export interface EducationItem {
+  id: string;
+  degree: string;
+  institutionName: string;
+  startDate: string;
+  endDate?: string;
+  description: string;
+}
+
+export function Experience({ 
+  isPreview = false,
+  initialExperiences = [],
+  initialEducation = []
+}: { 
+  isPreview?: boolean;
+  initialExperiences?: ExperienceItem[];
+  initialEducation?: EducationItem[];
+}) {
+  const experiences = initialExperiences;
+  const education = initialEducation;
+  const isExpLoading = false;
+  const isEduLoading = false;
+
 
   const displayExperiences = isPreview ? experiences?.slice(0, 2) : experiences;
   const displayEducation = isPreview ? education?.slice(0, 2) : education;

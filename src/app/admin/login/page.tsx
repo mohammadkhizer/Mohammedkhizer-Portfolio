@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
+import { createSession } from "@/actions/auth";
 
 export default function LoginPage() {
   const [email, setEmail] = React.useState("");
@@ -51,6 +52,14 @@ export default function LoginPage() {
       }
 
       await signInWithEmailAndPassword(auth, email, password);
+      
+      // Sync auth state to server session
+      if (auth.currentUser) {
+        const idToken = await auth.currentUser.getIdToken();
+        await createSession(idToken);
+      }
+
+      
       router.push("/admin");
     } catch (error: any) {
       toast({
@@ -74,6 +83,14 @@ export default function LoginPage() {
 
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
+      
+      // Sync auth state to server session
+      if (auth.currentUser) {
+        const idToken = await auth.currentUser.getIdToken();
+        await createSession(idToken);
+      }
+
+      
       router.push("/admin");
     } catch (error: any) {
       toast({

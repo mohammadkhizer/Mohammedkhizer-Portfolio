@@ -25,7 +25,7 @@ export default function EducationManagement() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!degree || !institution || !startDate) return;
+    if (!degree || !institution || !startDate || !firestore || !educationRef) return;
 
     const eduData = {
       degree,
@@ -37,14 +37,15 @@ export default function EducationManagement() {
     };
 
     if (editingId) {
-      updateDocumentNonBlocking(doc(firestore, "educations", editingId), eduData);
+      updateDocumentNonBlocking(doc(firestore!, "educations", editingId), eduData);
       setEditingId(null);
     } else {
-      addDocumentNonBlocking(educationRef, { ...eduData, id: crypto.randomUUID() });
+      addDocumentNonBlocking(educationRef!, { ...eduData, id: crypto.randomUUID() });
     }
 
     resetForm();
   };
+
 
   const resetForm = () => {
     setDegree("");
@@ -67,8 +68,10 @@ export default function EducationManagement() {
   };
 
   const handleDelete = (id: string) => {
-    deleteDocumentNonBlocking(doc(firestore, "educations", id));
+    if (!firestore) return;
+    deleteDocumentNonBlocking(doc(firestore!, "educations", id));
   };
+
 
   return (
     <div className="space-y-8">

@@ -5,9 +5,11 @@
 
 // Admin configuration
 export const ADMIN_CONFIG = {
-  MASTER_UID: 'eg1KGzcz7fNQSwZL79FMkQUSjVh2',
+  // In production, this should ONLY be set via environment variable
+  MASTER_UID: process.env.MASTER_UID || 'eg1KGzcz7fNQSwZL79FMkQUSjVh2', 
   COLLECTION_NAME: 'admins',
 };
+
 
 // Firebase configuration keys (must match .env variables)
 export const FIREBASE_CONFIG_KEYS = {
