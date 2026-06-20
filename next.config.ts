@@ -80,10 +80,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  webpack: (config) => {
-    config.cache = false;
-    return config;
-  },
 };
 
 export default withSentryConfig(nextConfig, {
@@ -110,7 +106,9 @@ export default withSentryConfig(nextConfig, {
   // Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
   // This can increase your server load as well as your hosting bill.
   // Note: Check that the configured route will not match with your Next.js middleware, otherwise reporting of client-side errors will fail.
-  tunnelRoute: "/monitoring",
+  // DISABLED: tunnelRoute reads .next/routes-manifest.json which only exists after `next build`,
+  // causing ENOENT crashes in `next dev`. Re-enable only if ad-blocker bypass is critical.
+  // tunnelRoute: "/monitoring",
 
   // Hides source maps from generated client bundles
   hideSourceMaps: true,
