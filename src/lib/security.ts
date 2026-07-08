@@ -128,70 +128,27 @@ export async function setCsrfCookie(): Promise<string> {
 
 /**
  * Verifies if the current request is from an authenticated admin.
- * USES SERVER-SIDE COOKIE VERIFICATION with Firebase Admin SDK.
+ * USES SERVER-SIDE COOKIE VERIFICATION with JWT and MongoDB check.
  */
 export async function isAdmin(): Promise<boolean> {
-  const user = await getAuthenticatedUser();
-  if (!user) return false;
-
-  const { ADMIN_CONFIG } = await import('./constants');
-  const { dbAdmin } = await import('./firebase-admin');
-
-  // Master UID bypass
-  if (user.uid === ADMIN_CONFIG.MASTER_UID) return true;
-
-  try {
-    const adminDoc = await dbAdmin.collection(ADMIN_CONFIG.COLLECTION_NAME).doc(user.uid).get();
-    return adminDoc.exists && adminDoc.data()?.isAdmin === true;
-  } catch (error) {
-    console.error('Error checking admin status:', error);
-    return false;
-  }
+  const { isAdmin: checkIsAdmin } = await import('./auth');
+  return checkIsAdmin();
 }
 
 /**
  * Safely retrieves the authenticated user from the session cookie.
  */
-export async function getAuthenticatedUser(): Promise<{ uid: string; email?: string } | null> {
-  const sessionCookie = await getCookie('fb_session');
-  if (!sessionCookie) return null;
-
-  const { authAdmin } = await import('./firebase-admin');
-  
-  try {
-    // Verify the session cookie. This is a server-side only check.
-    const decodedClaims = await authAdmin.verifySessionCookie(sessionCookie, true);
-    return { 
-      uid: decodedClaims.uid,
-      email: decodedClaims.email
-    };
-  } catch (error) {
-    // Session cookie is invalid or expired
-    console.error('Session verification failed:', error);
-    return null;
-  }
+export async function getAuthenticatedUser(): Promise<{ uid: string; email?: string; isAdmin?: boolean } | null> {
+  const { getAuthenticatedUser: getAuthUser } = await import('./auth');
+  return getAuthUser();
 }
 
 /**
- * Sets the session cookie after a successful client-side login.
- * This function creates a Firebase session cookie from an ID token.
+ * Sets the session cookie after a successful login.
  */
-export async function setSessionCookie(idToken: string): Promise<boolean> {
-  const { authAdmin } = await import('./firebase-admin');
-  
-  try {
-    // Set session expiration to 5 days.
-    const expiresIn = 60 * 60 * 24 * 5 * 1000;
-    
-    // Create the session cookie. This will also verify the ID token.
-    const sessionCookie = await authAdmin.createSessionCookie(idToken, { expiresIn });
-    
-    await setSecureCookie('fb_session', sessionCookie, expiresIn / 1000);
-    return true;
-  } catch (error) {
-    console.error('Failed to create session cookie:', error);
-    return false;
-  }
+export async function setSessionCookie(email: string, uid: string, isAdminUser: boolean): Promise<boolean> {
+  const { setSessionCookie: setSession } = await import('./auth');
+  return setSession(email, uid, isAdminUser);
 }
 
 

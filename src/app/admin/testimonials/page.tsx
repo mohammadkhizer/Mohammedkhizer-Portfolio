@@ -2,8 +2,8 @@
 "use client";
 
 import * as React from "react";
-import { useFirestore, useCollection, useMemoFirebase, addDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking } from "@/firebase";
-import { collection, doc } from "firebase/firestore";
+import { useApiCollection } from "@/hooks/use-api-collection";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,7 +23,8 @@ interface Testimonial {
 }
 
 export default function TestimonialsManagement() {
-  const firestore = useFirestore();
+  const { toast } = useToast();
+  const { data: testimonials, isLoading, add, update, remove } = useApiCollection<Testimonial>("/api/v1/testimonials");
   const [clientName, setClientName] = React.useState("");
   const [clientTitle, setClientTitle] = React.useState("");
   const [testimonialText, setTestimonialText] = React.useState("");
@@ -31,12 +32,9 @@ export default function TestimonialsManagement() {
   const [imageUrl, setImageUrl] = React.useState("");
   const [editingId, setEditingId] = React.useState<string | null>(null);
 
-  const testimonialsRef = useMemoFirebase(() => firestore ? collection(firestore, "testimonials") : null, [firestore]);
-  const { data: testimonials, isLoading } = useCollection<Testimonial>(testimonialsRef);
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!clientName || !testimonialText || !firestore || !testimonialsRef) return;
+    if (!clientName || !testimonialText) return;
 
     const testimonialData = {
       clientName,
@@ -46,11 +44,17 @@ export default function TestimonialsManagement() {
       clientImageUrl: imageUrl || ""
     };
 
-    if (editingId) {
-      updateDocumentNonBlocking(doc(firestore, "testimonials", editingId), testimonialData);
-      setEditingId(null);
-    } else {
-      addDocumentNonBlocking(testimonialsRef, { ...testimonialData, id: crypto.randomUUID() });
+    try {
+      if (editingId) {
+        await update(editingId, testimonialData);
+        toast({ title: "Testimonial Updated" });
+        setEditingId(null);
+      } else {
+        await add({ ...testimonialData, id: crypto.randomUUID() });
+        toast({ title: "Testimonial Added" });
+      }
+    } catch (err: any) {
+      toast({ variant: "destructive", title: "Error", description: err.message || "Failed to save testimonial." });
     }
 
     resetForm();
@@ -74,9 +78,13 @@ export default function TestimonialsManagement() {
     setImageUrl(test.clientImageUrl || "");
   };
 
-  const handleDelete = (id: string) => {
-    if (!firestore) return;
-    deleteDocumentNonBlocking(doc(firestore, "testimonials", id));
+  const handleDelete = async (id: string) => {
+    try {
+      await remove(id);
+      toast({ title: "Testimonial Deleted" });
+    } catch (err: any) {
+      toast({ variant: "destructive", title: "Error", description: err.message || "Failed to delete testimonial." });
+    }
   };
 
   return (

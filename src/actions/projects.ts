@@ -2,7 +2,8 @@
 
 import { isRateLimited, validateServerCsrfToken, isAdmin } from '@/lib/security';
 import { sanitizeInput } from '@/lib/utils';
-import { dbAdmin } from '@/lib/firebase-admin';
+import dbConnect from '@/lib/mongodb';
+import Project from '@/models/Project';
 import { revalidatePath } from 'next/cache';
 
 /**
@@ -53,12 +54,15 @@ export async function manageProject(formData: FormData, editingId: string | null
   };
 
   try {
+    await dbConnect();
+
     if (editingId) {
-      await dbAdmin.collection('projects').doc(editingId).update(projectData);
+      await Project.updateOne({ id: editingId }, { $set: projectData });
     } else {
-      await dbAdmin.collection('projects').add({
+      const newId = crypto.randomUUID();
+      await Project.create({
         ...projectData,
-        id: crypto.randomUUID(),
+        id: newId,
         createdAt: new Date().toISOString()
       });
     }
@@ -67,7 +71,7 @@ export async function manageProject(formData: FormData, editingId: string | null
     return { success: true };
   } catch (error) {
     console.error('Error managing project:', error);
-    return { success: false, error: 'Failed to save project. Ensure FIREBASE_PRIVATE_KEY is set.' };
+    return { success: false, error: 'Failed to save project. Ensure MongoDB connection is valid.' };
   }
 }
 
@@ -86,7 +90,8 @@ export async function deleteProject(id: string) {
   }
 
   try {
-    await dbAdmin.collection('projects').doc(id).delete();
+    await dbConnect();
+    await Project.deleteOne({ id });
     revalidatePath('/admin/projects');
     return { success: true };
   } catch (error) {
@@ -94,4 +99,3 @@ export async function deleteProject(id: string) {
     return { success: false, error: 'Failed to delete project.' };
   }
 }
-

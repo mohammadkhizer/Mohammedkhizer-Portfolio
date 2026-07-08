@@ -8,7 +8,7 @@ import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
-  const sessionToken = request.cookies.get('fb_session')?.value;
+  const sessionToken = request.cookies.get('admin_session')?.value;
 
   // 1. Protection for /admin routes
   // Allow public admin auth pages (login, signup, password reset flow)

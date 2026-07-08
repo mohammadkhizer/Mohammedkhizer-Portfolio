@@ -1,6 +1,6 @@
 import type {Metadata} from 'next';
 import './globals.css';
-import { FirebaseClientProvider } from '@/firebase/client-provider';
+
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     template: '%s | Mohammed Khizer Shaikh'
   },
   description: 'Portfolio of Mohammed Khizer Shaikh, a passionate Full-Stack Web Developer and AI/ML enthusiast specializing in building performant, user-centric applications.',
-  keywords: ['Full-Stack Developer', 'AI/ML Enthusiast', 'Web Development', 'React', 'Next.js', 'Firebase', 'Portfolio', 'Mohammed Khizer Shaikh', 'Ahmedabad Developer'],
+  keywords: ['Full-Stack Developer', 'AI/ML Enthusiast', 'Web Development', 'React', 'Next.js', 'MongoDB', 'Portfolio', 'Mohammed Khizer Shaikh', 'Ahmedabad Developer'],
   authors: [{ name: 'Mohammed Khizer Shaikh' }],
   creator: 'Mohammed Khizer Shaikh',
   verification: {
@@ -83,7 +83,7 @@ export default function RootLayout({
     "name": "Mohammed Khizer Shaikh",
     "url": baseUrl,
     "jobTitle": "Full-Stack Web Developer",
-    "description": "Full-Stack Web Developer and AI/ML Enthusiast specializing in React, Next.js, and Firebase.",
+    "description": "Full-Stack Web Developer and AI/ML Enthusiast specializing in React, Next.js, and MongoDB.",
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Ahmedabad",
@@ -95,7 +95,7 @@ export default function RootLayout({
       "https://github.com/mohammadkhizer",
       "https://www.instagram.com/khizerrrr11/"
     ],
-    "knowsAbout": ["Web Development", "AI/ML", "React", "Next.js", "Firebase", "Python", "Django", "Machine Learning"]
+    "knowsAbout": ["Web Development", "AI/ML", "React", "Next.js", "MongoDB", "Python", "Django", "Machine Learning"]
   };
 
   return (
@@ -122,8 +122,7 @@ export default function RootLayout({
           `}
         </Script>
 
-        <FirebaseClientProvider>
-          <ThemeProvider>
+        <ThemeProvider>
             <CursorHighlighter />
             <Navbar />
             <div className="pt-20 min-h-screen">
@@ -133,7 +132,6 @@ export default function RootLayout({
             <ScrollToTop />
             <Toaster />
           </ThemeProvider>
-        </FirebaseClientProvider>
       </body>
     </html>
   );

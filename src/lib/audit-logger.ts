@@ -1,18 +1,18 @@
 /**
  * Admin Security Audit Logger
  *
- * Writes immutable audit records to Firestore `adminSecurityLogs`.
+ * Writes immutable audit records to MongoDB `adminSecurityLogs`.
  * Records are append-only; we never update or delete them.
  *
  * Security decisions:
- * - Uses Firestore server timestamps for tamper-resistant ordering.
+ * - Uses MongoDB timestamps for tamper-resistant ordering.
  * - Keeps IP + user-agent for forensics.
  * - Action enum prevents free-text injection.
  */
 
-import { dbAdmin } from '@/lib/firebase-admin';
+import dbConnect from '@/lib/mongodb';
+import AuditLog from '@/models/AuditLog';
 import { logger } from '@/lib/logger';
-import type { FieldValue } from 'firebase-admin/firestore';
 
 export type AuditAction =
   | 'OTP_REQUESTED'
@@ -28,11 +28,11 @@ export type AuditAction =
 export interface AuditEntry {
   action: AuditAction;
   email: string;            // redacted in non-error logs via logger
-  adminId: string | null;   // Firebase UID if available
+  adminId: string | null;   // Admin ID if available
   ipAddress: string;
   userAgent: string;
   metadata?: Record<string, string | number | boolean>;
-  timestamp: FieldValue;
+  timestamp: Date;
 }
 
 export async function writeAuditLog(
@@ -44,7 +44,6 @@ export async function writeAuditLog(
   metadata?: Record<string, string | number | boolean>
 ): Promise<void> {
   try {
-    const { FieldValue } = await import('firebase-admin/firestore');
     const entry: AuditEntry = {
       action,
       email,
@@ -52,10 +51,11 @@ export async function writeAuditLog(
       ipAddress,
       userAgent,
       metadata,
-      timestamp: FieldValue.serverTimestamp(),
+      timestamp: new Date(),
     };
 
-    await dbAdmin.collection('adminSecurityLogs').add(entry);
+    await dbConnect();
+    await AuditLog.create(entry);
   } catch (err) {
     // Audit failures must never break the main flow — log internally only.
     logger.error('Audit log write failed', { action, error: String(err) });

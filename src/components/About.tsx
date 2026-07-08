@@ -32,7 +32,7 @@ export function About({ isPreview = false }: { isPreview?: boolean }) {
               </div>
             </div>
           </div>
-          
+
           <div className="space-y-8 md:space-y-10 max-w-2xl text-center md:text-left">
             <div className="space-y-4 md:space-y-6">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] md:text-xs font-bold uppercase tracking-widest border border-primary/20">
@@ -44,21 +44,21 @@ export function About({ isPreview = false }: { isPreview?: boolean }) {
               </h2>
               <div className="w-16 md:w-24 h-2 bg-primary rounded-full mx-auto md:mx-0" />
             </div>
-            
+
             <div className="space-y-6 text-base md:text-lg text-muted-foreground leading-relaxed">
               <p>
-                I am a passionate <span className="text-foreground font-semibold underline decoration-primary/40 decoration-4 underline-offset-4">Full-Stack Web Developer</span> and AI/ML enthusiast. 
-                Currently in my <span className="text-foreground font-medium">2nd Year of CSE at SVGU</span>, I specialize in building 
+                I am a passionate <span className="text-foreground font-semibold underline decoration-primary/40 decoration-4 underline-offset-4">Full-Stack Web Developer</span> and AI/ML enthusiast.
+                Currently in my <span className="text-foreground font-medium">3rd Year of CSE at SVGU</span>, I specialize in building
                 highly performant, user-centric web applications that bridge the gap between complex algorithms and intuitive design.
               </p>
-              
+
               <p className="hidden md:block">
-                My technical journey is driven by a curiosity for emerging technologies and a commitment to 
-                delivering clean, maintainable code. From engineering official event websites to developing 
+                My technical journey is driven by a curiosity for emerging technologies and a commitment to
+                delivering clean, maintainable code. From engineering official event websites to developing
                 AI-powered assistants, I thrive on solving real-world challenges through technology.
               </p>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4 md:gap-8 pt-4">
               <Card className="glass border border-border/40 shadow-none bg-secondary/5">
                 <CardContent className="p-5 md:p-6 text-center md:text-left space-y-2">
@@ -66,7 +66,7 @@ export function About({ isPreview = false }: { isPreview?: boolean }) {
                     <GraduationCap className="h-5 w-5 text-primary" aria-hidden="true" />
                   </div>
                   <div>
-                    <h3 className="text-2xl md:text-3xl font-black text-primary">2nd</h3>
+                    <h3 className="text-2xl md:text-3xl font-black text-primary">3rd</h3>
                     <p className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest font-bold">Year CSE Student</p>
                   </div>
                 </CardContent>
@@ -77,7 +77,7 @@ export function About({ isPreview = false }: { isPreview?: boolean }) {
                     <Award className="h-5 w-5 text-accent" aria-hidden="true" />
                   </div>
                   <div>
-                    <h3 className="text-2xl md:text-3xl font-black text-accent">6+</h3>
+                    <h3 className="text-2xl md:text-3xl font-black text-accent">8+</h3>
                     <p className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest font-bold">Certifications</p>
                   </div>
                 </CardContent>
@@ -85,15 +85,15 @@ export function About({ isPreview = false }: { isPreview?: boolean }) {
             </div>
 
             <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-widest">
-               <div className="flex items-center gap-2">
-                 <MapPin className="h-4 w-4 text-primary" aria-hidden="true" />
-                 Ahmedabad, Gujarat
-               </div>
-               <div className="hidden sm:block text-border" aria-hidden="true">|</div>
-               <div className="flex items-center gap-2">
-                 <Award className="h-4 w-4 text-primary" aria-hidden="true" />
-                 Open for Opportunities
-               </div>
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-primary" aria-hidden="true" />
+                Ahmedabad, Gujarat
+              </div>
+              <div className="hidden sm:block text-border" aria-hidden="true">|</div>
+              <div className="flex items-center gap-2">
+                <Award className="h-4 w-4 text-primary" aria-hidden="true" />
+                Open for Opportunities
+              </div>
             </div>
           </div>
         </div>

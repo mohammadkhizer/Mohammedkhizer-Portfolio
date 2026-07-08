@@ -2,12 +2,11 @@
 
 import * as React from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useUser, useDoc, useFirestore, useMemoFirebase } from "@/firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { useSession } from "@/hooks/use-session";
 import { AdminSidebar } from "@/components/AdminSidebar";
 import { Loader2, Lock, ShieldCheck, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ADMIN_CONFIG, ERROR_MESSAGES, UI_LABELS } from "@/lib/constants";
+import { ERROR_MESSAGES, UI_LABELS } from "@/lib/constants";
 
 interface ProvisionError {
   hasError: boolean;
@@ -15,8 +14,7 @@ interface ProvisionError {
 }
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { user, isUserLoading, userError } = useUser();
-  const firestore = useFirestore();
+  const { user, isUserLoading, userError } = useSession();
   const router = useRouter();
   const pathname = usePathname();
   const [isProvisioning, setIsProvisioning] = React.useState(false);
@@ -27,13 +25,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     pathname === "/admin/signup" ||
     pathname.startsWith("/admin/auth/");
 
-  const adminDocRef = useMemoFirebase(() => {
-    if (!firestore || !user) return null;
-    return doc(firestore, ADMIN_CONFIG.COLLECTION_NAME, user.uid);
-  }, [firestore, user]);
-
-  const { data: adminData, isLoading: isAdminLoading } = useDoc(adminDocRef);
-
   React.useEffect(() => {
     if (!isUserLoading && !user && !isAuthPage) {
       router.push("/admin/login");
@@ -41,14 +32,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, [user, isUserLoading, isAuthPage, router]);
 
   const handleProvisionAdmin = async () => {
-    if (!user || !firestore) return;
     setIsProvisioning(true);
     setProvisionError(null);
     try {
-      await setDoc(doc(firestore, ADMIN_CONFIG.COLLECTION_NAME, user.uid), {
-        isAdmin: true,
-        updatedAt: new Date().toISOString()
-      });
+      const res = await fetch('/api/admin/auth/provision', { method: 'POST' });
+      if (!res.ok) {
+        throw new Error('Provision failed');
+      }
+      window.location.reload();
     } catch (error) {
       setProvisionError({
         hasError: true,
@@ -75,7 +66,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  if (isUserLoading || (user && isAdminLoading && !isAuthPage)) {
+  if (isUserLoading) {
     return (
       <div className="h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -87,8 +78,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return <>{children}</>;
   }
 
-  // Check for the isAdmin: true field OR the master UID bypass
-  const isAuthorizedAdmin = user && (user.uid === ADMIN_CONFIG.MASTER_UID || (adminData && adminData.isAdmin === true));
+  // Check if they are authorized admin from the session
+  const isAuthorizedAdmin = !!(user && user.isAdmin);
 
   if (!user || !isAuthorizedAdmin) {
     return (
@@ -108,7 +99,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Button variant="outline" onClick={() => router.push("/")}>
             {UI_LABELS.ADMIN_RETURN_PORTFOLIO}
           </Button>
-          {user?.uid === ADMIN_CONFIG.MASTER_UID && (
+          {user?.email === 'work.mkhizer@gmail.com' && (
              <Button onClick={handleProvisionAdmin} disabled={isProvisioning}>
                {isProvisioning ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <ShieldCheck className="h-4 w-4 mr-2" />}
                {UI_LABELS.ADMIN_PROVISION_BUTTON}

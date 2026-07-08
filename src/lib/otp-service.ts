@@ -6,11 +6,12 @@
  * - A separate cryptographically secure reset token is issued after OTP
  *   verification so the OTP cannot be reused if captured in transit.
  * - All limits (expiry, retries, resend cooldown) are enforced server-side.
- * - Firestore document TTL is set so records self-clean.
+ * - MongoDB collection is used for OTP document storage.
  */
 
 import crypto from 'crypto';
-import { dbAdmin } from '@/lib/firebase-admin';
+import dbConnect from './mongodb';
+import OTPRecord, { IOTPRecord } from '@/models/OTPRecord';
 import { logger } from '@/lib/logger';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -23,26 +24,6 @@ export const OTP_CONFIG = {
   LOCKOUT_MS: 15 * 60 * 1000,         // 15 minutes lockout
   RESET_TOKEN_EXPIRY_MS: 10 * 60 * 1000, // 10 minutes for reset token
 } as const;
-
-const COLLECTION = 'adminPasswordResetRequests';
-
-// ─── Types ────────────────────────────────────────────────────────────────────
-export interface OTPRecord {
-  email: string;
-  otpHash: string;
-  expiresAt: number;          // unix ms
-  attempts: number;
-  verified: boolean;
-  resendCount: number;
-  lastResendAt: number;       // unix ms
-  lockedUntil: number | null; // unix ms or null
-  ipAddress: string;
-  userAgent: string;
-  resetToken: string | null;  // hashed; set after OTP verified
-  resetTokenExpiresAt: number | null;
-  createdAt: number;
-  updatedAt: number;
-}
 
 // ─── Hash helpers ─────────────────────────────────────────────────────────────
 
@@ -64,7 +45,6 @@ export function safeCompare(a: string, b: string): boolean {
  * Uses crypto.randomInt for uniform distribution without modulo bias.
  */
 export function generateOTP(): string {
-  // randomInt(min, max) → [min, max)
   const otp = crypto.randomInt(100000, 1000000);
   return otp.toString();
 }
@@ -76,17 +56,15 @@ export function generateResetToken(): string {
   return crypto.randomBytes(32).toString('hex');
 }
 
-// ─── Firestore Operations ─────────────────────────────────────────────────────
+// ─── MongoDB Operations ─────────────────────────────────────────────────────
 
-function docRef(email: string) {
+function getDocId(email: string): string {
   // Use a lowercase-normalised email as the document ID to prevent duplicates.
-  return dbAdmin.collection(COLLECTION).doc(
-    hashValue(email.toLowerCase().trim())
-  );
+  return hashValue(email.toLowerCase().trim());
 }
 
 /**
- * Creates (or overwrites) an OTP record in Firestore.
+ * Creates (or overwrites) an OTP record in MongoDB.
  * Called on every "Send OTP" request once the admin account is verified.
  */
 export async function createOTPRecord(
@@ -96,7 +74,9 @@ export async function createOTPRecord(
   userAgent: string
 ): Promise<void> {
   const now = Date.now();
-  const record: OTPRecord = {
+  const id = getDocId(email);
+  const record = {
+    id,
     email: email.toLowerCase().trim(),
     otpHash: hashValue(otp),
     expiresAt: now + OTP_CONFIG.EXPIRY_MS,
@@ -113,7 +93,8 @@ export async function createOTPRecord(
     updatedAt: now,
   };
 
-  await docRef(email).set(record);
+  await dbConnect();
+  await OTPRecord.findOneAndUpdate({ id }, record, { upsert: true, new: true });
   logger.info('OTP record created', { action: 'OTP_CREATED', ip: ipAddress });
 }
 
@@ -127,12 +108,12 @@ export async function rotateOTP(
   ipAddress: string
 ): Promise<{ success: boolean; error?: string }> {
   const now = Date.now();
-  const ref = docRef(email);
-  const snap = await ref.get();
+  const id = getDocId(email);
+  
+  await dbConnect();
+  const data = await OTPRecord.findOne({ id }).lean() as IOTPRecord | null;
 
-  if (!snap.exists) return { success: false, error: 'No active reset request' };
-
-  const data = snap.data() as OTPRecord;
+  if (!data) return { success: false, error: 'No active reset request' };
 
   if (data.resendCount >= OTP_CONFIG.MAX_RESENDS) {
     return { success: false, error: 'Maximum resend limit reached. Please start over.' };
@@ -145,16 +126,19 @@ export async function rotateOTP(
     return { success: false, error: `Please wait ${remainingSec}s before resending.` };
   }
 
-  await ref.update({
-    otpHash: hashValue(newOtp),
-    expiresAt: now + OTP_CONFIG.EXPIRY_MS,
-    attempts: 0,
-    verified: false,
-    resendCount: data.resendCount + 1,
-    lastResendAt: now,
-    lockedUntil: null,
-    updatedAt: now,
-  });
+  await OTPRecord.updateOne(
+    { id },
+    {
+      otpHash: hashValue(newOtp),
+      expiresAt: now + OTP_CONFIG.EXPIRY_MS,
+      attempts: 0,
+      verified: false,
+      resendCount: data.resendCount + 1,
+      lastResendAt: now,
+      lockedUntil: null,
+      updatedAt: now,
+    }
+  );
 
   logger.info('OTP rotated', { action: 'OTP_RESENT', ip: ipAddress });
   return { success: true };
@@ -173,15 +157,15 @@ export async function verifyOTP(
   ipAddress: string
 ): Promise<{ success: boolean; resetToken?: string; error?: string }> {
   const now = Date.now();
-  const ref = docRef(email);
-  const snap = await ref.get();
+  const id = getDocId(email);
 
-  if (!snap.exists) {
+  await dbConnect();
+  const data = await OTPRecord.findOne({ id }).lean() as IOTPRecord | null;
+
+  if (!data) {
     logger.warn('OTP verify: no record found', { action: 'OTP_VERIFY_NO_RECORD', ip: ipAddress });
     return { success: false, error: 'Invalid or expired OTP.' };
   }
-
-  const data = snap.data() as OTPRecord;
 
   // ── Lockout check ──
   if (data.lockedUntil && now < data.lockedUntil) {
@@ -206,7 +190,7 @@ export async function verifyOTP(
   // ── Attempt guard ──
   if (data.attempts >= OTP_CONFIG.MAX_ATTEMPTS) {
     const lockedUntil = now + OTP_CONFIG.LOCKOUT_MS;
-    await ref.update({ lockedUntil, updatedAt: now });
+    await OTPRecord.updateOne({ id }, { lockedUntil, updatedAt: now });
     logger.warn('OTP lockout triggered', { action: 'OTP_LOCKOUT', ip: ipAddress });
     return {
       success: false,
@@ -219,7 +203,7 @@ export async function verifyOTP(
   const isValid = safeCompare(suppliedHash, data.otpHash);
 
   if (!isValid) {
-    await ref.update({ attempts: data.attempts + 1, updatedAt: now });
+    await OTPRecord.updateOne({ id }, { attempts: data.attempts + 1, updatedAt: now });
     const remaining = OTP_CONFIG.MAX_ATTEMPTS - (data.attempts + 1);
     logger.warn('OTP invalid attempt', { action: 'OTP_FAILED', ip: ipAddress, remaining });
     return {
@@ -230,13 +214,16 @@ export async function verifyOTP(
 
   // ── SUCCESS — issue reset token ──
   const rawResetToken = generateResetToken();
-  await ref.update({
-    verified: true,
-    attempts: data.attempts + 1,
-    resetToken: hashValue(rawResetToken),
-    resetTokenExpiresAt: now + OTP_CONFIG.RESET_TOKEN_EXPIRY_MS,
-    updatedAt: now,
-  });
+  await OTPRecord.updateOne(
+    { id },
+    {
+      verified: true,
+      attempts: data.attempts + 1,
+      resetToken: hashValue(rawResetToken),
+      resetTokenExpiresAt: now + OTP_CONFIG.RESET_TOKEN_EXPIRY_MS,
+      updatedAt: now,
+    }
+  );
 
   logger.info('OTP verified', { action: 'OTP_VERIFIED', ip: ipAddress });
   return { success: true, resetToken: rawResetToken };
@@ -251,11 +238,12 @@ export async function validateResetToken(
   rawResetToken: string
 ): Promise<{ valid: boolean; error?: string }> {
   const now = Date.now();
-  const snap = await docRef(email).get();
+  const id = getDocId(email);
 
-  if (!snap.exists) return { valid: false, error: 'Invalid reset session.' };
+  await dbConnect();
+  const data = await OTPRecord.findOne({ id }).lean() as IOTPRecord | null;
 
-  const data = snap.data() as OTPRecord;
+  if (!data) return { valid: false, error: 'Invalid reset session.' };
 
   if (!data.verified) return { valid: false, error: 'OTP not verified.' };
   if (!data.resetToken) return { valid: false, error: 'No reset token issued.' };
@@ -273,6 +261,8 @@ export async function validateResetToken(
  * Deletes the OTP record after a successful password reset (cleanup).
  */
 export async function invalidateOTPRecord(email: string): Promise<void> {
-  await docRef(email).delete();
+  const id = getDocId(email);
+  await dbConnect();
+  await OTPRecord.deleteOne({ id });
   logger.info('OTP record invalidated post-reset', { action: 'OTP_INVALIDATED' });
 }

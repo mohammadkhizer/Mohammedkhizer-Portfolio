@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { useFirestore, useCollection, useMemoFirebase, addDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking } from "@/firebase";
-import { collection, doc } from "firebase/firestore";
+import { useApiCollection } from "@/hooks/use-api-collection";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
@@ -26,48 +26,44 @@ interface Skill {
 }
 
 export default function SkillsManagement() {
-  const firestore = useFirestore();
+  const { toast } = useToast();
+  const { data: skills, isLoading, add, update, remove } = useApiCollection<Skill>("/api/v1/skills");
   const [nameInput, setNameInput] = React.useState("");
   const [category, setCategory] = React.useState("");
   const [proficiency, setProficiency] = React.useState("Advanced");
   const [editingId, setEditingId] = React.useState<string | null>(null);
 
-  const skillsRef = useMemoFirebase(() => firestore ? collection(firestore, "skills") : null, [firestore]);
-  const { data: skills, isLoading } = useCollection<Skill>(skillsRef);
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nameInput.trim() || !category.trim()) return;
 
-    // Split by comma and clean up whitespace
     const names = nameInput.split(",").map(n => n.trim()).filter(n => n !== "");
 
-    if (!firestore || !skillsRef) return;
-
-    if (editingId) {
-      // In edit mode, we update the single document with the first name provided
-      const skillData = {
-        name: names[0],
-        category,
-        proficiency,
-        iconName: "Code2"
-      };
-      updateDocumentNonBlocking(doc(firestore!, "skills", editingId), skillData);
-      setEditingId(null);
-    } else {
-      // In create mode, we can add multiple documents
-      names.forEach(name => {
-        const skillData = {
-          name,
+    try {
+      if (editingId) {
+        await update(editingId, {
+          name: names[0],
           category,
           proficiency,
-          iconName: "Code2",
-          id: crypto.randomUUID()
-        };
-        addDocumentNonBlocking(skillsRef!, skillData);
-      });
+          iconName: "Code2"
+        });
+        toast({ title: "Skill Updated", description: `"${names[0]}" has been updated.` });
+        setEditingId(null);
+      } else {
+        for (const name of names) {
+          await add({
+            name,
+            category,
+            proficiency,
+            iconName: "Code2",
+            id: crypto.randomUUID()
+          });
+        }
+        toast({ title: "Skills Added", description: `${names.length} skill(s) added successfully.` });
+      }
+    } catch (err: any) {
+      toast({ variant: "destructive", title: "Error", description: err.message || "Failed to save skill." });
     }
-
 
     setNameInput("");
     setCategory("");
@@ -88,12 +84,14 @@ export default function SkillsManagement() {
     setProficiency("Advanced");
   };
 
-  const handleDelete = (id: string) => {
-    if (!firestore) return;
-    const docRef = doc(firestore!, "skills", id);
-    deleteDocumentNonBlocking(docRef);
+  const handleDelete = async (id: string) => {
+    try {
+      await remove(id);
+      toast({ title: "Skill Deleted" });
+    } catch (err: any) {
+      toast({ variant: "destructive", title: "Error", description: err.message || "Failed to delete skill." });
+    }
   };
-
 
   // Live preview of names being added
   const namePreview = React.useMemo(() => {

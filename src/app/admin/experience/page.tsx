@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { useFirestore, useCollection, useMemoFirebase, addDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking } from "@/firebase";
-import { collection, doc } from "firebase/firestore";
+import { useApiCollection } from "@/hooks/use-api-collection";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,19 +20,17 @@ import { Label } from "@/components/ui/label";
 import { Trash2, Plus, Loader2, Briefcase, Calendar, Pencil, X } from "lucide-react";
 
 export default function ExperienceManagement() {
-  const firestore = useFirestore();
+  const { toast } = useToast();
+  const { data: experiences, isLoading, add, update, remove } = useApiCollection<Experience>("/api/v1/experiences");
   const [role, setRole] = React.useState("");
   const [company, setCompany] = React.useState("");
   const [period, setPeriod] = React.useState("");
   const [description, setDescription] = React.useState("");
   const [editingId, setEditingId] = React.useState<string | null>(null);
 
-  const experienceRef = useMemoFirebase(() => firestore ? collection(firestore, "experiences") : null, [firestore]);
-  const { data: experiences, isLoading } = useCollection<Experience>(experienceRef);
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!role || !company || !firestore || !experienceRef) return;
+    if (!role || !company) return;
 
     const expData = {
       jobTitle: role,
@@ -43,11 +41,17 @@ export default function ExperienceManagement() {
       location: "Remote/Office"
     };
 
-    if (editingId) {
-      updateDocumentNonBlocking(doc(firestore!, "experiences", editingId), expData);
-      setEditingId(null);
-    } else {
-      addDocumentNonBlocking(experienceRef!, { ...expData, id: crypto.randomUUID() });
+    try {
+      if (editingId) {
+        await update(editingId, expData);
+        toast({ title: "Experience Updated" });
+        setEditingId(null);
+      } else {
+        await add({ ...expData, id: crypto.randomUUID() });
+        toast({ title: "Experience Added" });
+      }
+    } catch (err: any) {
+      toast({ variant: "destructive", title: "Error", description: err.message || "Failed to save experience." });
     }
 
     resetForm();
@@ -69,9 +73,13 @@ export default function ExperienceManagement() {
     setDescription(exp.description);
   };
 
-  const handleDelete = (id: string) => {
-    if (!firestore) return;
-    deleteDocumentNonBlocking(doc(firestore!, "experiences", id));
+  const handleDelete = async (id: string) => {
+    try {
+      await remove(id);
+      toast({ title: "Experience Deleted" });
+    } catch (err: any) {
+      toast({ variant: "destructive", title: "Error", description: err.message || "Failed to delete experience." });
+    }
   };
 
 

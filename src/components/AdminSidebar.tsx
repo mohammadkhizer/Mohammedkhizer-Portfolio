@@ -23,8 +23,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { useAuth, useUser } from "@/firebase";
-import { signOut } from "firebase/auth";
+import { useSession } from "@/hooks/use-session";
 
 const NAV_ITEMS = [
   { name: "Overview", href: "/admin", icon: LayoutDashboard },
@@ -42,17 +41,13 @@ import { logoutAction } from "@/actions/auth";
 
 export function AdminSidebar() {
   const pathname = usePathname();
-  const auth = useAuth();
-  const { user } = useUser();
+  const { user } = useSession();
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);
 
   const handleLogout = async () => {
-    if (auth) {
-      await signOut(auth);
-      await logoutAction();
-      window.location.href = "/admin/login";
-    }
+    await logoutAction();
+    window.location.href = "/admin/login";
   };
 
 

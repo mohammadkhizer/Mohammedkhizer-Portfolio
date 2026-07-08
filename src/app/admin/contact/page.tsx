@@ -1,8 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { useFirestore, useCollection, useMemoFirebase, deleteDocumentNonBlocking, updateDocumentNonBlocking } from "@/firebase";
-import { collection, doc } from "firebase/firestore";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -35,12 +33,28 @@ import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 
 export default function ContactManagement() {
-  const firestore = useFirestore();
   const { toast } = useToast();
   const [deletingId, setDeletingId] = React.useState<string | null>(null);
-  
-  const contactRef = useMemoFirebase(() => firestore ? collection(firestore, "contactSubmissions") : null, [firestore]);
-  const { data: submissions, isLoading } = useCollection<Submission>(contactRef);
+  const [submissions, setSubmissions] = React.useState<Submission[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  const fetchSubmissions = React.useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch("/api/v1/contact");
+      if (!res.ok) throw new Error("Failed to fetch contact submissions");
+      const data = await res.json();
+      setSubmissions(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    fetchSubmissions();
+  }, [fetchSubmissions]);
 
   const sortedSubmissions = React.useMemo(() => {
     if (!submissions) return [];
@@ -49,21 +63,50 @@ export default function ContactManagement() {
     );
   }, [submissions]);
 
-  const confirmDelete = (id: string) => {
-    if (!id || !firestore) return;
-    deleteDocumentNonBlocking(doc(firestore!, "contactSubmissions", id));
-    setDeletingId(null);
-    toast({
-      title: "Inquiry Deleted",
-      description: "The message has been permanently removed.",
-    });
+  const confirmDelete = async (id: string) => {
+    if (!id) return;
+    try {
+      const res = await fetch(`/api/v1/contact?id=${id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to delete inquiry");
+
+      setSubmissions((prev) => prev.filter((s) => s.id !== id));
+      toast({
+        title: "Inquiry Deleted",
+        description: "The message has been permanently removed.",
+      });
+    } catch (err: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: err.message || "Failed to delete inquiry.",
+      });
+    } finally {
+      setDeletingId(null);
+    }
   };
 
-  const toggleReadStatus = (submission: Submission) => {
-    if (!firestore) return;
-    updateDocumentNonBlocking(doc(firestore!, "contactSubmissions", submission.id), {
-      isRead: !submission.isRead
-    });
+  const toggleReadStatus = async (submission: Submission) => {
+    try {
+      const updatedRead = !submission.isRead;
+      const res = await fetch("/api/v1/contact", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: submission.id, isRead: updatedRead }),
+      });
+      if (!res.ok) throw new Error("Failed to update status");
+
+      setSubmissions((prev) =>
+        prev.map((s) => (s.id === submission.id ? { ...s, isRead: updatedRead } : s))
+      );
+    } catch (err: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: err.message || "Failed to update inquiry status.",
+      });
+    }
   };
 
 

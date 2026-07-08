@@ -1,8 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useFirestore, useCollection, useMemoFirebase, updateDocumentNonBlocking, setDocumentNonBlocking } from "@/firebase";
-import { collection, doc } from "firebase/firestore";
+import { useApiCollection } from "@/hooks/use-api-collection";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,11 +11,8 @@ import { Loader2, Save, User, Link as LinkIcon, FileText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export default function ProfileManagement() {
-  const firestore = useFirestore();
   const { toast } = useToast();
-  
-  const profileRef = useMemoFirebase(() => firestore ? collection(firestore, "userProfiles") : null, [firestore]);
-  const { data: profiles, isLoading } = useCollection(profileRef);
+  const { data: profiles, isLoading, add, update } = useApiCollection("/api/v1/profile");
   const profile = profiles?.[0];
 
   const [fullName, setFullName] = React.useState("");
@@ -43,24 +39,21 @@ export default function ProfileManagement() {
       tagline,
       cvDownloadUrl: cvUrl,
       professionalSummary,
-      introductionSummary: tagline, // Mirroring for compatibility
+      introductionSummary: tagline,
       updatedAt: new Date().toISOString()
     };
 
-    if (!firestore) return;
-
     try {
       if (profile?.id) {
-        updateDocumentNonBlocking(doc(firestore!, "userProfiles", profile.id), profileData);
+        await update(profile.id, profileData);
       } else {
-        setDocumentNonBlocking(doc(firestore!, "userProfiles", "main-profile"), { ...profileData, id: "main-profile" }, { merge: true });
+        await add({ ...profileData, id: "main-profile" });
       }
       toast({
         title: "Profile Updated",
         description: "Your public information has been saved successfully.",
       });
     } catch (error) {
-
       toast({
         variant: "destructive",
         title: "Update Failed",

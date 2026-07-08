@@ -2,26 +2,21 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { useAuth, useUser } from "@/firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { useSession } from "@/hooks/use-session";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Loader2, AlertCircle } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { createSession } from "@/actions/auth";
-
 
 export default function SignupPage() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [loading, setLoading] = React.useState(false);
-  const { user } = useUser();
-  const auth = useAuth();
+  const { user, refreshSession } = useSession();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -35,23 +30,24 @@ export default function SignupPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      if (!auth) {
-        toast({ variant: "destructive", title: "Not Ready", description: "Firebase is still loading. Please wait a moment." });
-        setLoading(false);
-        return;
-      }
-      await createUserWithEmailAndPassword(auth!, email, password);
+      const response = await fetch("/api/admin/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-      // Sync auth state to server session
-      if (auth.currentUser) {
-        const idToken = await auth.currentUser.getIdToken();
-        await createSession(idToken);
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "An error occurred during signup.");
       }
 
       toast({
         title: "Account Created",
-        description: "Your account has been created. Please ensure you are authorized as an admin in the database.",
+        description: "Your account has been created successfully.",
       });
+
+      await refreshSession();
       router.push("/admin");
     } catch (error: unknown) {
       const err = error as Error;
@@ -74,13 +70,6 @@ export default function SignupPage() {
         </CardHeader>
         <form onSubmit={handleSignup}>
           <CardContent className="space-y-4">
-            <Alert variant="destructive" className="bg-destructive/10">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Admin Restriction</AlertTitle>
-              <AlertDescription>
-                After signing up, your UID must be manually added to the <code className="font-bold">admins</code> collection in Firestore to gain write access.
-              </AlertDescription>
-            </Alert>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input 

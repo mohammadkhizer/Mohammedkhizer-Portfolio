@@ -1,13 +1,12 @@
 /**
  * POST /api/admin/auth/reset-password
  *
- * Step 3 — Updates the admin password.
+ * Step 3 — Updates the admin password in MongoDB.
  *
  * Security:
  *   - Reset token read from httpOnly cookie (never from body).
- *   - Token validated against hashed value in Firestore.
- *   - Firebase Admin SDK used to update password (server-side only).
- *   - All refresh tokens revoked immediately after update.
+ *   - Token validated against hashed value in MongoDB.
+ *   - bcryptjs used to hash and store the new password.
  *   - OTP record deleted (single-use guarantee).
  *   - Confirmation email sent.
  *   - Reset cookies cleared after use.
@@ -16,7 +15,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { z } from 'zod';
-import { authAdmin } from '@/lib/firebase-admin';
+import bcrypt from 'bcryptjs';
+import dbConnect from '@/lib/mongodb';
+import Admin from '@/models/Admin';
 import { validateResetToken, invalidateOTPRecord } from '@/lib/otp-service';
 import { sendPasswordChangedConfirmation } from '@/lib/email-service';
 import { writeAuditLog } from '@/lib/audit-logger';
@@ -57,6 +58,8 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    await dbConnect();
+
     // ── 1. Validate reset token ──
     const tokenCheck = await validateResetToken(email, rawResetToken);
     if (!tokenCheck.valid) {
@@ -69,26 +72,31 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // ── 2. Look up admin UID ──
-    const userRecord = await authAdmin.getUserByEmail(email);
+    // ── 2. Look up admin account ──
+    const admin = await Admin.findOne({ email: email.toLowerCase().trim() });
+    if (!admin) {
+      return NextResponse.json({ message: 'Admin account not found.' }, { status: 404 });
+    }
 
-    // ── 3. Update password via Firebase Admin SDK ──
-    await authAdmin.updateUser(userRecord.uid, { password });
+    // ── 3. Hash and update password in MongoDB ──
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(password, salt);
 
-    // ── 4. Revoke ALL refresh tokens → forces logout on all devices ──
-    await authAdmin.revokeRefreshTokens(userRecord.uid);
+    admin.passwordHash = passwordHash;
+    admin.updatedAt = new Date();
+    await admin.save();
 
-    // ── 5. Invalidate OTP record (single-use) ──
+    // ── 4. Invalidate OTP record (single-use) ──
     await invalidateOTPRecord(email);
 
-    // ── 6. Audit log ──
-    await writeAuditLog('PASSWORD_RESET_COMPLETED', email, ip, userAgent, userRecord.uid);
-    await writeAuditLog('SESSION_REVOKED', email, ip, userAgent, userRecord.uid);
+    // ── 5. Audit log ──
+    await writeAuditLog('PASSWORD_RESET_COMPLETED', email, ip, userAgent, admin._id.toString());
+    await writeAuditLog('SESSION_REVOKED', email, ip, userAgent, admin._id.toString());
 
-    // ── 7. Confirmation email ──
+    // ── 6. Confirmation email ──
     await sendPasswordChangedConfirmation(email);
 
-    // ── 8. Clear reset cookies ──
+    // ── 7. Clear reset cookies ──
     const response = NextResponse.json({ success: true }, { status: 200 });
     response.cookies.set('admin_reset_token', '', {
       httpOnly: true,

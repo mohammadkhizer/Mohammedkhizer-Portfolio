@@ -4,21 +4,25 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, Download } from "lucide-react";
 import Link from "next/link";
-import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
-import { collection } from "firebase/firestore";
 
 export function Hero() {
   const [displayText, setDisplayText] = React.useState("");
   const fullText = "Full-Stack Web Developer & AI/ML Enthusiast";
 
-  const firestore = useFirestore();
-  // Guard: firestore is null before Firebase initializes (SSR / first render)
-  const profileRef = useMemoFirebase(
-    () => firestore ? collection(firestore, "userProfiles") : null,
-    [firestore]
-  );
-  const { data: profiles, isLoading: isProfileLoading } = useCollection(profileRef);
-  const profile = profiles?.[0];
+  const [profile, setProfile] = React.useState<any>(null);
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    fetch("/api/v1/profile")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.length > 0) {
+          setProfile(data[0]);
+        }
+      })
+      .catch((err) => console.error("Error fetching profile:", err))
+      .finally(() => setIsLoading(false));
+  }, []);
 
 
   React.useEffect(() => {

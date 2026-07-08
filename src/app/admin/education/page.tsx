@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { useFirestore, useCollection, useMemoFirebase, addDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking } from "@/firebase";
-import { collection, doc } from "firebase/firestore";
+import { useApiCollection } from "@/hooks/use-api-collection";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,7 +21,8 @@ import { Label } from "@/components/ui/label";
 import { Trash2, Plus, Loader2, GraduationCap, Calendar, Pencil, X, MapPin } from "lucide-react";
 
 export default function EducationManagement() {
-  const firestore = useFirestore();
+  const { toast } = useToast();
+  const { data: educations, isLoading, add, update, remove } = useApiCollection<Education>("/api/v1/education");
   const [degree, setDegree] = React.useState("");
   const [institution, setInstitution] = React.useState("");
   const [location, setLocation] = React.useState("");
@@ -30,12 +31,9 @@ export default function EducationManagement() {
   const [description, setDescription] = React.useState("");
   const [editingId, setEditingId] = React.useState<string | null>(null);
 
-  const educationRef = useMemoFirebase(() => firestore ? collection(firestore, "educations") : null, [firestore]);
-  const { data: educations, isLoading } = useCollection<Education>(educationRef);
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!degree || !institution || !startDate || !firestore || !educationRef) return;
+    if (!degree || !institution || !startDate) return;
 
     const eduData = {
       degree,
@@ -46,11 +44,17 @@ export default function EducationManagement() {
       description
     };
 
-    if (editingId) {
-      updateDocumentNonBlocking(doc(firestore!, "educations", editingId), eduData);
-      setEditingId(null);
-    } else {
-      addDocumentNonBlocking(educationRef!, { ...eduData, id: crypto.randomUUID() });
+    try {
+      if (editingId) {
+        await update(editingId, eduData);
+        toast({ title: "Education Updated" });
+        setEditingId(null);
+      } else {
+        await add({ ...eduData, id: crypto.randomUUID() });
+        toast({ title: "Education Added" });
+      }
+    } catch (err: any) {
+      toast({ variant: "destructive", title: "Error", description: err.message || "Failed to save education." });
     }
 
     resetForm();
@@ -77,9 +81,13 @@ export default function EducationManagement() {
     setDescription(edu.description);
   };
 
-  const handleDelete = (id: string) => {
-    if (!firestore) return;
-    deleteDocumentNonBlocking(doc(firestore!, "educations", id));
+  const handleDelete = async (id: string) => {
+    try {
+      await remove(id);
+      toast({ title: "Education Deleted" });
+    } catch (err: any) {
+      toast({ variant: "destructive", title: "Error", description: err.message || "Failed to delete education." });
+    }
   };
 
 

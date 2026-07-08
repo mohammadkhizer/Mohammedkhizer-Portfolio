@@ -2,18 +2,8 @@
 
 import { setCsrfCookie, validateServerCsrfToken, isRateLimited } from '@/lib/security';
 import { sanitizeInput } from '@/lib/utils';
-import { initializeApp, getApps } from 'firebase/app';
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
-import { firebaseConfig } from '@/firebase/config';
-
-/**
- * Initializes Firebase for Server Actions.
- */
-function getFirebaseServer() {
-  const apps = getApps();
-  const app = apps.length === 0 ? initializeApp(firebaseConfig) : apps[0];
-  return getFirestore(app);
-}
+import dbConnect from '@/lib/mongodb';
+import ContactSubmission from '@/models/ContactSubmission';
 
 /**
  * Refreshes or sets the CSRF token cookie and returns the token to the client.
@@ -62,10 +52,9 @@ export async function submitContactForm(formData: FormData) {
 
   // 5. Database Write (on server)
   try {
-    const db = getFirebaseServer();
-    const submissionsRef = collection(db, 'contactSubmissions');
+    await dbConnect();
     
-    await addDoc(submissionsRef, {
+    await ContactSubmission.create({
       id: crypto.randomUUID(),
       senderName: name,
       senderEmail: email,

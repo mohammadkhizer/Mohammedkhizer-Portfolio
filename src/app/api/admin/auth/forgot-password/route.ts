@@ -14,7 +14,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { z } from 'zod';
-import { authAdmin, dbAdmin } from '@/lib/firebase-admin';
+import dbConnect from '@/lib/mongodb';
+import Admin from '@/models/Admin';
 import { generateOTP, createOTPRecord } from '@/lib/otp-service';
 import { sendAdminPasswordResetOTP } from '@/lib/email-service';
 import { writeAuditLog } from '@/lib/audit-logger';
@@ -81,27 +82,12 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    // ── 1. Look up admin account in Firebase Auth ──
-    let uid: string | null = null;
-    try {
-      const userRecord = await authAdmin.getUserByEmail(email);
-      uid = userRecord.uid;
+    await dbConnect();
 
-      // ── 2. Verify account is not disabled ──
-      if (userRecord.disabled) {
-        logger.warn('Password reset blocked: account disabled', { ip });
-        await writeAuditLog('OTP_REQUESTED', email, ip, userAgent, uid, {
-          blocked: true,
-          reason: 'account_disabled',
-        });
-        // Intentionally fall through to generic response
-        return NextResponse.json(
-          { message: 'If an account exists, an OTP has been sent.' },
-          { status: 200 }
-        );
-      }
-    } catch {
-      // getUserByEmail throws if not found; fall through to generic response
+    // ── 1. Look up admin account in MongoDB ──
+    const admin = await Admin.findOne({ email });
+
+    if (!admin) {
       logger.info('Password reset request for unknown email', { ip });
       return NextResponse.json(
         { message: 'If an account exists, an OTP has been sent.' },
@@ -109,17 +95,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // ── 3. Verify admin role in Firestore ──
-    const isAdminUser =
-      uid === ADMIN_CONFIG.MASTER_UID ||
-      (await (async () => {
-        const doc = await dbAdmin.collection(ADMIN_CONFIG.COLLECTION_NAME).doc(uid!).get();
-        return doc.exists && doc.data()?.isAdmin === true;
-      })());
-
-    if (!isAdminUser) {
+    // ── 2. Verify account has admin access ──
+    if (!admin.isAdmin) {
       logger.warn('Password reset blocked: not an admin', { ip });
-      await writeAuditLog('OTP_REQUESTED', email, ip, userAgent, uid, {
+      await writeAuditLog('OTP_REQUESTED', email, ip, userAgent, admin._id.toString(), {
         blocked: true,
         reason: 'not_admin',
       });
@@ -129,11 +108,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // ── 4. Generate OTP and store hashed ──
+    // ── 3. Generate OTP and store hashed ──
     const otp = generateOTP();
     await createOTPRecord(email, otp, ip, userAgent);
 
-    // ── 5. Send OTP email ──
+    // ── 4. Send OTP email ──
     const sent = await sendAdminPasswordResetOTP({
       to: email,
       otp,
@@ -143,11 +122,10 @@ export async function POST(req: NextRequest) {
 
     if (!sent) {
       logger.error('OTP email delivery failed', { ip });
-      // Don't reveal delivery failure to prevent enumeration
     }
 
-    // ── 6. Audit log ──
-    await writeAuditLog('OTP_REQUESTED', email, ip, userAgent, uid);
+    // ── 5. Audit log ──
+    await writeAuditLog('OTP_REQUESTED', email, ip, userAgent, admin._id.toString());
 
     return NextResponse.json(
       { message: 'If an account exists, an OTP has been sent.' },

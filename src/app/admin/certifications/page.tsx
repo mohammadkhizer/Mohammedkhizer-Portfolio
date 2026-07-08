@@ -1,8 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
-import { collection } from "firebase/firestore";
+import { useApiCollection } from "@/hooks/use-api-collection";
 import { manageCertification, deleteCertification } from "@/actions/certifications";
 import { refreshCsrfToken } from "@/actions/contact";
 import { useToast } from "@/hooks/use-toast";
@@ -25,7 +24,7 @@ import { Trash2, Plus, Loader2, Award, ExternalLink, Pencil, X, Inbox, PlusCircl
 
 export default function CertificationsManagement() {
   const { toast } = useToast();
-  const firestore = useFirestore();
+  const { data: certs, isLoading, mutate } = useApiCollection<Certification>("/api/v1/certifications");
   const [name, setName] = React.useState("");
   const [issuer, setIssuer] = React.useState("");
   const [url, setUrl] = React.useState("");
@@ -37,9 +36,6 @@ export default function CertificationsManagement() {
   React.useEffect(() => {
     refreshCsrfToken().then(token => setCsrfToken(token));
   }, []);
-
-  const certsRef = useMemoFirebase(() => firestore ? collection(firestore, "certifications") : null, [firestore]);
-  const { data: certs, isLoading } = useCollection<Certification>(certsRef);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,7 +58,8 @@ export default function CertificationsManagement() {
           description: `"${name}" has been successfully saved.`,
         });
         resetForm();
-        // Refresh token after successful mutation to prevent reuse if needed
+        await mutate();
+        // Refresh token after successful mutation
         const newToken = await refreshCsrfToken();
         setCsrfToken(newToken);
       } else {
@@ -109,6 +106,7 @@ export default function CertificationsManagement() {
           title: "Achievement Removed",
           description: `The achievement "${certName}" has been deleted.`,
         });
+        await mutate();
       } else {
         toast({
           variant: "destructive",

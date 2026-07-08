@@ -1,8 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
-import { collection } from "firebase/firestore";
+import { useApiCollection } from "@/hooks/use-api-collection";
 import { manageProject, deleteProject } from "@/actions/projects";
 import { refreshCsrfToken } from "@/actions/contact";
 import { useToast } from "@/hooks/use-toast";
@@ -36,7 +35,7 @@ import {
 
 export default function ProjectsManagement() {
   const { toast } = useToast();
-  const firestore = useFirestore();
+  const { data: projects, isLoading, mutate } = useApiCollection<Project>("/api/v1/projects");
   const [title, setTitle] = React.useState("");
   const [description, setDescription] = React.useState("");
   const [techStack, setTechStack] = React.useState("");
@@ -50,9 +49,6 @@ export default function ProjectsManagement() {
   React.useEffect(() => {
     refreshCsrfToken().then(token => setCsrfToken(token));
   }, []);
-
-  const projectsRef = useMemoFirebase(() => firestore ? collection(firestore, "projects") : null, [firestore]);
-  const { data: projects, isLoading } = useCollection<Project>(projectsRef);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,6 +73,7 @@ export default function ProjectsManagement() {
           description: `The project "${title}" has been successfully saved.`,
         });
         resetForm();
+        await mutate();
       } else {
         toast({
           variant: "destructive",
@@ -125,6 +122,7 @@ export default function ProjectsManagement() {
           title: "Project Deleted",
           description: `The project "${name}" has been removed.`,
         });
+        await mutate();
       } else {
         toast({
           variant: "destructive",

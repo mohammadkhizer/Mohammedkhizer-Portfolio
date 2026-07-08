@@ -2,7 +2,8 @@
 
 import { isRateLimited, validateServerCsrfToken, isAdmin } from '@/lib/security';
 import { sanitizeInput } from '@/lib/utils';
-import { dbAdmin } from '@/lib/firebase-admin';
+import dbConnect from '@/lib/mongodb';
+import Certification from '@/models/Certification';
 import { revalidatePath } from 'next/cache';
 
 /**
@@ -49,11 +50,13 @@ export async function manageCertification(formData: FormData, editingId: string 
   };
 
   try {
+    await dbConnect();
+
     if (editingId) {
-      await dbAdmin.collection('certifications').doc(editingId).update(certData);
+      await Certification.updateOne({ id: editingId }, { $set: certData });
     } else {
       const newId = crypto.randomUUID();
-      await dbAdmin.collection('certifications').doc(newId).set({
+      await Certification.create({
         ...certData,
         id: newId,
         createdAt: new Date().toISOString()
@@ -82,7 +85,8 @@ export async function deleteCertification(id: string) {
   }
 
   try {
-    await dbAdmin.collection('certifications').doc(id).delete();
+    await dbConnect();
+    await Certification.deleteOne({ id });
     revalidatePath('/admin/certifications');
     return { success: true };
   } catch (error) {

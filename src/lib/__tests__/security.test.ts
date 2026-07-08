@@ -12,32 +12,30 @@ vi.mock('next/headers', () => ({
   })),
 }));
 
-// Mock firebase-admin imports
-const mockDocGet = vi.fn(async () => ({ exists: true, data: () => ({ isAdmin: true }) }));
-const mockDoc = vi.fn(() => ({ get: mockDocGet }));
-const mockCollection = vi.fn(() => ({ doc: mockDoc }));
+// Mock dbConnect
+vi.mock('../mongodb', () => ({
+  default: vi.fn(async () => {}),
+}));
 
-vi.mock('../firebase-admin', () => ({
-  dbAdmin: {
-    collection: mockCollection,
+// Mock Admin model
+const mockFindOne = vi.fn();
+vi.mock('@/models/Admin', () => ({
+  default: {
+    findOne: mockFindOne,
   },
-  authAdmin: {
-    verifySessionCookie: vi.fn(async (token: string) => {
-      if (token === 'valid-token') return { uid: 'user-123', email: 'test@example.com' };
+}));
+
+// Mock jsonwebtoken
+vi.mock('jsonwebtoken', () => ({
+  default: {
+    verify: vi.fn((token: string) => {
+      if (token === 'valid-token') return { uid: 'user-123', email: 'test@example.com', isAdmin: true };
       throw new Error('Invalid token');
     }),
-    createSessionCookie: vi.fn(async () => 'mock-session-cookie'),
+    sign: vi.fn(() => 'mock-token'),
   },
 }));
 
-
-// Mock constants
-vi.mock('../constants', () => ({
-  ADMIN_CONFIG: {
-    MASTER_UID: 'master-uid',
-    COLLECTION_NAME: 'admins',
-  },
-}));
 
 describe('Security Utilities', () => {
   beforeEach(() => {
@@ -62,37 +60,45 @@ describe('Security Utilities', () => {
       }));
 
       const user = await getAuthenticatedUser();
-      expect(user).toEqual({ uid: 'user-123', email: 'test@example.com' });
+      expect(user).toEqual({ uid: 'user-123', email: 'test@example.com', isAdmin: true });
     });
   });
 
   describe('isAdmin', () => {
-    it('should return true for master UID', async () => {
+    it('should return true if user exists and is admin in DB', async () => {
       const { cookies } = await import('next/headers');
       (cookies as Mock).mockImplementationOnce(async () => ({
         get: vi.fn().mockReturnValue({ value: 'valid-token' }),
       }));
 
-      // Override verifySessionCookie to return master-uid
-      const { authAdmin } = await import('../firebase-admin');
-      (authAdmin.verifySessionCookie as Mock).mockResolvedValueOnce({ uid: 'master-uid' });
+      mockFindOne.mockResolvedValueOnce({ email: 'test@example.com', isAdmin: true });
 
       const result = await isAdmin();
       expect(result).toBe(true);
     });
 
-    it('should return false if user is not in admin collection', async () => {
+    it('should return false if user exists but is not admin in DB', async () => {
       const { cookies } = await import('next/headers');
       (cookies as Mock).mockImplementationOnce(async () => ({
         get: vi.fn().mockReturnValue({ value: 'valid-token' }),
       }));
 
-      // Access the mock from the module scope if possible, or via import
-      mockDocGet.mockResolvedValueOnce({ exists: false } as never);
+      mockFindOne.mockResolvedValueOnce({ email: 'test@example.com', isAdmin: false });
 
       const result = await isAdmin();
       expect(result).toBe(false);
     });
 
+    it('should return false if user is not in DB', async () => {
+      const { cookies } = await import('next/headers');
+      (cookies as Mock).mockImplementationOnce(async () => ({
+        get: vi.fn().mockReturnValue({ value: 'valid-token' }),
+      }));
+
+      mockFindOne.mockResolvedValueOnce(null);
+
+      const result = await isAdmin();
+      expect(result).toBe(false);
+    });
   });
 });

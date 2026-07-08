@@ -11,15 +11,6 @@ export const ADMIN_CONFIG = {
 };
 
 
-// Firebase configuration keys (must match .env variables)
-export const FIREBASE_CONFIG_KEYS = {
-  PROJECT_ID: 'NEXT_PUBLIC_FIREBASE_PROJECT_ID',
-  APP_ID: 'NEXT_PUBLIC_FIREBASE_APP_ID',
-  API_KEY: 'NEXT_PUBLIC_FIREBASE_API_KEY',
-  AUTH_DOMAIN: 'NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN',
-  MEASUREMENT_ID: 'NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID',
-  MESSAGING_SENDER_ID: 'NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID',
-} as const;
 
 // Error messages
 export const ERROR_MESSAGES = {
@@ -28,10 +19,6 @@ export const ERROR_MESSAGES = {
   AUTH_ADMIN_REQUIRED: 'Administrative privileges required.',
   AUTH_PROVISION_FAILED: 'Failed to provision admin record.',
   AUTH_STATE_ERROR: 'Error checking authentication state.',
-
-  // Firebase errors
-  FIREBASE_INIT_FAILED: 'Firebase initialization failed.',
-  FIREBASE_CONFIG_FALLBACK: 'Falling back to firebase config object.',
 
   // API/Network errors
   NETWORK_ERROR: 'Network error. Please check your connection.',

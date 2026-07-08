@@ -1,23 +1,23 @@
 'use server';
 
-import { setSessionCookie, deleteCookie } from '@/lib/security';
-import { cookies } from 'next/headers';
+import { setSessionCookie, clearSessionCookie } from '@/lib/auth';
 
 /**
- * Creates a server-side session after a successful client-side Firebase login.
- * @param idToken The Firebase ID token of the authenticated user.
+ * Creates a server-side session.
+ * @param email User email
+ * @param uid User ID
+ * @param isAdmin Admin status
  */
-export async function createSession(idToken: string) {
-  if (!idToken) return { success: false };
-  const success = await setSessionCookie(idToken);
+export async function createSession(email: string, uid: string, isAdmin: boolean) {
+  if (!email || !uid) return { success: false };
+  const success = await setSessionCookie(email, uid, isAdmin);
   return { success };
 }
-
 
 /**
  * Clears the server-side session.
  */
 export async function logoutAction() {
-  await deleteCookie('fb_session');
+  await clearSessionCookie();
   return { success: true };
 }

@@ -1,10 +1,8 @@
-
 "use client";
 
 import * as React from "react";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
-import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
-import { collection } from "firebase/firestore";
+import { useApiCollection } from "@/hooks/use-api-collection";
 import { 
   Code2, 
   FolderKanban, 
@@ -21,23 +19,13 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export default function AdminDashboard() {
-  const firestore = useFirestore();
-
-  const skillsRef = useMemoFirebase(() => firestore ? collection(firestore, "skills") : null, [firestore]);
-  const projectsRef = useMemoFirebase(() => firestore ? collection(firestore, "projects") : null, [firestore]);
-  const experienceRef = useMemoFirebase(() => firestore ? collection(firestore, "experiences") : null, [firestore]);
-  const educationRef = useMemoFirebase(() => firestore ? collection(firestore, "educations") : null, [firestore]);
-  const certsRef = useMemoFirebase(() => firestore ? collection(firestore, "certifications") : null, [firestore]);
-  const contactRef = useMemoFirebase(() => firestore ? collection(firestore, "contactSubmissions") : null, [firestore]);
-  const testimonialsRef = useMemoFirebase(() => firestore ? collection(firestore, "testimonials") : null, [firestore]);
-
-  const { data: skills } = useCollection(skillsRef);
-  const { data: projects } = useCollection(projectsRef);
-  const { data: experiences } = useCollection(experienceRef);
-  const { data: education } = useCollection(educationRef);
-  const { data: certs } = useCollection(certsRef);
-  const { data: contacts } = useCollection(contactRef);
-  const { data: testimonials } = useCollection(testimonialsRef);
+  const { data: skills } = useApiCollection("/api/v1/skills");
+  const { data: projects } = useApiCollection("/api/v1/projects");
+  const { data: experiences } = useApiCollection("/api/v1/experiences");
+  const { data: education } = useApiCollection("/api/v1/education");
+  const { data: certs } = useApiCollection("/api/v1/certifications");
+  const { data: contacts } = useApiCollection("/api/v1/contact");
+  const { data: testimonials } = useApiCollection("/api/v1/testimonials");
 
   const stats = [
     { name: "Skills", count: skills?.length || 0, icon: Code2, color: "text-blue-500", href: "/admin/skills" },
@@ -87,7 +75,7 @@ export default function AdminDashboard() {
           <CardContent>
             {contacts && contacts.length > 0 ? (
               <div className="space-y-4">
-                {contacts.slice(0, 5).map((contact) => (
+                {contacts.slice(0, 5).map((contact: any) => (
                   <div key={contact.id} className="border-b border-border/50 pb-4 last:border-0 last:pb-0">
                     <div className="flex justify-between items-start">
                       <div>
