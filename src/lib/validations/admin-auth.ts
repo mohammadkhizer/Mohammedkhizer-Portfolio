@@ -5,36 +5,6 @@
 
 import { z } from 'zod';
 
-// ─── Forgot Password ───────────────────────────────────────────────────────────
-export const forgotPasswordSchema = z.object({
-  email: z
-    .string()
-    .min(1, 'Email is required')
-    .email('Enter a valid email address')
-    .toLowerCase()
-    .trim(),
-});
-
-export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
-
-// ─── OTP Verification ─────────────────────────────────────────────────────────
-export const verifyOTPSchema = z.object({
-  email: z
-    .string()
-    .min(1, 'Email is required')
-    .email('Enter a valid email address')
-    .toLowerCase()
-    .trim(),
-  otp: z
-    .string()
-    .length(6, 'OTP must be exactly 6 digits')
-    .regex(/^\d{6}$/, 'OTP must contain only digits'),
-});
-
-export type VerifyOTPInput = z.infer<typeof verifyOTPSchema>;
-
-// ─── Reset Password ───────────────────────────────────────────────────────────
-
 // Common passwords that will be rejected (OWASP Top-100 check subset)
 const COMMON_PASSWORDS = [
   'password123456',

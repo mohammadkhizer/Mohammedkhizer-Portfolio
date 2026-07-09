@@ -15,16 +15,26 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  let body;
   try {
-    const { email, password } = await req.json();
+    body = await req.json();
+  } catch {
+    return NextResponse.json(
+      { message: 'Invalid or missing JSON payload.' },
+      { status: 400 }
+    );
+  }
 
-    if (!email || !password) {
-      return NextResponse.json(
-        { message: 'Email and password are required.' },
-        { status: 400 }
-      );
-    }
+  const { email, password } = body || {};
 
+  if (!email || !password) {
+    return NextResponse.json(
+      { message: 'Email and password are required.' },
+      { status: 400 }
+    );
+  }
+
+  try {
     await dbConnect();
 
     // 2. Find admin by email
@@ -62,7 +72,6 @@ export async function POST(req: NextRequest) {
         isAdmin: admin.isAdmin,
       }
     });
-
   } catch (error) {
     console.error('Login API error:', error);
     return NextResponse.json(

@@ -17,22 +17,20 @@ graph TD
     
     subgraph Security_Layer [Security & Monitoring]
         Sentry[Sentry APM]
-        AdminSDK[Firebase Admin SDK]
-        AuthUtils[Auth Utilities / Master UID]
+        AuthUtils[JWT Security]
     end
     
     subgraph Data_Persistence [Data Persistence]
-        Firestore[(Firestore DB)]
-        Storage[(Firebase Storage)]
+        MongoDB[(MongoDB)]
     end
     
     User <-->|HTTPS / SSR| ServerComp
     User <-->|Hydration / Events| ClientComp
     ClientComp -->|Invocations| ServerActions
-    ServerActions --> AdminSDK
-    GenkitFlows --> AdminSDK
-    AdminSDK <-->|Privileged Query| Firestore
-    ServerComp -->|SSR Fetch| AdminSDK
+    ServerActions --> AuthUtils
+    AuthUtils --> MongoDB
+    GenkitFlows --> MongoDB
+    ServerComp -->|SSR Fetch| MongoDB
     
     %% Monitoring
     ServerComp -.-> Sentry
@@ -43,15 +41,15 @@ graph TD
 ## Core Principles
 
 1.  **Server-First Rendering**: Primary portfolio content is rendered server-side to ensure maximum SEO and minimum Time-to-Interactive (TTI).
-2.  **Zero-Trust Database Access**: No client-side Firestore queries are permitted. All data is proxied through the Firebase Admin SDK on the server, where identity is verified against a secure `MASTER_UID`.
+2.  **Zero-Trust Database Access**: All database access is conducted server-side using Mongoose and MongoDB. Identity and actions are verified using secure JWT mechanisms.
 3.  **Observability by Default**: Sentry tracks every error and performance bottleneck across both client and server boundaries.
-4.  **Decoupled AI Intelligence**: The Genkit AI engine is decoupled from hardcoded data, fetching live portfolio context dynamically from Firestore.
+4.  **Decoupled AI Intelligence**: The Genkit AI engine is decoupled from hardcoded data, fetching live portfolio context dynamically from MongoDB.
 
 ## Data Flow: Project Recommendation
 
 1.  User enters an interest in the UI.
 2.  The request is sent to a **Server Action**.
 3.  The Server Action triggers the **Genkit AI Flow**.
-4.  The Flow fetches all projects via the **Admin SDK**.
-5.  Projects are injected into the **Gemini 1.5 Flash** prompt as structured context.
+4.  The Flow fetches all projects via Mongoose from MongoDB.
+5.  Projects are injected into the **Gemini Flash** prompt as structured context.
 6.  Recommendations are returned to the user with a keyword-match **fallback** if AI services are unavailable.

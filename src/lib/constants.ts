@@ -5,8 +5,6 @@
 
 // Admin configuration
 export const ADMIN_CONFIG = {
-  // In production, this should ONLY be set via environment variable
-  MASTER_UID: process.env.MASTER_UID || 'eg1KGzcz7fNQSwZL79FMkQUSjVh2', 
   COLLECTION_NAME: 'admins',
 };
 

@@ -11,11 +11,10 @@ export function middleware(request: NextRequest) {
   const sessionToken = request.cookies.get('admin_session')?.value;
 
   // 1. Protection for /admin routes
-  // Allow public admin auth pages (login, signup, password reset flow)
+  // Allow public admin auth pages (login, signup)
   const isPublicAdminRoute =
     pathname.startsWith('/admin/login') ||
-    pathname.startsWith('/admin/signup') ||
-    pathname.startsWith('/admin/auth/');
+    pathname.startsWith('/admin/signup');
 
   if (pathname.startsWith('/admin') && !isPublicAdminRoute) {
     if (!sessionToken) {

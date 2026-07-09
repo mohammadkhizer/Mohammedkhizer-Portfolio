@@ -5,7 +5,21 @@ import { Card, CardContent } from "@/components/ui/card";
 import { User, Award, GraduationCap, MapPin } from "lucide-react";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 
-export function About({ isPreview = false }: { isPreview?: boolean }) {
+export interface ProfileData {
+  fullName: string;
+  tagline: string;
+  professionalSummary: string;
+  introductionSummary: string;
+  cvDownloadUrl?: string;
+}
+
+export function About({ 
+  isPreview = false,
+  profileData
+}: { 
+  isPreview?: boolean;
+  profileData?: ProfileData | null;
+}) {
   const profileImg = PlaceHolderImages.find(img => img.id === 'profile-pic');
 
   return (
@@ -17,7 +31,7 @@ export function About({ isPreview = false }: { isPreview?: boolean }) {
             <div className="relative bg-card rounded-3xl overflow-hidden border border-border/50 shadow-2xl aspect-square">
               <Image
                 src={profileImg?.imageUrl || "https://techaura26.netlify.app/Assets/khizer.jpeg"}
-                alt="Mohammed Khizer Shaikh"
+                alt={profileData?.fullName || "Mohammed Khizer Shaikh"}
                 width={600}
                 height={600}
                 priority={true} // Priority loading for LCP
@@ -27,8 +41,8 @@ export function About({ isPreview = false }: { isPreview?: boolean }) {
                 data-ai-hint={profileImg?.imageHint || "professional man"}
               />
               <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent text-white md:hidden">
-                <p className="font-bold text-lg">Mohammed Khizer Shaikh</p>
-                <p className="text-xs opacity-80 uppercase tracking-widest font-semibold">Full Stack Developer</p>
+                <p className="font-bold text-lg">{profileData?.fullName || "Mohammed Khizer Shaikh"}</p>
+                <p className="text-xs opacity-80 uppercase tracking-widest font-semibold">{profileData?.tagline || "Full Stack Developer"}</p>
               </div>
             </div>
           </div>
@@ -47,15 +61,23 @@ export function About({ isPreview = false }: { isPreview?: boolean }) {
 
             <div className="space-y-6 text-base md:text-lg text-muted-foreground leading-relaxed">
               <p>
-                I am a passionate <span className="text-foreground font-semibold underline decoration-primary/40 decoration-4 underline-offset-4">Full-Stack Web Developer</span> and AI/ML enthusiast.
-                Currently in my <span className="text-foreground font-medium">3rd Year of CSE at SVGU</span>, I specialize in building
-                highly performant, user-centric web applications that bridge the gap between complex algorithms and intuitive design.
+                {profileData?.introductionSummary || (
+                  <>
+                    I am a passionate <span className="text-foreground font-semibold underline decoration-primary/40 decoration-4 underline-offset-4">Full-Stack Web Developer</span> and AI/ML enthusiast.
+                    Currently in my <span className="text-foreground font-medium">3rd Year of CSE at SVGU</span>, I specialize in building
+                    highly performant, user-centric web applications that bridge the gap between complex algorithms and intuitive design.
+                  </>
+                )}
               </p>
 
               <p className="hidden md:block">
-                My technical journey is driven by a curiosity for emerging technologies and a commitment to
-                delivering clean, maintainable code. From engineering official event websites to developing
-                AI-powered assistants, I thrive on solving real-world challenges through technology.
+                {profileData?.professionalSummary || (
+                  <>
+                    My technical journey is driven by a curiosity for emerging technologies and a commitment to
+                    delivering clean, maintainable code. From engineering official event websites to developing
+                    AI-powered assistants, I thrive on solving real-world challenges through technology.
+                  </>
+                )}
               </p>
             </div>
 

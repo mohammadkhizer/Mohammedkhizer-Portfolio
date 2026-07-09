@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IProject extends Document {
-  id: string; // Keeps compatibility with existing Firestore ID
+  id: string; // Unique string identifier
   title: string;
   description: string;
   projectImageUrl: string;

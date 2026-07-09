@@ -22,8 +22,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const isAuthPage =
     pathname === "/admin/login" ||
-    pathname === "/admin/signup" ||
-    pathname.startsWith("/admin/auth/");
+    pathname === "/admin/signup";
 
   React.useEffect(() => {
     if (!isUserLoading && !user && !isAuthPage) {

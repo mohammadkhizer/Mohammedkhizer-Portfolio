@@ -8,18 +8,28 @@ import { Skills, type Skill } from "@/components/Skills";
 import { Projects, type Project } from "@/components/Projects";
 import { Experience, type ExperienceItem, type EducationItem } from "@/components/Experience";
 import { Testimonials, type Testimonial } from "@/components/Testimonials";
-import { getProjects, getSkills, getExperience, getEducation, getTestimonials } from "@/lib/db";
+import { getProjects, getSkills, getExperience, getEducation, getTestimonials, getUserProfile } from "@/lib/db";
 
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
-  const [rawProjects, rawSkills, rawExperience, rawEducation, rawTestimonials] = await Promise.all([
+  const [rawProjects, rawSkills, rawExperience, rawEducation, rawTestimonials, rawProfile] = await Promise.all([
     getProjects(),
     getSkills(),
     getExperience(),
     getEducation(),
     getTestimonials(),
+    getUserProfile(),
   ]);
+
+  const profileData = rawProfile ? {
+    fullName: rawProfile.fullName,
+    tagline: rawProfile.tagline,
+    professionalSummary: rawProfile.professionalSummary,
+    introductionSummary: rawProfile.introductionSummary,
+    cvDownloadUrl: rawProfile.cvDownloadUrl,
+  } : null;
+
 
   // Serialize to plain objects that are safe to pass to client components
   const skills: Skill[] = rawSkills.map((s: any) => ({
@@ -74,7 +84,7 @@ export default async function HomePage() {
       <div className="container mx-auto px-4 sm:px-6 space-y-16 md:space-y-32 pb-24">
         {/* About Section */}
         <section className="space-y-8 md:space-y-12">
-          <About isPreview={true} />
+          <About isPreview={true} profileData={profileData} />
           <div className="flex justify-center px-4">
             <Button asChild variant="outline" className="w-full sm:w-auto rounded-full h-12 px-8">
               <Link href="/about" className="flex items-center justify-center gap-2">

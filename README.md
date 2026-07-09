@@ -1,6 +1,6 @@
 # Mohammed Khizer Shaikh — Portfolio
 
-> A production-grade, AI-powered portfolio built with **Next.js 15**, **Firebase**, and **Google Genkit**.
+> A production-grade, AI-powered portfolio built with **Next.js 15**, **MongoDB**, and **Google Genkit**.
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://mohammedkhizershaikh.netlify.app)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org)
@@ -12,7 +12,7 @@
 This portfolio uses a **Server-First** architecture:
 
 - **Server Components** render all portfolio content (Projects, Skills, Experience) for instant load times and maximum SEO.
-- **Firebase Admin SDK** handles all privileged data access server-side — no client-side Firestore reads.
+- **MongoDB** handles all data storage and retrieval via Mongoose server-side.
 - **ISR Caching** (`unstable_cache`) with tag-based revalidation provides sub-second page loads with 1-hour data freshness.
 - **Sentry** provides full-stack observability across client, server, and edge runtimes.
 - **Genkit AI** powers intelligent project recommendations with a keyword-match fallback for high availability.
@@ -25,7 +25,7 @@ See [docs/architecture.md](docs/architecture.md) for detailed diagrams.
 
 - Node.js >= 18
 - npm >= 9
-- Firebase project with Firestore enabled
+- MongoDB database
 - Google AI API key (for Genkit)
 
 ### Environment Variables
@@ -40,10 +40,8 @@ Required variables:
 
 | Variable | Description |
 |---|---|
-| `FIREBASE_PROJECT_ID` | Your Firebase project ID |
-| `FIREBASE_CLIENT_EMAIL` | Service account email |
-| `FIREBASE_PRIVATE_KEY` | Service account private key |
-| `MASTER_UID` | Admin user UID for privileged operations |
+| `MONGO_URI` | MongoDB connection URI |
+| `JWT_SECRET` | Secret key for admin session tokens |
 | `GOOGLE_GENAI_API_KEY` | Google AI API key for Genkit |
 | `NEXT_PUBLIC_SENTRY_DSN` | Sentry DSN for error tracking |
 
@@ -92,17 +90,14 @@ src/
 │   ├── Skills.tsx
 │   └── ...
 ├── lib/                 # Utilities
-│   ├── db.ts            # Server-side Firestore queries (cached)
-│   ├── firebase-admin.ts # Admin SDK initialization
+│   ├── db.ts            # Server-side MongoDB queries (cached)
 │   ├── security-client.ts # Input sanitization
 │   └── constants.ts     # Application constants
-└── firebase/            # Client-side Firebase (auth only)
 ```
 
 ## 🔒 Security
 
-- **Zero-Trust Data Access**: All Firestore reads go through the Admin SDK on the server.
-- **Master UID Verification**: Admin operations are gated by a server-side environment variable.
+- **Zero-Trust Data Access**: All database reads go through Mongoose/MongoDB server-side.
 - **Content Security Policy**: Strict CSP headers block XSS, clickjacking, and data exfiltration.
 - **AI Prompt Hardening**: User inputs are sanitized before reaching LLM prompts, with injection detection.
 

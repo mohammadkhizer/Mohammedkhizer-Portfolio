@@ -5,6 +5,8 @@ import Experience from '@/models/Experience';
 import Education from '@/models/Education';
 import Certification from '@/models/Certification';
 import Testimonial from '@/models/Testimonial';
+import UserProfile from '@/models/UserProfile';
+
 
 /**
  * Fetches projects from MongoDB server-side with pagination support.
@@ -128,6 +130,25 @@ export async function getTestimonials() {
   } catch (error) {
     console.error('Error fetching testimonials:', error);
     return [];
+  }
+}
+
+/**
+ * Fetches the user profile from MongoDB server-side.
+ */
+export async function getUserProfile() {
+  try {
+    await dbConnect();
+    const doc = await UserProfile.findOne({ id: 'main-profile' }).lean();
+    if (!doc) return null;
+
+    return {
+      ...doc,
+      _id: doc._id.toString(),
+    };
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    return null;
   }
 }
 

@@ -84,7 +84,7 @@ const recommendProjectsFlow = ai.defineFlow(
       // Sanitize user input before it reaches the prompt
       const sanitizedInterest = sanitizeAiInput(input.interest);
       
-      // Fetch live projects from Firestore
+      // Fetch live projects from MongoDB
       const liveProjects = await getProjects() as ProjectData[];
       
       if (!liveProjects || liveProjects.length === 0) {

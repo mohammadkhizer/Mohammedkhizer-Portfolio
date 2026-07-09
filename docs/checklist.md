@@ -19,12 +19,12 @@ The checklist is organized by priority and explicitly covers input from **all li
 
 ## 1. Security & Compliance (High Priority)
 
-- [x] Move hardcoded **Master UID** from Firestore Security Rules to environment variables + Admin SDK
+- [x] Remove legacy **Master UID** and Firebase Security Rules in favor of MongoDB + JWT
 
 - [x] Implement secret scanning in CI/CD and rotate credentials
 - [x] Add automated security headers and CSP enforcement
 - [ ] Complete GDPR/CCPA documentation and data handling procedures
-- [ ] Review and tighten all Firestore Rules for least-privilege access
+- [ ] Review and tighten MongoDB collection indexes and access controls
 
 
 **Owners:** Security Engineer, DevSecOps Engineer, Cybersecurity Analyst, Compliance & Privacy Reviewer, Legal/Policy Reviewer
@@ -49,7 +49,7 @@ The checklist is organized by priority and explicitly covers input from **all li
 ## 3. AI/ML Integration & Data Flow (Critical)
 
 - [x] Decouple AI flows from hardcoded project arrays (`recommend-projects-flow.ts`)
-- [x] Replace static arrays in AI flows with dynamic Firestore queries (Admin SDK)
+- [x] Replace static arrays in AI flows with dynamic MongoDB queries
 - [x] Implement structured context injection for LLM prompts using portfolio data
 - [x] Fix TypeScript errors and optimize AI context mapping
 - [ ] Add evaluation logic for AI recommendations (Genkit Evals)
@@ -64,10 +64,9 @@ The checklist is organized by priority and explicitly covers input from **all li
 
 ## 4. Scalability & Database (High Priority)
 
-- [x] Implement Firestore pagination (limit/offset) for Projects and Experience collections
+- [x] Implement MongoDB pagination (limit/offset) for Projects and Experience collections
 - [x] Implement data caching strategy (Next.js unstable_cache + Tag-based ISR)
 - [ ] Add query limits and indexing strategy for large collections
-- [ ] Optimize Firebase read costs on high-traffic pages
 
 - [ ] Plan for future sharding or migration strategy if portfolio grows significantly
 
@@ -81,7 +80,7 @@ The checklist is organized by priority and explicitly covers input from **all li
 - [x] Connect `logger.ts` to Sentry and enable alerting
 - [x] Implement comprehensive error tracking (Global Error Boundary implemented)
 - [ ] Add redundancy and failover logic for critical API endpoints
-- [ ] Set up real-time dashboards for error rates, latency, and Firebase usage
+- [ ] Set up real-time dashboards for error rates, latency, and database usage
 
 
 **Owners:** SRE (System Reliability Engineer), DevOps Engineer, Performance Engineer, Infrastructure Engineer
@@ -92,13 +91,13 @@ The checklist is organized by priority and explicitly covers input from **all li
 
 ### TypeScript & Code Health
 - [x] Resolve all TypeScript errors and enforce strict mode
-- [x] Remove internal Firebase SDK hacks (`_query.path.canonicalString()`)
+- [x] Clean up unused legacy Firebase configurations
 
 
 ### Testing
 - [ ] Increase test coverage from <5% to minimum **70%** for core modules
 - [x] Add unit tests for core logic (Security Utilities tests implemented with Vitest)
-- [ ] Implement proper mocking for Firebase and Genkit
+- [ ] Implement proper mocking for MongoDB and Genkit
 
 
 ### Documentation
@@ -117,7 +116,6 @@ The checklist is organized by priority and explicitly covers input from **all li
 
 - [ ] Add automated performance and accessibility tests in CI
 - [ ] Implement proper rate limiting (distributed, not in-memory)
-- [ ] Set up monitoring for Firebase costs and usage quotas
 
 **Owners:** DevOps Engineer, Deployment & Release Manager, Infrastructure Engineer, SaaS Operations Reviewer
 
@@ -162,7 +160,7 @@ The checklist is organized by priority and explicitly covers input from **all li
 **Phase 1 (Week 1-2) - Foundation**
 - [x] Master UID fix + Sentry integration (Master UID fix & Sentry implemented)
 - [x] Convert critical pages to Server Components
-- [x] Dynamic AI context from Firestore
+- [x] Dynamic AI context from MongoDB
 
 
 

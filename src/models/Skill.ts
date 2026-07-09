@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface ISkill extends Document {
-  id: string; // Keep compatibility with existing Firestore uuid/id format
+  id: string; // Unique string identifier
   name: string;
   category: string;
   proficiency: string;
