@@ -81,9 +81,16 @@ export function Skills({
     <section id="skills" className={`${isPreview ? '' : 'py-24'}`}>
       <div className="container mx-auto px-4 md:px-6">
         <div className="text-center space-y-4 mb-12 md:mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Technical <span className="text-primary">Skills</span></h2>
-          <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto">
-            A comprehensive overview of my technical expertise spanning multiple programming paradigms and platforms.
+          {isPreview ? (
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Technical <span className="text-primary">Skills</span></h2>
+          ) : (
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Technical <span className="text-primary">Skills</span></h1>
+          )}
+          <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            A comprehensive overview of my technical expertise spanning multiple programming paradigms and software engineering platforms. 
+            This technology stack is designed to build high-performance user interfaces using <span className="font-semibold text-foreground">React</span> and <span className="font-semibold text-foreground">Next.js</span>, 
+            scalable API backends with <span className="font-semibold text-foreground">Python</span>, <span className="font-semibold text-foreground">Django</span>, and <span className="font-semibold text-foreground">Node.js</span>, 
+            and data storage solutions using <span className="font-semibold text-foreground">MongoDB</span> and SQL databases.
           </p>
         </div>
 

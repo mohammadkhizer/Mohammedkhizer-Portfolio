@@ -39,10 +39,15 @@ export function Projects({
     <section id="projects" className={`${isPreview ? '' : 'py-24'}`}>
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 md:mb-16">
-          <div className="space-y-3 md:space-y-4 text-center md:text-left">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Technical <span className="text-primary">Projects</span></h2>
-            <p className="text-sm md:text-base text-muted-foreground max-w-xl mx-auto md:mx-0">
-              Practical applications of my skills in web development, AI/ML, and hardware integration.
+          <div className="space-y-3 md:space-y-4 text-center md:text-left w-full">
+            {isPreview ? (
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Technical <span className="text-primary">Projects</span></h2>
+            ) : (
+              <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Technical <span className="text-primary">Projects</span></h1>
+            )}
+            <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto md:mx-0 leading-relaxed">
+              Practical engineering solutions applying full-stack web development, Artificial Intelligence, machine learning integrations, and backend architectures. 
+              Each project is structured to document the specific technical problem, system architecture, selected tech stack, and key performance results.
             </p>
           </div>
         </div>

@@ -97,59 +97,63 @@ export function Contact() {
             <ShieldCheck className="h-3.5 w-3.5" />
             Secure Submission
           </div>
-          <h2 className="text-4xl font-bold tracking-tight">Get in <span className="text-primary">Touch</span></h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Looking for a collaborator or just want to discuss technology? Reach out!
+          <h1 className="text-4xl font-bold tracking-tight">Get in <span className="text-primary">Touch</span></h1>
+          <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            Looking for a collaborator, full-stack developer, or just want to discuss software engineering? Reach out using the secure form below or via the direct contact info.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           <div className="lg:col-span-5 space-y-8">
-            <div className="space-y-6">
+            <address className="space-y-6 not-italic">
               <div className="flex items-start gap-4">
                 <div className="p-4 bg-primary/10 rounded-2xl text-primary">
-                  <Mail className="h-6 w-6" />
+                  <Mail className="h-6 w-6" aria-hidden="true" />
                 </div>
                 <div>
                   <h4 className="text-lg font-bold">Email</h4>
-                  <p className="text-muted-foreground">work.mkhizer@gmail.com</p>
+                  <a href="mailto:work.mkhizer@gmail.com" className="text-muted-foreground hover:text-primary transition-colors">
+                    work.mkhizer@gmail.com
+                  </a>
                 </div>
               </div>
               <div className="flex items-start gap-4">
                 <div className="p-4 bg-primary/10 rounded-2xl text-primary">
-                  <Phone className="h-6 w-6" />
+                  <Phone className="h-6 w-6" aria-hidden="true" />
                 </div>
                 <div>
                   <h4 className="text-lg font-bold">Phone</h4>
-                  <p className="text-muted-foreground">+91 9510865651</p>
+                  <a href="tel:+919510865651" className="text-muted-foreground hover:text-primary transition-colors">
+                    +91 9510865651
+                  </a>
                 </div>
               </div>
               <div className="flex items-start gap-4">
                 <div className="p-4 bg-primary/10 rounded-2xl text-primary">
-                  <MapPin className="h-6 w-6" />
+                  <MapPin className="h-6 w-6" aria-hidden="true" />
                 </div>
                 <div>
                   <h4 className="text-lg font-bold">Location</h4>
                   <p className="text-muted-foreground">Ahmedabad, Gujarat, India</p>
                 </div>
               </div>
-            </div>
+            </address>
 
             <div className="pt-8 border-t border-border/50">
               <h4 className="text-lg font-bold mb-6">Social Links</h4>
               <div className="flex gap-4">
                 <Button variant="outline" size="icon" className="rounded-full hover:bg-primary hover:text-white transition-colors" asChild aria-label="LinkedIn Profile">
-                  <a href="https://www.linkedin.com/in/mohammad-khizer-shaikh-14a362275" target="_blank" rel="noopener noreferrer">
+                  <a href="https://www.linkedin.com/in/mohammad-khizer-shaikh-14a362275" target="_blank" rel="noopener noreferrer me">
                     <Linkedin className="h-5 w-5" />
                   </a>
                 </Button>
                 <Button variant="outline" size="icon" className="rounded-full hover:bg-primary hover:text-white transition-colors" asChild aria-label="GitHub Profile">
-                  <a href="https://github.com/mohammadkhizer" target="_blank" rel="noopener noreferrer">
+                  <a href="https://github.com/mohammadkhizer" target="_blank" rel="noopener noreferrer me">
                     <Github className="h-5 w-5" />
                   </a>
                 </Button>
                 <Button variant="outline" size="icon" className="rounded-full hover:bg-primary hover:text-white transition-colors" asChild aria-label="Instagram Profile">
-                  <a href="https://www.instagram.com/khizerrrr11/" target="_blank" rel="noopener noreferrer">
+                  <a href="https://www.instagram.com/khizerrrr11/" target="_blank" rel="noopener noreferrer me">
                     <Instagram className="h-5 w-5" />
                   </a>
                 </Button>

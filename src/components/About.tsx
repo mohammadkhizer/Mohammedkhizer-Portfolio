@@ -53,9 +53,15 @@ export function About({
                 <User className="h-3 w-3" aria-hidden="true" />
                 Who I Am
               </div>
-              <h2 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">
-                About <span className="text-primary">Me</span>
-              </h2>
+              {isPreview ? (
+                <h2 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">
+                  About <span className="text-primary">Me</span>
+                </h2>
+              ) : (
+                <h1 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">
+                  About <span className="text-primary">Me</span>
+                </h1>
+              )}
               <div className="w-16 md:w-24 h-2 bg-primary rounded-full mx-auto md:mx-0" />
             </div>
 
@@ -63,7 +69,7 @@ export function About({
               <p>
                 {profileData?.introductionSummary || (
                   <>
-                    I am a passionate <span className="text-foreground font-semibold underline decoration-primary/40 decoration-4 underline-offset-4">Full-Stack Web Developer</span> and AI/ML enthusiast.
+                    I am a passionate <span className="text-foreground font-semibold underline decoration-primary/40 decoration-4 underline-offset-4">Full-Stack Web Developer</span> and AI/ML enthusiast based in <span className="text-foreground font-medium">Ahmedabad, Gujarat, India</span>.
                     Currently in my <span className="text-foreground font-medium">3rd Year of CSE at SVGU</span>, I specialize in building
                     highly performant, user-centric web applications that bridge the gap between complex algorithms and intuitive design.
                   </>

@@ -1,0 +1,85 @@
+# Mohammed Khizer Shaikh — Portfolio
+
+> Mohammed Khizer Shaikh is a Full-Stack Web Developer and AI/ML engineer based in Ahmedabad, Gujarat, India.
+> He specializes in React, Next.js, TypeScript, Python, Django, and MongoDB.
+> Currently pursuing a Bachelor of Engineering in Computer Science at SVGU.
+
+## About
+
+Mohammed Khizer Shaikh (also known as MK) is a passionate Full-Stack Web Developer and AI/ML enthusiast.
+He builds highly performant, user-centric web applications that bridge complex algorithms with intuitive design.
+He has completed a Diploma in AI/ML from LJ University and has professional experience as a Python Developer Intern at Way to Web, where he worked on the Tripboss project using Django.
+
+## Contact
+
+- Email: work.mkhizer@gmail.com
+- Phone: +91 9510865651
+- Location: Ahmedabad, Gujarat, India
+- LinkedIn: https://www.linkedin.com/in/mohammad-khizer-shaikh-14a362275
+- GitHub: https://github.com/mohammadkhizer
+- Instagram: https://www.instagram.com/khizerrrr11/
+
+## Technical Skills
+
+### Frontend Development
+React, Next.js, TypeScript, JavaScript, HTML5, CSS3, Tailwind CSS
+
+### Backend Development
+Python, Django, Node.js, REST APIs, Express.js
+
+### Databases
+MongoDB, MySQL, PostgreSQL
+
+### AI / Machine Learning
+Machine Learning, Artificial Intelligence, Python AI/ML libraries, scikit-learn
+
+### Programming Languages
+Python, JavaScript, TypeScript, C, C++
+
+### Tools & Systems
+Git, GitHub, Linux, VS Code, Netlify, Vercel, Sentry
+
+## Education
+
+- Bachelor of Engineering (B.E.) in Computer Science — Sumandeep Vidyapeeth General University (SVGU), Ahmedabad (3rd Year, In Progress)
+- Diploma in AI/ML — LJ University, Ahmedabad (Completed)
+
+## Professional Experience
+
+- Python Developer Intern — Way to Web, Ahmedabad
+  - Worked on the Tripboss travel platform using Django
+  - Built REST API endpoints and database integrations
+  - Tech stack: Python, Django, MongoDB
+
+## Portfolio Projects
+
+Mohammed Khizer has built projects in the following domains:
+- Full-stack web applications using React and Next.js
+- AI-powered assistants and chatbots
+- Django REST API backends
+- Event management platforms
+- Portfolio and personal branding websites
+
+For detailed project information, visit: https://mohammedkhizershaikh.netlify.app/projects
+
+## Certifications
+
+Mohammed Khizer holds 8+ professional certifications in web development, cloud computing, and AI/ML.
+For the full list, visit: https://mohammedkhizershaikh.netlify.app/experience
+
+## Availability
+
+Mohammed Khizer is open to:
+- Full-time software engineering opportunities
+- Freelance web development projects
+- AI/ML engineering collaborations
+- Remote and hybrid roles
+
+## Pages
+
+- [Home](https://mohammedkhizershaikh.netlify.app/)
+- [About](https://mohammedkhizershaikh.netlify.app/about)
+- [Skills](https://mohammedkhizershaikh.netlify.app/skills)
+- [Projects](https://mohammedkhizershaikh.netlify.app/projects)
+- [Experience & Education](https://mohammedkhizershaikh.netlify.app/experience)
+- [Contact](https://mohammedkhizershaikh.netlify.app/contact)
