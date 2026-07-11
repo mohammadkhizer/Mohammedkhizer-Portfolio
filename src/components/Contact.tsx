@@ -78,7 +78,7 @@ export function Contact() {
       formElement.reset();
       // Optionally refresh token after submission
       refreshCsrfToken().then(token => setCsrfToken(token));
-    } catch (error) {
+    } catch {
       toast({
         variant: "destructive",
         title: "Submission Error",

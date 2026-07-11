@@ -18,7 +18,6 @@ export function Hero() {
   const fullText = STATIC_TAGLINE;
 
   const [profile, setProfile] = React.useState<any>(null);
-  const [isLoading, setIsLoading] = React.useState(true);
 
   // Fetch live profile data (CV link, custom name) from the admin CMS
   React.useEffect(() => {
@@ -29,8 +28,7 @@ export function Hero() {
           setProfile(data[0]);
         }
       })
-      .catch((err) => console.error('Error fetching profile:', err))
-      .finally(() => setIsLoading(false));
+      .catch((err) => console.error('Error fetching profile:', err));
   }, []);
 
   // Typewriter animation — runs on client only (displayText starts empty)
@@ -57,7 +55,7 @@ export function Hero() {
       <div className="absolute bottom-1/4 right-1/4 w-72 h-72 md:w-96 md:h-96 bg-accent/10 rounded-full blur-[80px] md:blur-[120px] -z-10 animate-pulse delay-700" />
 
       <div className="container mx-auto px-4 sm:px-6 text-center z-10">
-        <div className="space-y-6 md:space-y-8 animate-fade-in-up">
+        <div className="space-y-6 md:space-y-8 motion-safe:animate-fade-in-up">
           {/* Eyebrow label */}
           <p className="text-primary text-xs md:text-sm font-bold tracking-[0.3em] uppercase opacity-80">
             Welcome to my space

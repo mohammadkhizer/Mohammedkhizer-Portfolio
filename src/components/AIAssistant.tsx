@@ -30,7 +30,7 @@ export function AIAssistant() {
     try {
       const data = await recommendProjects({ interest: sanitizeAiInput(interest) });
       setResults(data);
-    } catch (err) {
+    } catch {
       setError({
         hasError: true,
         message: "Failed to fetch recommendations. Please try again.",
@@ -82,7 +82,7 @@ export function AIAssistant() {
               <p>Unable to load recommendations</p>
             </div>
           ) : results ? (
-            <div className="space-y-4 animate-in fade-in slide-in-from-right-4">
+            <div className="space-y-4 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-right-4">
               {results.recommendations.map((rec, i) => (
                 <Card key={i} className="glass border-accent/30 overflow-hidden">
                   <CardHeader className="pb-2">

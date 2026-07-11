@@ -9,9 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Trash2, Plus, Loader2, Quote, Pencil, X, User, Star, PlusCircle, Inbox } from "lucide-react";
+import { Trash2, Loader2, Pencil, X, User, Star, PlusCircle, Inbox } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 
 interface Testimonial {
   id: string;

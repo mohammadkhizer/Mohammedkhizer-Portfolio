@@ -4,7 +4,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { MessageCircle, X, Send, Loader2, User, Bot, AlertCircle } from "lucide-react";
+import { MessageCircle, X, Send, Loader2, User, Bot } from "lucide-react";
 import { chatWithAI } from "@/ai/flows/chat-flow";
 import { cn } from "@/lib/utils";
 import { sanitizeAiInput } from "@/lib/security-client";
@@ -15,11 +15,6 @@ type Message = {
   text: string;
 };
 
-interface ChatError {
-  hasError: boolean;
-  message: string;
-}
-
 export function Chatbot() {
   const [isOpen, setIsOpen] = React.useState(false);
   const [input, setInput] = React.useState("");
@@ -27,7 +22,6 @@ export function Chatbot() {
     { role: "model", text: "Hi! I'm Khizer's AI assistant. How can I help you today?" }
   ]);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [error, setError] = React.useState<ChatError | null>(null);
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
@@ -42,7 +36,6 @@ export function Chatbot() {
 
     const userMessage = input.trim();
     setInput("");
-    setError(null);
     const newMessages: Message[] = [...messages, { role: "user", text: userMessage }];
     setMessages(newMessages);
     setIsLoading(true);
@@ -56,11 +49,7 @@ export function Chatbot() {
         }))
       });
       setMessages([...newMessages, { role: "model", text: response }]);
-    } catch (err) {
-      setError({
-        hasError: true,
-        message: "Unable to reach AI assistant. Please try again.",
-      });
+    } catch {
       setMessages([...newMessages, { role: "model", text: "Sorry, I encountered an error. Please try again." }]);
     } finally {
       setIsLoading(false);
@@ -70,7 +59,7 @@ export function Chatbot() {
   return (
     <div className="fixed bottom-6 right-6 z-40">
       {isOpen ? (
-        <Card className="w-[350px] sm:w-[400px] h-[500px] flex flex-col shadow-2xl animate-in slide-in-from-bottom-5 fade-in duration-300 glass border-primary/20">
+        <Card className="w-[350px] sm:w-[400px] h-[500px] flex flex-col shadow-2xl motion-safe:animate-in motion-safe:slide-in-from-bottom-5 motion-safe:fade-in motion-safe:duration-300 glass border-primary/20">
           <CardHeader className="p-4 border-b flex flex-row items-center justify-between bg-primary/5">
             <div className="flex items-center gap-3">
               <div className="bg-primary p-2 rounded-full text-white">

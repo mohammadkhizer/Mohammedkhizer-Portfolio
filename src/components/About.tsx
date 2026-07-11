@@ -11,6 +11,11 @@ export interface ProfileData {
   professionalSummary: string;
   introductionSummary: string;
   cvDownloadUrl?: string;
+  // Stats counter fields — managed via Admin > Profile Settings
+  yearsOfExperience?: number;
+  projectsCount?: number;
+  certificationsCount?: number;
+  skillsCount?: number;
 }
 
 export function About({ 

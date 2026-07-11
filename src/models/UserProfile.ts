@@ -7,6 +7,10 @@ export interface IUserProfile extends Document {
   cvDownloadUrl: string;
   professionalSummary: string;
   introductionSummary: string;
+  yearsOfExperience?: number;
+  projectsCount?: number;
+  certificationsCount?: number;
+  skillsCount?: number;
   updatedAt: string;
 }
 
@@ -18,6 +22,10 @@ const UserProfileSchema: Schema = new Schema(
     cvDownloadUrl: { type: String, default: '' },
     professionalSummary: { type: String, default: '' },
     introductionSummary: { type: String, default: '' },
+    yearsOfExperience: { type: Number, default: 2 },
+    projectsCount: { type: Number, default: 10 },
+    certificationsCount: { type: Number, default: 8 },
+    skillsCount: { type: Number, default: 15 },
     updatedAt: { type: String, required: true },
   },
   {

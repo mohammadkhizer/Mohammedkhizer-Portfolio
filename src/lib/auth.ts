@@ -3,7 +3,22 @@ import { cookies } from 'next/headers';
 import dbConnect from './mongodb';
 import Admin from '@/models/Admin';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'portfolio-dev-secret-key-12345';
+import crypto from 'crypto';
+
+const getJwtSecret = () => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    if (process.env.NODE_ENV === 'production') {
+      // In production serving, if missing, generate a random secret so it's secure but doesn't crash the build phase.
+      // In serverless, JWT_SECRET must be set to persist session state across different lambdas.
+      return crypto.randomBytes(32).toString('hex');
+    }
+    return 'portfolio-dev-secret-key-12345';
+  }
+  return secret;
+};
+
+const JWT_SECRET = getJwtSecret();
 const COOKIE_NAME = 'admin_session';
 
 export interface JWTPayload {
@@ -77,7 +92,7 @@ export async function setSessionCookie(email: string, uid: string, isAdminUser: 
     cookieStore.set(COOKIE_NAME, token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: 'strict',
       maxAge: expiresIn,
       path: '/',
     });

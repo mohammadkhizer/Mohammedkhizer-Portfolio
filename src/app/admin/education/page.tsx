@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 interface Education {
   id: string;
@@ -18,7 +18,7 @@ interface Education {
   description: string;
 }
 import { Label } from "@/components/ui/label";
-import { Trash2, Plus, Loader2, GraduationCap, Calendar, Pencil, X, MapPin } from "lucide-react";
+import { Trash2, Plus, Loader2, Calendar, Pencil, X, MapPin } from "lucide-react";
 
 export default function EducationManagement() {
   const { toast } = useToast();

@@ -19,6 +19,7 @@ import {
   Settings,
   Mail,
   Menu,
+  Tag,
   X
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -31,6 +32,7 @@ const NAV_ITEMS = [
   { name: "Profile Settings", href: "/admin/profile", icon: Settings },
   { name: "Technical Skills", href: "/admin/skills", icon: Code2 },
   { name: "Projects", href: "/admin/projects", icon: FolderKanban },
+  { name: "Project Categories", href: "/admin/project-categories", icon: Tag },
   { name: "Experience", href: "/admin/experience", icon: Briefcase },
   { name: "Education", href: "/admin/education", icon: GraduationCap },
   { name: "Certifications", href: "/admin/certifications", icon: Award },

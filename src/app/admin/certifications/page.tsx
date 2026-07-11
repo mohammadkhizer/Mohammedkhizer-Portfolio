@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 
 interface Certification {
@@ -69,7 +68,7 @@ export default function CertificationsManagement() {
           description: result.error || "Something went wrong.",
         });
       }
-    } catch (error) {
+    } catch {
       toast({
         variant: "destructive",
         title: "Connection Error",
@@ -114,7 +113,7 @@ export default function CertificationsManagement() {
           description: result.error || "Failed to remove the record.",
         });
       }
-    } catch (error) {
+    } catch {
       toast({
         variant: "destructive",
         title: "Connection Error",

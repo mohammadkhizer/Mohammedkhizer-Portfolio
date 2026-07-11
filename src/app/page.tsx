@@ -29,6 +29,11 @@ export default async function HomePage() {
     professionalSummary: rawProfile.professionalSummary,
     introductionSummary: rawProfile.introductionSummary,
     cvDownloadUrl: rawProfile.cvDownloadUrl,
+    // Stats counter fields — editable via Admin > Profile
+    yearsOfExperience: rawProfile.yearsOfExperience ?? 2,
+    projectsCount: rawProfile.projectsCount ?? 10,
+    certificationsCount: rawProfile.certificationsCount ?? 8,
+    skillsCount: rawProfile.skillsCount ?? 15,
   } : null;
 
 
@@ -48,6 +53,7 @@ export default async function HomePage() {
     liveDemoUrl: p.liveDemoUrl,
     githubRepoUrl: p.githubRepoUrl,
     skillIds: p.skillIds,
+    categorySlug: p.categorySlug,
     createdAt: p.createdAt,
   }));
 
@@ -92,7 +98,9 @@ export default async function HomePage() {
                   <Briefcase className="h-6 w-6" aria-hidden="true" />
                 </div>
                 <div>
-                  <p className="text-2xl md:text-3xl font-black tracking-tight text-primary">2+</p>
+                  <p className="text-2xl md:text-3xl font-black tracking-tight text-primary">
+                    {profileData?.yearsOfExperience ?? 2}+
+                  </p>
                   <p className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest font-bold">Years Experience</p>
                 </div>
               </CardContent>
@@ -103,7 +111,9 @@ export default async function HomePage() {
                   <Code2 className="h-6 w-6" aria-hidden="true" />
                 </div>
                 <div>
-                  <p className="text-2xl md:text-3xl font-black tracking-tight text-accent">10+</p>
+                  <p className="text-2xl md:text-3xl font-black tracking-tight text-accent">
+                    {profileData?.projectsCount ?? 10}+
+                  </p>
                   <p className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest font-bold">Projects Built</p>
                 </div>
               </CardContent>
@@ -114,7 +124,9 @@ export default async function HomePage() {
                   <Award className="h-6 w-6" aria-hidden="true" />
                 </div>
                 <div>
-                  <p className="text-2xl md:text-3xl font-black tracking-tight text-primary">8+</p>
+                  <p className="text-2xl md:text-3xl font-black tracking-tight text-primary">
+                    {profileData?.certificationsCount ?? 8}+
+                  </p>
                   <p className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest font-bold">Certifications</p>
                 </div>
               </CardContent>
@@ -125,7 +137,9 @@ export default async function HomePage() {
                   <Sparkles className="h-6 w-6" aria-hidden="true" />
                 </div>
                 <div>
-                  <p className="text-2xl md:text-3xl font-black tracking-tight text-accent">15+</p>
+                  <p className="text-2xl md:text-3xl font-black tracking-tight text-accent">
+                    {profileData?.skillsCount ?? 15}+
+                  </p>
                   <p className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest font-bold">Tech Stack Entities</p>
                 </div>
               </CardContent>

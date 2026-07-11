@@ -9,7 +9,6 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
-import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 
 export default function LoginPage() {
@@ -111,13 +110,6 @@ export default function LoginPage() {
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Sign In"}
             </Button>
-            
-            <p className="text-center text-sm text-muted-foreground mt-2">
-              Don&apos;t have an account?{" "}
-              <Link href="/admin/signup" className="text-primary hover:underline font-medium">
-                Sign Up
-              </Link>
-            </p>
           </CardFooter>
         </form>
       </Card>

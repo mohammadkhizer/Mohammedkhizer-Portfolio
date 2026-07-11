@@ -6,6 +6,26 @@ import Education from '@/models/Education';
 import Certification from '@/models/Certification';
 import Testimonial from '@/models/Testimonial';
 import UserProfile from '@/models/UserProfile';
+import ProjectCategory from '@/models/ProjectCategory';
+
+
+/**
+ * Fetches project categories from MongoDB server-side.
+ */
+export async function getProjectCategories() {
+  try {
+    await dbConnect();
+    const docs = await ProjectCategory.find().sort({ order: 1, name: 1 }).lean();
+    return docs.map((doc: any) => ({
+      ...doc,
+      _id: doc._id.toString(),
+      id: doc.id || doc._id.toString(),
+    }));
+  } catch (error) {
+    console.error('Error fetching project categories:', error);
+    return [];
+  }
+}
 
 
 /**

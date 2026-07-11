@@ -144,7 +144,7 @@ function log(level: LogLevel, message: string, context?: Record<string, unknown>
 
   // Production: send to analytics for errors and warnings
   if (IS_PRODUCTION && (level === 'error' || level === 'warn')) {
-    sendToAnalytics(entry).catch((err) => {
+    sendToAnalytics(entry).catch(() => {
       // Silently fail - don't log logging errors
     });
   }

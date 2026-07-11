@@ -20,6 +20,14 @@ interface Project {
   liveDemoUrl?: string;
   githubRepoUrl?: string;
   projectImageUrl?: string;
+  categorySlug?: string;
+}
+
+interface ProjectCategory {
+  id: string;
+  name: string;
+  slug: string;
+  order: number;
 }
 import { 
   Trash2, 
@@ -36,15 +44,22 @@ import {
 export default function ProjectsManagement() {
   const { toast } = useToast();
   const { data: projects, isLoading, mutate } = useApiCollection<Project>("/api/v1/projects");
+  const { data: categories } = useApiCollection<ProjectCategory>("/api/v1/project-categories");
   const [title, setTitle] = React.useState("");
   const [description, setDescription] = React.useState("");
   const [techStack, setTechStack] = React.useState("");
   const [demoUrl, setDemoUrl] = React.useState("");
   const [githubUrl, setGithubUrl] = React.useState("");
   const [imageUrl, setImageUrl] = React.useState("https://picsum.photos/seed/project/800/600");
+  const [categorySlug, setCategorySlug] = React.useState("");
   const [editingId, setEditingId] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
   const [csrfToken, setCsrfToken] = React.useState<string | null>(null);
+
+  const sortedCategories = React.useMemo(
+    () => [...(categories || [])].sort((a, b) => a.order - b.order || a.name.localeCompare(b.name)),
+    [categories]
+  );
 
   React.useEffect(() => {
     refreshCsrfToken().then(token => setCsrfToken(token));
@@ -62,6 +77,7 @@ export default function ProjectsManagement() {
     formData.append('demoUrl', demoUrl);
     formData.append('githubUrl', githubUrl);
     formData.append('imageUrl', imageUrl);
+    formData.append('categorySlug', categorySlug);
     if (csrfToken) formData.append('csrfToken', csrfToken);
 
     try {
@@ -81,7 +97,7 @@ export default function ProjectsManagement() {
           description: result.error || "Something went wrong.",
         });
       }
-    } catch (error) {
+    } catch {
       toast({
         variant: "destructive",
         title: "Connection Error",
@@ -99,6 +115,7 @@ export default function ProjectsManagement() {
     setDemoUrl("");
     setGithubUrl("");
     setImageUrl("https://picsum.photos/seed/project/800/600");
+    setCategorySlug("");
     setEditingId(null);
   };
 
@@ -110,6 +127,7 @@ export default function ProjectsManagement() {
     setDemoUrl(project.liveDemoUrl || "");
     setGithubUrl(project.githubRepoUrl || "");
     setImageUrl(project.projectImageUrl || "https://picsum.photos/seed/project/800/600");
+    setCategorySlug(project.categorySlug || "");
   };
 
   const handleDelete = async (id: string, name: string) => {
@@ -130,7 +148,7 @@ export default function ProjectsManagement() {
           description: result.error || "Failed to delete the project.",
         });
       }
-    } catch (error) {
+    } catch {
       toast({
         variant: "destructive",
         title: "Connection Error",
@@ -179,6 +197,26 @@ export default function ProjectsManagement() {
                 <Label htmlFor="image">Image URL</Label>
                 <Input type="url" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="category">Category</Label>
+                <select
+                  id="category"
+                  value={categorySlug}
+                  onChange={(e) => setCategorySlug(e.target.value)}
+                  className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                >
+                  <option value="">— No category —</option>
+                  {sortedCategories.map((cat) => (
+                    <option key={cat.id} value={cat.slug}>{cat.name}</option>
+                  ))}
+                </select>
+                {sortedCategories.length === 0 && (
+                  <p className="text-[11px] text-muted-foreground">
+                    No categories yet.{" "}
+                    <a href="/admin/project-categories" className="underline text-primary">Create one →</a>
+                  </p>
+                )}
+              </div>
               <div className="flex gap-2">
                 <Button type="submit" className="flex-1" disabled={loading}>
                   {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : (editingId ? <Pencil className="h-4 w-4 mr-2" /> : <Plus className="h-4 w-4 mr-2" />)}
@@ -224,6 +262,11 @@ export default function ProjectsManagement() {
                 </CardHeader>
                 <CardContent className="p-4 pt-0 flex-grow">
                   <div className="flex flex-wrap gap-1">
+                    {project.categorySlug && (
+                      <span className="text-[10px] bg-primary/15 text-primary px-2 py-0.5 rounded-full font-semibold">
+                        {sortedCategories.find(c => c.slug === project.categorySlug)?.name || project.categorySlug}
+                      </span>
+                    )}
                     {project.skillIds?.map((skill: string) => (
                       <span key={skill} className="text-[10px] bg-secondary px-2 py-0.5 rounded-full">{skill}</span>
                     ))}

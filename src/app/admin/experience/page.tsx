@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 interface Experience {
   id: string;
@@ -17,7 +17,7 @@ interface Experience {
   description: string;
 }
 import { Label } from "@/components/ui/label";
-import { Trash2, Plus, Loader2, Briefcase, Calendar, Pencil, X } from "lucide-react";
+import { Trash2, Plus, Loader2, Calendar, Pencil, X } from "lucide-react";
 
 export default function ExperienceManagement() {
   const { toast } = useToast();

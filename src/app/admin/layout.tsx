@@ -21,8 +21,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [provisionError, setProvisionError] = React.useState<ProvisionError | null>(null);
 
   const isAuthPage =
-    pathname === "/admin/login" ||
-    pathname === "/admin/signup";
+    pathname === "/admin/login";
 
   React.useEffect(() => {
     if (!isUserLoading && !user && !isAuthPage) {
@@ -39,7 +38,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         throw new Error('Provision failed');
       }
       window.location.reload();
-    } catch (error) {
+    } catch {
       setProvisionError({
         hasError: true,
         message: ERROR_MESSAGES.AUTH_PROVISION_FAILED,

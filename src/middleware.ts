@@ -13,8 +13,7 @@ export function middleware(request: NextRequest) {
   // 1. Protection for /admin routes
   // Allow public admin auth pages (login, signup)
   const isPublicAdminRoute =
-    pathname.startsWith('/admin/login') ||
-    pathname.startsWith('/admin/signup');
+    pathname.startsWith('/admin/login');
 
   if (pathname.startsWith('/admin') && !isPublicAdminRoute) {
     if (!sessionToken) {

@@ -1,6 +1,6 @@
-import { Projects, type Project } from '@/components/Projects';
+import { Projects, type Project, type ProjectCategory } from '@/components/Projects';
 import { Metadata } from 'next';
-import { getProjects } from '@/lib/db';
+import { getProjects, getProjectCategories } from '@/lib/db';
 
 const baseUrl = 'https://mohammedkhizershaikh.netlify.app';
 
@@ -23,7 +23,10 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function ProjectsPage() {
-  const rawProjects = await getProjects();
+  const [rawProjects, rawCategories] = await Promise.all([
+    getProjects(),
+    getProjectCategories(),
+  ]);
 
   const projects: Project[] = rawProjects.map((p: any) => ({
     id: String(p._id || p.id),
@@ -33,7 +36,15 @@ export default async function ProjectsPage() {
     liveDemoUrl: p.liveDemoUrl,
     githubRepoUrl: p.githubRepoUrl,
     skillIds: p.skillIds,
+    categorySlug: p.categorySlug,
     createdAt: p.createdAt,
+  }));
+
+  const categories: ProjectCategory[] = rawCategories.map((c: any) => ({
+    id: String(c._id || c.id),
+    name: c.name,
+    slug: c.slug,
+    order: c.order,
   }));
 
   // WebPage + BreadcrumbList + ItemList JSON-LD.
@@ -104,7 +115,7 @@ export default async function ProjectsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }}
       />
-      <Projects initialData={projects} />
+      <Projects initialData={projects} categories={categories} />
     </main>
   );
 }

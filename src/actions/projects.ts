@@ -31,6 +31,7 @@ export async function manageProject(formData: FormData, editingId: string | null
   const githubUrl = sanitizeInput(formData.get('githubUrl') as string);
   const techStackRaw = formData.get('techStack') as string;
   const techStack = techStackRaw ? techStackRaw.split(',').map(s => sanitizeInput(s.trim())) : [];
+  const categorySlug = sanitizeInput((formData.get('categorySlug') as string) || '');
   
   // 4. Authorization Check
   const authorized = await isAdmin();
@@ -50,6 +51,7 @@ export async function manageProject(formData: FormData, editingId: string | null
     liveDemoUrl: demoUrl || "#",
     githubRepoUrl: githubUrl || "#",
     skillIds: techStack,
+    categorySlug,
     updatedAt: new Date().toISOString()
   };
 

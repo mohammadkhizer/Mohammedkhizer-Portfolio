@@ -63,6 +63,10 @@ export default async function AboutPage() {
         professionalSummary: rawProfile.professionalSummary,
         introductionSummary: rawProfile.introductionSummary,
         cvDownloadUrl: rawProfile.cvDownloadUrl,
+        yearsOfExperience: rawProfile.yearsOfExperience ?? 2,
+        projectsCount: rawProfile.projectsCount ?? 10,
+        certificationsCount: rawProfile.certificationsCount ?? 8,
+        skillsCount: rawProfile.skillsCount ?? 15,
       }
     : null;
 

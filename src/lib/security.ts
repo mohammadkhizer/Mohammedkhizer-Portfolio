@@ -73,7 +73,7 @@ export async function setSecureCookie(
   cookieStore.set(name, value, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax', // Use lax for session cookies to avoid issues with some redirects
+    sameSite: 'strict',
     maxAge,
     path: '/',
   });

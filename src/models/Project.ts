@@ -8,6 +8,7 @@ export interface IProject extends Document {
   liveDemoUrl: string;
   githubRepoUrl: string;
   skillIds: string[];
+  categorySlug: string;  // references ProjectCategory.slug
   createdAt: string;
   updatedAt: string;
 }
@@ -21,6 +22,7 @@ const ProjectSchema: Schema = new Schema(
     liveDemoUrl: { type: String, default: '#' },
     githubRepoUrl: { type: String, default: '#' },
     skillIds: { type: [String], default: [] },
+    categorySlug: { type: String, default: '' },
     createdAt: { type: String, required: true },
     updatedAt: { type: String, required: true },
   },

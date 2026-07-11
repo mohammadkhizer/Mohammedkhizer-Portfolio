@@ -9,7 +9,6 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/com
 import { Label } from "@/components/ui/label";
 import { 
   Trash2, 
-  Plus, 
   Loader2,
   Code2,
   Pencil,

@@ -4,6 +4,7 @@ import * as React from 'react';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ERROR_MESSAGES } from '@/lib/constants';
+import { logError } from '@/lib/logger';
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -28,11 +29,7 @@ export class ErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    // In production, log to monitoring service
-    if (process.env.NODE_ENV === 'production') {
-      // TODO: Integrate with Sentry or similar
-      // Sentry.captureException(error, { extra: errorInfo });
-    }
+    logError(error, { componentStack: errorInfo.componentStack });
   }
 
   handleReset = () => {
