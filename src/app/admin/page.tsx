@@ -13,7 +13,8 @@ import {
   GraduationCap,
   PlusCircle,
   Inbox,
-  Quote
+  Quote,
+  Trophy
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,7 @@ export default function AdminDashboard() {
   const { data: certs } = useApiCollection("/api/v1/certifications");
   const { data: contacts } = useApiCollection("/api/v1/contact");
   const { data: testimonials } = useApiCollection("/api/v1/testimonials");
+  const { data: achievements } = useApiCollection("/api/v1/achievements");
 
   const stats = [
     { name: "Skills", count: skills?.length || 0, icon: Code2, color: "text-blue-500", href: "/admin/skills" },
@@ -33,6 +35,7 @@ export default function AdminDashboard() {
     { name: "Experience", count: experiences?.length || 0, icon: Briefcase, color: "text-orange-500", href: "/admin/experience" },
     { name: "Education", count: education?.length || 0, icon: GraduationCap, color: "text-pink-500", href: "/admin/education" },
     { name: "Certifications", count: certs?.length || 0, icon: Award, color: "text-purple-500", href: "/admin/certifications" },
+    { name: "Achievements", count: achievements?.length || 0, icon: Trophy, color: "text-yellow-500", href: "/admin/achievements" },
     { name: "Testimonials", count: testimonials?.length || 0, icon: Quote, color: "text-indigo-500", href: "/admin/testimonials" },
   ];
 
@@ -43,7 +46,7 @@ export default function AdminDashboard() {
         <p className="text-muted-foreground mt-2">Manage your portfolio content and track submissions.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-6">
         {stats.map((stat) => (
           <Card key={stat.name} className="hover:shadow-md transition-shadow border-primary/10">
             <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">

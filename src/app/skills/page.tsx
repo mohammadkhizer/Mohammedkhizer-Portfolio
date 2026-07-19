@@ -1,6 +1,7 @@
 import { Skills, type Skill } from '@/components/Skills';
 import { Metadata } from 'next';
-import { getSkills } from '@/lib/db';
+import { Certifications, type Certification } from "@/components/Certifications";
+import { getSkills, getCertifications } from '@/lib/db';
 
 const baseUrl = 'https://mohammedkhizershaikh.netlify.app';
 
@@ -23,13 +24,25 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function SkillsPage() {
-  const rawSkills = await getSkills();
+  const [rawSkills, rawCertifications] = await Promise.all([
+    getSkills(),
+    getCertifications(),
+  ]);
 
   const skills: Skill[] = rawSkills.map((s: any) => ({
     id: String(s._id || s.id),
     name: s.name,
     category: s.category,
     proficiency: s.proficiency,
+  }));
+
+  const certifications: Certification[] = rawCertifications.map((c: any) => ({
+    id: String(c._id || c.id),
+    name: c.name,
+    issuingBody: c.issuingBody,
+    imageUrl: c.imageUrl,
+    credentialUrl: c.credentialUrl,
+    date: c.date || c.issueDate,
   }));
 
   // WebPage + BreadcrumbList JSON-LD for the skills page
@@ -81,6 +94,7 @@ export default async function SkillsPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }}
       />
       <Skills initialData={skills} />
+      <Certifications initialData={certifications} />
     </main>
   );
 }

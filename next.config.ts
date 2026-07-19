@@ -80,6 +80,15 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  outputFileTracingRoot: process.cwd(),
+  webpack: (config) => {
+    config.infrastructureLogging = { level: 'error' };
+    config.ignoreWarnings = config.ignoreWarnings || [];
+    config.ignoreWarnings.push({
+      message: /Serializing big strings/i,
+    });
+    return config;
+  },
 };
 
 export default withSentryConfig(nextConfig, {

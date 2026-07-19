@@ -20,6 +20,8 @@ import {
   Mail,
   Menu,
   Tag,
+  Trophy,
+  DatabaseBackup,
   X
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -36,7 +38,9 @@ const NAV_ITEMS = [
   { name: "Experience", href: "/admin/experience", icon: Briefcase },
   { name: "Education", href: "/admin/education", icon: GraduationCap },
   { name: "Certifications", href: "/admin/certifications", icon: Award },
+  { name: "Achievements", href: "/admin/achievements", icon: Trophy },
   { name: "Testimonials", href: "/admin/testimonials", icon: Quote },
+  { name: "Backup & Restore", href: "/admin/backup", icon: DatabaseBackup },
 ];
 
 import { logoutAction } from "@/actions/auth";

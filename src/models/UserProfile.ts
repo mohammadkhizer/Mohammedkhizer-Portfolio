@@ -11,6 +11,7 @@ export interface IUserProfile extends Document {
   projectsCount?: number;
   certificationsCount?: number;
   skillsCount?: number;
+  studentYear?: string;
   updatedAt: string;
 }
 
@@ -26,6 +27,7 @@ const UserProfileSchema: Schema = new Schema(
     projectsCount: { type: Number, default: 10 },
     certificationsCount: { type: Number, default: 8 },
     skillsCount: { type: Number, default: 15 },
+    studentYear: { type: String, default: '3rd' },
     updatedAt: { type: String, required: true },
   },
   {

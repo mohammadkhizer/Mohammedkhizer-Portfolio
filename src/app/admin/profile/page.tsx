@@ -20,6 +20,7 @@ export default function ProfileManagement() {
   const [cvUrl, setCvUrl] = React.useState("");
   const [professionalSummary, setProfessionalSummary] = React.useState("");
   const [introductionSummary, setIntroductionSummary] = React.useState("");
+  const [studentYear, setStudentYear] = React.useState("");
 
   // Stats Counters state variables
   const [yearsOfExperience, setYearsOfExperience] = React.useState<number | string>("");
@@ -36,6 +37,7 @@ export default function ProfileManagement() {
       setCvUrl(profile.cvDownloadUrl || "");
       setProfessionalSummary(profile.professionalSummary || "");
       setIntroductionSummary(profile.introductionSummary || "");
+      setStudentYear(profile.studentYear || "3rd");
       setYearsOfExperience(profile.yearsOfExperience !== undefined ? profile.yearsOfExperience : 2);
       setProjectsCount(profile.projectsCount !== undefined ? profile.projectsCount : 10);
       setCertificationsCount(profile.certificationsCount !== undefined ? profile.certificationsCount : 8);
@@ -57,6 +59,7 @@ export default function ProfileManagement() {
       projectsCount: Number(projectsCount),
       certificationsCount: Number(certificationsCount),
       skillsCount: Number(skillsCount),
+      studentYear,
       updatedAt: new Date().toISOString()
     };
 
@@ -107,7 +110,7 @@ export default function ProfileManagement() {
             <CardDescription>Configure your name, professional tagline, and CV attachment links.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
                 <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Full Name</Label>
                 <Input
@@ -124,6 +127,16 @@ export default function ProfileManagement() {
                   value={tagline}
                   onChange={(e) => setTagline(e.target.value)}
                   placeholder="e.g. Full-Stack Web Developer &amp; AI/ML Enthusiast"
+                  className="bg-background/50 border-primary/20"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">CSE Student Year</Label>
+                <Input
+                  value={studentYear}
+                  onChange={(e) => setStudentYear(e.target.value)}
+                  placeholder="e.g. 3rd"
                   className="bg-background/50 border-primary/20"
                   required
                 />

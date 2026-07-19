@@ -16,6 +16,7 @@ export interface ProfileData {
   projectsCount?: number;
   certificationsCount?: number;
   skillsCount?: number;
+  studentYear?: string;
 }
 
 export function About({ 
@@ -99,7 +100,7 @@ export function About({
                     <GraduationCap className="h-5 w-5 text-primary" aria-hidden="true" />
                   </div>
                   <div>
-                    <h3 className="text-2xl md:text-3xl font-black text-primary">3rd</h3>
+                    <h3 className="text-2xl md:text-3xl font-black text-primary">{profileData?.studentYear || "3rd"}</h3>
                     <p className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest font-bold">Year CSE Student</p>
                   </div>
                 </CardContent>
@@ -110,7 +111,7 @@ export function About({
                     <Award className="h-5 w-5 text-accent" aria-hidden="true" />
                   </div>
                   <div>
-                    <h3 className="text-2xl md:text-3xl font-black text-accent">8+</h3>
+                    <h3 className="text-2xl md:text-3xl font-black text-accent">{profileData?.certificationsCount !== undefined ? `${profileData.certificationsCount}+` : "8+"}</h3>
                     <p className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest font-bold">Certifications</p>
                   </div>
                 </CardContent>

@@ -7,6 +7,7 @@ import Certification from '@/models/Certification';
 import Testimonial from '@/models/Testimonial';
 import UserProfile from '@/models/UserProfile';
 import ProjectCategory from '@/models/ProjectCategory';
+import Achievement from '@/models/Achievement';
 
 
 /**
@@ -169,6 +170,27 @@ export async function getUserProfile() {
   } catch (error) {
     console.error('Error fetching user profile:', error);
     return null;
+  }
+}
+
+/**
+ * Fetches achievements from MongoDB server-side.
+ */
+export async function getAchievements() {
+  try {
+    await dbConnect();
+    const docs = await Achievement.find()
+      .sort({ date: -1 })
+      .lean();
+
+    return docs.map((doc: any) => ({
+      ...doc,
+      _id: doc._id.toString(),
+      id: doc.id || doc._id.toString(),
+    }));
+  } catch (error) {
+    console.error('Error fetching achievements:', error);
+    return [];
   }
 }
 

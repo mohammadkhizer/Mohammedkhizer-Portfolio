@@ -67,6 +67,7 @@ export default async function AboutPage() {
         projectsCount: rawProfile.projectsCount ?? 10,
         certificationsCount: rawProfile.certificationsCount ?? 8,
         skillsCount: rawProfile.skillsCount ?? 15,
+        studentYear: rawProfile.studentYear ?? "3rd",
       }
     : null;
 
