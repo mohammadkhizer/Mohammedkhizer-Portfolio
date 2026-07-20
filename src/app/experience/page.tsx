@@ -1,7 +1,7 @@
 import { Experience, type ExperienceItem, type EducationItem } from "@/components/Experience";
 import { Achievements, type AchievementItem } from "@/components/Achievements";
 import { Metadata } from 'next';
-import { getExperience, getCertifications, getEducation, getAchievements } from "@/lib/db";
+import { getExperience, getEducation, getAchievements } from "@/lib/db";
 
 const baseUrl = 'https://mohammedkhizershaikh.netlify.app';
 
@@ -22,10 +22,9 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function ExperiencePage() {
-  const [rawExperience, rawEducation, rawCertifications, rawAchievements] = await Promise.all([
+  const [rawExperience, rawEducation, rawAchievements] = await Promise.all([
     getExperience(),
     getEducation(),
-    getCertifications(),
     getAchievements(),
   ]);
 

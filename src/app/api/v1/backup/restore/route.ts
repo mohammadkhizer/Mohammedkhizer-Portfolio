@@ -61,7 +61,12 @@ export async function POST(req: NextRequest) {
         }
 
         // Strip Mongoose internal fields that would conflict on re-insert
-        const cleaned = records.map(({ _id, __v, ...rest }: any) => rest);
+        const cleaned = records.map((rec: any) => {
+          const copy = { ...rec };
+          delete copy._id;
+          delete copy.__v;
+          return copy;
+        });
 
         await Model.deleteMany({});
         if (cleaned.length > 0) {

@@ -102,7 +102,12 @@ export async function POST(req: NextRequest) {
           const docs = await sourceCollection.find({}).toArray();
 
           // Strip _id to let Mongoose re-assign
-          const cleaned = docs.map(({ _id, __v, ...rest }: any) => rest);
+          const cleaned = docs.map((doc: any) => {
+            const copy = { ...doc };
+            delete copy._id;
+            delete copy.__v;
+            return copy;
+          });
 
           await model.deleteMany({});
           if (cleaned.length > 0) {

@@ -106,13 +106,13 @@ export default function AchievementsManagement() {
     e.preventDefault();
     if (!title || !issuer || !date || !description) return;
 
-    let finalImages = [...images];
+    const finalImages = [...images];
     if (imageInput.trim()) {
       try { new URL(imageInput.trim()); finalImages.push(imageInput.trim()); } catch { /* ignore */ }
     }
 
     // Auto-commit pending link if both fields have values
-    let finalLinks = [...links];
+    const finalLinks = [...links];
     if (linkLabel.trim() && linkUrl.trim()) {
       try { new URL(linkUrl.trim()); finalLinks.push({ label: linkLabel.trim(), url: linkUrl.trim() }); } catch { /* ignore */ }
     }
