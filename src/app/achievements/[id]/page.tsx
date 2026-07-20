@@ -105,11 +105,11 @@ export default async function AchievementDetailPage({ params }: PageProps) {
         {/* Back Link */}
         <div className="mb-8">
           <Link
-            href="/experience#achievements"
+            href="/about#achievements"
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors duration-200 group"
           >
             <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-            Back to Experience &amp; Education
+            Back to about and achievements
           </Link>
         </div>
 
@@ -128,7 +128,7 @@ export default async function AchievementDetailPage({ params }: PageProps) {
               <Sparkles className="h-3 w-3 animate-pulse" />
               Verified Achievement
             </div>
-            
+
             <h1 className="text-2xl md:text-4xl font-black tracking-tight leading-tight">
               {achievement.title}
             </h1>

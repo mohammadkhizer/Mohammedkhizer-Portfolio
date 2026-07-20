@@ -199,7 +199,7 @@ export function Achievements({
             {(isPreview || initialData.length > 3) && (
               <div className="flex justify-center mt-12">
                 <Link
-                  href="/experience#achievements"
+                  href="/about#achievements"
                   className="inline-flex items-center gap-2 px-8 py-3 rounded-full font-bold text-sm border border-primary/30 text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow hover:shadow-primary/20"
                 >
                   All Achievements <ArrowRight className="h-4 w-4" />

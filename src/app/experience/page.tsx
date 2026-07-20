@@ -1,7 +1,6 @@
 import { Experience, type ExperienceItem, type EducationItem } from "@/components/Experience";
-import { Achievements, type AchievementItem } from "@/components/Achievements";
 import { Metadata } from 'next';
-import { getExperience, getEducation, getAchievements } from "@/lib/db";
+import { getExperience, getEducation } from "@/lib/db";
 
 const baseUrl = 'https://mohammedkhizershaikh.netlify.app';
 
@@ -22,10 +21,9 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function ExperiencePage() {
-  const [rawExperience, rawEducation, rawAchievements] = await Promise.all([
+  const [rawExperience, rawEducation] = await Promise.all([
     getExperience(),
     getEducation(),
-    getAchievements(),
   ]);
 
   const experience: ExperienceItem[] = rawExperience.map((e: any) => ({
@@ -44,17 +42,6 @@ export default async function ExperiencePage() {
     startDate: e.startDate,
     endDate: e.endDate,
     description: e.description,
-  }));
-
-
-
-  const achievements: AchievementItem[] = rawAchievements.map((a: any) => ({
-    id: a.id || String(a._id),
-    title: a.title,
-    issuer: a.issuer,
-    date: a.date,
-    description: a.description,
-    images: a.images || [],
   }));
 
   // JSON-LD for Career and Education page
@@ -107,7 +94,6 @@ export default async function ExperiencePage() {
         </p>
       </div>
       <Experience initialExperiences={experience} initialEducation={education} />
-      <Achievements initialData={achievements} />
     </main>
   );
 }

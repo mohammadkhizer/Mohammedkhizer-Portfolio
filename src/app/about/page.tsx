@@ -1,7 +1,8 @@
 import { About } from '@/components/About';
 import { FAQSection } from '@/components/FAQSection';
+import { Achievements, type AchievementItem } from "@/components/Achievements";
 import { Metadata } from 'next';
-import { getUserProfile } from '@/lib/db';
+import { getUserProfile, getAchievements } from '@/lib/db';
 
 const baseUrl = 'https://mohammedkhizershaikh.netlify.app';
 
@@ -54,7 +55,10 @@ const FAQ_ITEMS = [
 ];
 
 export default async function AboutPage() {
-  const rawProfile = await getUserProfile();
+  const [rawProfile, rawAchievements] = await Promise.all([
+    getUserProfile(),
+    getAchievements(),
+  ]);
 
   const profileData = rawProfile
     ? {
@@ -70,6 +74,15 @@ export default async function AboutPage() {
         studentYear: rawProfile.studentYear ?? "3rd",
       }
     : null;
+
+  const achievements: AchievementItem[] = rawAchievements.map((a: any) => ({
+    id: a.id || String(a._id),
+    title: a.title,
+    issuer: a.issuer,
+    date: a.date,
+    description: a.description,
+    images: a.images || [],
+  }));
 
   // WebPage + BreadcrumbList JSON-LD for this specific page.
   // Cross-references the Person entity defined in the root layout via @id.
@@ -116,6 +129,7 @@ export default async function AboutPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }}
       />
       <About profileData={profileData} />
+      <Achievements initialData={achievements} />
       <FAQSection
         title="Frequently Asked Questions About Mohammed Khizer Shaikh"
         items={FAQ_ITEMS}
