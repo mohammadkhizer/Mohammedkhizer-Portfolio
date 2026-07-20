@@ -7,20 +7,22 @@ import { ArrowRight, Code2, Award, Briefcase, Sparkles, Send } from "lucide-reac
 import { Skills, type Skill } from "@/components/Skills";
 import { Projects, type Project } from "@/components/Projects";
 import { Experience, type ExperienceItem, type EducationItem } from "@/components/Experience";
+import { Achievements, type AchievementItem } from "@/components/Achievements";
 import { Testimonials, type Testimonial } from "@/components/Testimonials";
-import { getProjects, getSkills, getExperience, getEducation, getTestimonials, getUserProfile } from "@/lib/db";
+import { getProjects, getSkills, getExperience, getEducation, getTestimonials, getUserProfile, getAchievements } from "@/lib/db";
 import { Card, CardContent } from "@/components/ui/card";
 
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
-  const [rawProjects, rawSkills, rawExperience, rawEducation, rawTestimonials, rawProfile] = await Promise.all([
+  const [rawProjects, rawSkills, rawExperience, rawEducation, rawTestimonials, rawProfile, rawAchievements] = await Promise.all([
     getProjects(),
     getSkills(),
     getExperience(),
     getEducation(),
     getTestimonials(),
     getUserProfile(),
+    getAchievements(),
   ]);
 
   const profileData = rawProfile ? {
@@ -82,6 +84,15 @@ export default async function HomePage() {
     clientImageUrl: t.clientImageUrl,
     testimonialText: t.testimonialText,
     rating: t.rating,
+  }));
+
+  const achievements: AchievementItem[] = rawAchievements.map((a: any) => ({
+    id: a.id || String(a._id),
+    title: a.title,
+    issuer: a.issuer,
+    date: a.date,
+    description: a.description,
+    images: a.images || [],
   }));
 
   return (
@@ -194,6 +205,13 @@ export default async function HomePage() {
             </Button>
           </div>
         </section>
+
+        {/* Achievements Preview Section */}
+        {achievements.length > 0 && (
+          <section className="space-y-8 md:space-y-12">
+            <Achievements isPreview={true} initialData={achievements} />
+          </section>
+        )}
 
         {/* Testimonials Section */}
         <section className="space-y-8 md:space-y-12">

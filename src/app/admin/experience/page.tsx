@@ -149,9 +149,9 @@ export default function ExperienceManagement() {
                         <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
                           <Calendar className="h-3 w-3" /> {exp.startDate} - {exp.endDate}
                         </div>
-                        <p className="text-sm mt-3 text-muted-foreground leading-relaxed">
+                        <pre className="whitespace-pre-wrap font-sans text-sm mt-3 text-muted-foreground leading-relaxed">
                           {exp.description}
-                        </p>
+                        </pre>
                       </div>
                       <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <Button 

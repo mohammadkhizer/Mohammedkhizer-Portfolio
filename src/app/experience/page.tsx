@@ -50,11 +50,12 @@ export default async function ExperiencePage() {
 
 
   const achievements: AchievementItem[] = rawAchievements.map((a: any) => ({
-    id: String(a._id || a.id),
+    id: a.id || String(a._id),
     title: a.title,
     issuer: a.issuer,
     date: a.date,
     description: a.description,
+    images: a.images || [],
   }));
 
   // JSON-LD for Career and Education page

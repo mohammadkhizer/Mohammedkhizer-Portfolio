@@ -241,7 +241,9 @@ export default function ProjectCategoriesManagement() {
                         </Badge>
                       </div>
                       {cat.description && (
-                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{cat.description}</p>
+                        <pre className="whitespace-pre-wrap font-sans text-xs text-muted-foreground mt-1 line-clamp-2">
+                          {cat.description}
+                        </pre>
                       )}
                     </div>
                   </div>

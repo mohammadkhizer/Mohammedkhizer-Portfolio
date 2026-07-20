@@ -70,7 +70,7 @@ export function Experience({
                       </span>
                       <h3 className="text-lg md:text-xl font-bold leading-tight">{exp.jobTitle}</h3>
                       <p className="text-accent text-sm md:text-base font-semibold">{exp.companyName}</p>
-                      <p className="text-sm md:text-base text-muted-foreground leading-relaxed line-clamp-3 md:line-clamp-none">{exp.description}</p>
+                      <pre className="whitespace-pre-wrap font-sans text-sm md:text-base text-muted-foreground leading-relaxed line-clamp-3 md:line-clamp-none">{exp.description}</pre>
                     </div>
                   </div>
                 ))
@@ -104,7 +104,7 @@ export function Experience({
                       </span>
                       <h3 className="text-lg md:text-xl font-bold leading-tight">{edu.degree}</h3>
                       <p className="text-primary text-sm md:text-base font-semibold">{edu.institutionName}</p>
-                      <p className="text-sm md:text-base text-muted-foreground leading-relaxed line-clamp-3 md:line-clamp-none">{edu.description}</p>
+                      <pre className="whitespace-pre-wrap font-sans text-sm md:text-base text-muted-foreground leading-relaxed line-clamp-3 md:line-clamp-none">{edu.description}</pre>
                     </div>
                   </div>
                 ))

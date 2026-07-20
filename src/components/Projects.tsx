@@ -178,9 +178,9 @@ export function Projects({
                 {/* Card Header */}
                 <CardHeader className="p-5 md:p-6 pb-2">
                   <CardTitle className="text-xl font-bold line-clamp-1">{project.title}</CardTitle>
-                  <CardDescription className="text-xs md:text-sm line-clamp-2">
+                  <pre className="whitespace-pre-wrap font-sans text-xs md:text-sm text-muted-foreground line-clamp-2 leading-relaxed mt-1">
                     {project.description}
-                  </CardDescription>
+                  </pre>
                 </CardHeader>
 
                 {/* Tech Stack Badges */}

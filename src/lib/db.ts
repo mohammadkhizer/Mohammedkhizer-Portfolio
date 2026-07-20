@@ -194,3 +194,30 @@ export async function getAchievements() {
   }
 }
 
+/**
+ * Fetches a single achievement by ID.
+ */
+export async function getAchievement(id: string) {
+  try {
+    await dbConnect();
+    // Try by custom UUID id first, then fall back to MongoDB _id
+    let doc = await Achievement.findOne({ id }).lean();
+    if (!doc) {
+      try {
+        doc = await Achievement.findById(id).lean();
+      } catch {
+        // id is not a valid ObjectId — that's fine, return null
+      }
+    }
+    if (!doc) return null;
+    return {
+      ...doc,
+      _id: doc._id.toString(),
+      id: doc.id || doc._id.toString(),
+    };
+  } catch (error) {
+    console.error(`Error fetching achievement ${id}:`, error);
+    return null;
+  }
+}
+

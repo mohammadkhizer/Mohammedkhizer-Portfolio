@@ -174,9 +174,9 @@ export default function EducationManagement() {
                             </div>
                           )}
                         </div>
-                        <p className="text-sm mt-3 text-muted-foreground leading-relaxed">
+                        <pre className="whitespace-pre-wrap font-sans text-sm mt-3 text-muted-foreground leading-relaxed">
                           {edu.description}
-                        </p>
+                        </pre>
                       </div>
                       <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <Button 

@@ -258,7 +258,9 @@ export default function ProjectsManagement() {
                 </div>
                 <CardHeader className="p-4">
                   <CardTitle className="text-lg">{project.title}</CardTitle>
-                  <CardDescription className="line-clamp-2 text-xs">{project.description}</CardDescription>
+                  <pre className="whitespace-pre-wrap font-sans text-xs text-muted-foreground line-clamp-3 leading-relaxed mt-1">
+                    {project.description}
+                  </pre>
                 </CardHeader>
                 <CardContent className="p-4 pt-0 flex-grow">
                   <div className="flex flex-wrap gap-1">

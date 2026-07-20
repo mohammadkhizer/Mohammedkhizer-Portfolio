@@ -6,6 +6,8 @@ export interface IAchievement extends Document {
   issuer: string;
   date: string;
   description: string;
+  images?: string[];
+  links?: { label: string; url: string }[];
 }
 
 const AchievementSchema: Schema = new Schema(
@@ -15,6 +17,11 @@ const AchievementSchema: Schema = new Schema(
     issuer: { type: String, required: true },
     date: { type: String, required: true },
     description: { type: String, required: true },
+    images: { type: [String], default: [] },
+    links: {
+      type: [{ label: { type: String, required: true }, url: { type: String, required: true } }],
+      default: [],
+    },
   },
   {
     collection: 'achievements'
