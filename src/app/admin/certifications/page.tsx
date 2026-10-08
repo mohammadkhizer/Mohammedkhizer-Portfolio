@@ -137,20 +137,20 @@ export default function CertificationsManagement() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label>Certificate Name</Label>
-                <Input value={name} onChange={(e) => setName(e.target.value)} required disabled={loading} />
+                <Label htmlFor="cert-name">Certificate Name</Label>
+                <Input id="cert-name" name="cert-name" value={name} onChange={(e) => setName(e.target.value)} required disabled={loading} />
               </div>
               <div className="space-y-2">
-                <Label>Issuing Body</Label>
-                <Input value={issuer} onChange={(e) => setIssuer(e.target.value)} required placeholder="e.g. CDAC, IBM, Meta" disabled={loading} />
+                <Label htmlFor="cert-issuer">Issuing Body</Label>
+                <Input id="cert-issuer" name="cert-issuer" value={issuer} onChange={(e) => setIssuer(e.target.value)} required placeholder="e.g. CDAC, IBM, Meta" disabled={loading} />
               </div>
               <div className="space-y-2">
-                <Label>Credential URL</Label>
-                <Input type="url" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://..." disabled={loading} />
+                <Label htmlFor="cert-url">Credential URL</Label>
+                <Input id="cert-url" name="cert-url" type="url" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://..." disabled={loading} />
               </div>
               <div className="space-y-2">
-                <Label>Image URL (Badge/Certificate Image)</Label>
-                <Input type="url" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="https://..." disabled={loading} />
+                <Label htmlFor="cert-image-url">Image URL (Badge/Certificate Image)</Label>
+                <Input id="cert-image-url" name="cert-image-url" type="url" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="https://..." disabled={loading} />
               </div>
               <input type="hidden" name="csrfToken" value={csrfToken || ""} />
               <div className="flex gap-2">

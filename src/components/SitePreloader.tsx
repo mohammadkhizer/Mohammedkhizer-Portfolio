@@ -5,7 +5,7 @@ import * as React from "react";
 const LOADING_STEPS = [
   "Initializing system...",
   "Loading portfolio assets...",
-  "Configuring interactive components...",
+  "Configuring components...",
   "Ready!",
 ];
 
@@ -16,14 +16,24 @@ export function SitePreloader() {
   const [shouldRender, setShouldRender] = React.useState(true);
 
   React.useEffect(() => {
-    // Lock scroll during preloader animation
+    // Only run initial preloader on first site visit / mount
+    // Check if preloader has already completed in this browser session
+    try {
+      if (sessionStorage.getItem("mks_preloader_shown")) {
+        setShouldRender(false);
+        setIsLoading(false);
+        return;
+      }
+    } catch {
+      // Storage unavailable fallback
+    }
+
     document.body.style.overflow = "hidden";
 
-    let intervalId: NodeJS.Timeout;
+    const duration = 1000; // 1s initial entrance sequence
     const startTime = Date.now();
-    const duration = 1600; // 1.6 seconds total loading sequence
 
-    intervalId = setInterval(() => {
+    const intervalId = setInterval(() => {
       const elapsed = Date.now() - startTime;
       const currentProgress = Math.min(100, Math.floor((elapsed / duration) * 100));
 
@@ -41,14 +51,17 @@ export function SitePreloader() {
 
       if (currentProgress >= 100) {
         clearInterval(intervalId);
+        try {
+          sessionStorage.setItem("mks_preloader_shown", "true");
+        } catch {}
+
         setTimeout(() => {
           setIsLoading(false);
           document.body.style.overflow = "unset";
-          // Unmount DOM after fade-out transition finishes
-          setTimeout(() => setShouldRender(false), 700);
-        }, 200);
+          setTimeout(() => setShouldRender(false), 400);
+        }, 100);
       }
-    }, 20);
+    }, 16);
 
     return () => {
       clearInterval(intervalId);
@@ -61,7 +74,7 @@ export function SitePreloader() {
   return (
     <div
       aria-hidden="true"
-      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-background transition-all duration-700 ease-in-out ${
+      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-background transition-all duration-400 ease-in-out ${
         isLoading ? "opacity-100 scale-100" : "opacity-0 scale-105 pointer-events-none"
       }`}
     >
