@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Github, Linkedin, Instagram, Mail, Phone, MapPin, ArrowUpRight, ShieldCheck } from "lucide-react";
+import { LastUpdatedDate } from "@/components/LastUpdatedDate";
 
 export function Footer() {
   const [year, setYear] = React.useState<number | null>(null);
@@ -32,9 +33,12 @@ export function Footer() {
             <p className="text-sm text-muted-foreground max-w-sm leading-relaxed">
               Mohammed Khizer Shaikh is a Full-Stack Web Developer and AI/ML engineer specializing in building high-performance web applications using React, Next.js, Django, and MongoDB.
             </p>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-500/10 text-green-500 text-[10px] font-bold uppercase tracking-wider border border-green-500/20">
-              <ShieldCheck className="h-3.5 w-3.5" />
-              Secure, SSL Protected
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-500/10 text-green-500 text-[10px] font-bold uppercase tracking-wider border border-green-500/20">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                Secure, SSL Protected
+              </div>
+              <LastUpdatedDate date="October 2026" />
             </div>
           </div>
 
@@ -69,8 +73,6 @@ export function Footer() {
               </li>
             </ul>
           </div>
-
-
 
           {/* Contact Details Column */}
           <div className="md:col-span-3 space-y-4">

@@ -5,9 +5,14 @@ export function register() {
     return;
   }
 
+  const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
+  if (!dsn || dsn.includes('examplePublicKey')) {
+    return;
+  }
+
   if (process.env.NEXT_RUNTIME === 'nodejs') {
     Sentry.init({
-      dsn: process.env.NEXT_PUBLIC_SENTRY_DSN || "https://examplePublicKey@o0.ingest.sentry.io/0",
+      dsn,
       tracesSampleRate: 1.0,
       debug: false,
     });
@@ -15,7 +20,7 @@ export function register() {
 
   if (process.env.NEXT_RUNTIME === 'edge') {
     Sentry.init({
-      dsn: process.env.NEXT_PUBLIC_SENTRY_DSN || "https://examplePublicKey@o0.ingest.sentry.io/0",
+      dsn,
       tracesSampleRate: 1.0,
       debug: false,
     });

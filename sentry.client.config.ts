@@ -1,9 +1,13 @@
 import * as Sentry from "@sentry/nextjs";
 
-Sentry.init({
-  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN || "https://examplePublicKey@o0.ingest.sentry.io/0",
-  tracesSampleRate: 1.0,
-  debug: false,
-  replaysOnErrorSampleRate: 1.0,
-  replaysSessionSampleRate: 0.1,
-});
+const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
+
+if (dsn && !dsn.includes("examplePublicKey")) {
+  Sentry.init({
+    dsn,
+    tracesSampleRate: 1.0,
+    debug: false,
+    replaysOnErrorSampleRate: 1.0,
+    replaysSessionSampleRate: 0.1,
+  });
+}

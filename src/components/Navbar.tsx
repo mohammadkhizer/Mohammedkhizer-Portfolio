@@ -67,13 +67,14 @@ export function Navbar() {
                 key={link.name}
                 href={link.href}
                 className={cn(
-                  "text-sm font-bold uppercase tracking-widest transition-colors hover:text-primary",
+                  "text-xs font-bold uppercase tracking-widest transition-colors hover:text-primary",
                   pathname === link.href ? "text-primary" : "text-foreground/70"
                 )}
               >
                 {link.name}
               </Link>
             ))}
+
             <Button
               variant="ghost"
               size="icon"

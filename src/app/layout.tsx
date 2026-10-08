@@ -1,12 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 
-import { ThemeProvider } from '@/components/ThemeProvider';
-import { Navbar } from '@/components/Navbar';
-import { Footer } from '@/components/Footer';
-import { ScrollToTop } from '@/components/ScrollToTop';
-import { Toaster } from '@/components/ui/toaster';
-import { CursorHighlighter } from '@/components/CursorHighlighter';
+import { GlobalLayoutWrapper } from '@/components/GlobalLayoutWrapper';
 import Script from 'next/script';
 import { Inter } from 'next/font/google';
 
@@ -254,7 +249,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" className={`scroll-smooth ${inter.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`scroll-smooth ${inter.variable}`} data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"
@@ -276,16 +271,9 @@ export default function RootLayout({
           `}
         </Script>
 
-        <ThemeProvider>
-          <CursorHighlighter />
-          <Navbar />
-          <div className="pt-20 min-h-screen">
-            {children}
-          </div>
-          <Footer />
-          <ScrollToTop />
-          <Toaster />
-        </ThemeProvider>
+        <GlobalLayoutWrapper>
+          {children}
+        </GlobalLayoutWrapper>
       </body>
     </html>
   );
