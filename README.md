@@ -1,122 +1,126 @@
 # Mohammed Khizer Shaikh — Portfolio
 
-> A production-grade, AI-powered portfolio built with **Next.js 15**, **MongoDB**, and **Google Genkit**.
+> A production-grade, high-performance, security-hardened portfolio built with **Next.js 15 (App Router)**, **MongoDB**, **Tailwind CSS**, and **Google Genkit AI**.
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://mohammedkhizershaikh.netlify.app)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org)
+[![Node.js](https://img.shields.io/badge/Node.js-22-green)](https://nodejs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-06B6D4)](https://tailwindcss.com)
 [![Sentry](https://img.shields.io/badge/Sentry-Monitored-purple)](https://sentry.io)
 
-## 🏗️ Architecture
+---
 
-This portfolio uses a **Server-First** architecture:
+## 🚀 Features & Enhancements
 
-- **Server Components** render all portfolio content (Projects, Skills, Experience) for instant load times and maximum SEO.
-- **MongoDB** handles all data storage and retrieval via Mongoose server-side.
-- **ISR Caching** (`unstable_cache`) with tag-based revalidation provides sub-second page loads with 1-hour data freshness.
-- **Sentry** provides full-stack observability across client, server, and edge runtimes.
-- **Genkit AI** powers intelligent project recommendations with a keyword-match fallback for high availability.
+- **⚡ Site Preloader**: Non-blocking initial site preloader featuring an animated brand logo, glowing aura, and real-time progress bar (`0% → 100%`).
+- **📜 Scroll Progress Bar**: Viewport sticky top bar tracking reading position using GPU-accelerated CSS transforms.
+- **🛡️ 20-Item Security Hardening**:
+  - **CSRF Token Validation**: 32-byte cryptographically secure tokens stored in `HttpOnly`, `SameSite: strict` cookies.
+  - **MongoDB Query Sanitization**: Protection against operator injection attacks (`$gt`, `$eq`).
+  - **SSRF Validation**: Blocks server-side requests targeting private IP ranges (`127.0.0.1`, `10.0.0.0/8`, `169.254.169.254`).
+  - **Webhook Signature Verification**: HMAC SHA-256 verification using constant-time string comparison.
+  - **File Upload Protection**: Validates MIME types, extensions, and file sizes (5MB limit).
+  - **Strict CSP Headers**: Allowlist rules for Google Fonts, Analytics, and Sentry endpoints with `hideSourceMaps: true`.
+- **📊 UTM Parameter Tracking**: Automatic query parameter capture (`utm_source`, `utm_medium`, `utm_campaign`), persistent `sessionStorage` sync, and contact form auto-forwarding.
+- **✉️ Form Success & Error States**: Visual confirmation card with checkmark animations, turnaround expectation notices, and field-level validation error alerts.
+- **⚠️ Confirmation Mode**: Modal confirmation dialogs protecting against accidental form resets or destructive actions.
+- **❓ Expandable FAQ Accordion**: Q&A section with real-time text search, Expand/Collapse All toggle, and inline Schema.org `FAQPage` JSON-LD schema.
+- **♿ Skip to Content & Accessibility**: Keyboard accessible jump link (`href="#main-content"`) targeting `<main id="main-content">` for screen readers.
+- **🕒 Content Freshness Badge**: Dynamic "Last updated" date badge in footer and sub-pages.
+- **🤖 Genkit AI Integration**: Intelligent project recommendation flows with fallback keyword match pipelines.
 
-See [docs/architecture.md](docs/architecture.md) for detailed diagrams.
+---
 
-## 🚀 Getting Started
+## 🏗️ Tech Stack & Architecture
 
-### Prerequisites
+- **Framework**: Next.js 15 (App Router, Server-First Architecture)
+- **Language**: TypeScript 5
+- **Styling**: Tailwind CSS, Vanilla CSS custom scrollbars & micro-interactions
+- **Database**: MongoDB & Mongoose ORM
+- **Authentication**: JWT signed tokens stored in `HttpOnly`, `Secure`, `SameSite: strict` cookies
+- **Observability**: Sentry error tracking & Google Analytics 4
+- **Deployment**: Netlify (Node 22 runtime)
 
-- Node.js >= 18
-- npm >= 9
-- MongoDB database
-- Google AI API key (for Genkit)
-
-### Environment Variables
-
-Copy `.env.example` to `.env` and fill in the values:
-
-```bash
-cp .env.example .env
-```
-
-Required variables:
-
-| Variable | Description |
-|---|---|
-| `MONGO_URI` | MongoDB connection URI |
-| `JWT_SECRET` | Secret key for admin session tokens |
-| `GOOGLE_GENAI_API_KEY` | Google AI API key for Genkit |
-| `NEXT_PUBLIC_SENTRY_DSN` | Sentry DSN for error tracking |
-
-### Installation
-
-```bash
-npm install
-```
-
-### Development
-
-```bash
-npm run dev          # Start Next.js dev server
-npm run genkit:dev   # Start Genkit dev UI
-```
-
-### Production Build
-
-```bash
-npm run build
-npm run start
-```
+---
 
 ## 📁 Project Structure
 
 ```
 src/
-├── ai/                  # Genkit AI flows and configuration
-│   ├── flows/           # AI recommendation flows
-│   └── genkit.ts        # Genkit initialization
-├── app/                 # Next.js App Router pages
+├── actions/                  # Server Actions for secure data mutations
+│   ├── certs.ts
+│   ├── contact.ts
+│   └── projects.ts
+├── ai/                       # Google Genkit AI flows and configuration
+│   ├── flows/                # Recommendation flows
+│   └── genkit.ts
+├── app/                      # Next.js App Router pages
 │   ├── about/
 │   ├── contact/
 │   ├── experience/
 │   ├── projects/
-│   ├── layout.tsx       # Root layout with SEO metadata
-│   ├── loading.tsx      # Global skeleton (Boneyard) preloader
-│   ├── page.tsx         # Home page (Server Component)
-│   ├── sitemap.ts       # Dynamic sitemap generation
-│   └── robots.ts        # SEO robots.txt
-├── components/          # React components
-│   ├── ui/              # shadcn/ui primitives
-│   ├── Hero.tsx
-│   ├── About.tsx
-│   ├── Projects.tsx
-│   ├── Skills.tsx
-│   └── ...
-├── lib/                 # Utilities
-│   ├── db.ts            # Server-side MongoDB queries (cached)
-│   ├── security-client.ts # Input sanitization
-│   └── constants.ts     # Application constants
+│   ├── skills/
+│   ├── globals.css           # Design system tokens & hover utilities
+│   ├── layout.tsx            # Root layout with SEO & Schema.org metadata
+│   ├── loading.tsx           # Global skeleton preloader
+│   └── not-found.tsx         # Redesigned 404 page
+├── components/               # React components
+│   ├── CookieBanner.tsx      # GDPR/CCPA cookie consent banner
+│   ├── FAQSection.tsx        # Expandable FAQ accordion with search
+│   ├── GlobalLayoutWrapper.tsx # Client wrapper for site-wide UI features
+│   ├── ScrollProgressBar.tsx # Top viewport scroll progress indicator
+│   ├── SkipToContent.tsx     # Accessibility skip link
+│   ├── SitePreloader.tsx     # Animated entrance preloader
+│   ├── UTMTracker.tsx        # Client query string capture
+│   └── ui/                   # Primitive UI components
+└── lib/                      # Server & client security utilities
+    ├── auth.ts               # JWT & session handling
+    ├── security.ts           # CSRF, rate limiting, SSRF, & upload validation
+    ├── security-client.ts    # Input sanitization
+    └── utmTracker.ts         # UTM parameter parsing
 ```
 
-## 🔒 Security
+---
 
-- **Zero-Trust Data Access**: All database reads go through Mongoose/MongoDB server-side.
-- **Content Security Policy**: Strict CSP headers block XSS, clickjacking, and data exfiltration.
-- **AI Prompt Hardening**: User inputs are sanitized before reaching LLM prompts, with injection detection.
+## ⚙️ Getting Started
 
-## 📊 Monitoring
+### Prerequisites
 
-- **Sentry**: Client, server, and edge error tracking with session replays.
-- **Google Analytics**: Page views and user engagement tracking.
-- **Performance**: ISR caching, image optimization, and code splitting for Core Web Vitals.
+- **Node.js**: `>= 20.0.0` (Recommended: `22.x`)
+- **MongoDB**: Connection string URI
+- **Resend / Email**: API key (optional for contact form email forwarding)
 
-## 📝 Scripts
+### Environment Setup
 
-| Script | Description |
-|---|---|
-| `npm run dev` | Start development server |
-| `npm run build` | Production build |
-| `npm run start` | Start production server |
-| `npm run lint` | Run ESLint |
-| `npm run typecheck` | Run TypeScript compiler check |
-| `npm run genkit:dev` | Start Genkit development UI |
+Create a `.env` file in the root directory:
+
+```env
+MONGODB_URI=mongodb+srv://user:password@cluster.mongodb.net/portfolio
+JWT_SECRET=your-secure-jwt-secret-key
+NEXT_PUBLIC_SENTRY_DSN=https://your-sentry-dsn@sentry.io/project
+```
+
+### Installation & Development
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Run TypeScript compiler check
+npm run typecheck
+
+# Build for production
+npm run build
+
+# Start production server
+npm run start
+```
+
+---
 
 ## 📄 License
 
