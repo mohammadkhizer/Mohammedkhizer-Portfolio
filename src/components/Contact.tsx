@@ -245,7 +245,7 @@ export function Contact() {
                   aria-label="LinkedIn Profile"
                 >
                   <a
-                    href="https://www.linkedin.com/in/mohammad-khizer-shaikh-14a362275"
+                    href="https://in.linkedin.com/in/mohammed-khizer-shaikh-14a362275"
                     target="_blank"
                     rel="noopener noreferrer me"
                   >

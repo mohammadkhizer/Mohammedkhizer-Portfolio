@@ -64,5 +64,5 @@ export const PORTFOLIO_ASSISTANT_CONFIG = {
   EXPERIENCE: 'Python Developer Intern at Way to Web (Django, Tripboss project)',
   LOCATION: 'Ahmedabad, Gujarat, India',
   EMAIL: 'work.mkhizer@gmail.com',
-  LINKEDIN: 'https://www.linkedin.com/in/mohammad-khizer-shaikh-14a362275',
+  LINKEDIN: 'https://in.linkedin.com/in/mohammed-khizer-shaikh-14a362275',
 } as const;
