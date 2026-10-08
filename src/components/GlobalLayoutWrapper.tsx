@@ -6,7 +6,6 @@ import { SkipToContent } from "@/components/SkipToContent";
 import { ScrollProgressBar } from "@/components/ScrollProgressBar";
 import { UTMTracker } from "@/components/UTMTracker";
 import { CookieBanner } from "@/components/CookieBanner";
-import { FloatingContactButton } from "@/components/FloatingContactButton";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ScrollToTop } from "@/components/ScrollToTop";
@@ -30,7 +29,6 @@ export function GlobalLayoutWrapper({ children }: { children: React.ReactNode })
 
       <Footer />
       <CookieBanner />
-      <FloatingContactButton />
       <ScrollToTop />
       <Toaster />
     </ThemeProvider>

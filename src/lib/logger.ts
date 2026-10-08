@@ -122,25 +122,8 @@ function log(level: LogLevel, message: string, context?: Record<string, unknown>
 
   const entry = formatLogEntry(level, message, context);
 
-  // Development: log to console with formatting
-  if (IS_DEVELOPMENT) {
-    const prefix = `[${entry.timestamp}] [${level.toUpperCase()}]`;
-
-    switch (level) {
-      case 'debug':
-        console.debug(prefix, message, context || '');
-        break;
-      case 'info':
-        console.info(prefix, message, context || '');
-        break;
-      case 'warn':
-        console.warn(prefix, message, context || '');
-        break;
-      case 'error':
-        console.error(prefix, message, context || '');
-        break;
-    }
-  }
+  // Console logging disabled to enforce clean console output
+  // Skip console output
 
   // Production: send to analytics for errors and warnings
   if (IS_PRODUCTION && (level === 'error' || level === 'warn')) {

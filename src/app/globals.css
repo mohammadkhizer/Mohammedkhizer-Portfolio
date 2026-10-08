@@ -57,6 +57,16 @@
     background: linear-gradient(135deg, #ffffff 0%, #fff7ed 100%);
     background-attachment: fixed;
   }
+  a,
+  button,
+  [role="button"],
+  input[type="submit"],
+  input[type="button"],
+  input[type="reset"],
+  select {
+    cursor: pointer !important;
+  }
+
   .dark body {
     background: hsl(var(--background));
   }
