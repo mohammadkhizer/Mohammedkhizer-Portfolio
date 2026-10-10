@@ -4,7 +4,10 @@
 > He specializes in React, Next.js, TypeScript, Python, Django, and MongoDB.
 > Currently pursuing a Bachelor of Engineering in Computer Science at SVGU.
 
+- [Full Detailed LLM Context](https://mohammedkhizershaikh.netlify.app/llms-full.txt): Complete knowledge graph, project catalog, and technical specifications for AI agents.
+
 ## About
+
 
 Mohammed Khizer Shaikh (also known as MK) is a passionate Full-Stack Web Developer and AI/ML enthusiast.
 He builds highly performant, user-centric web applications that bridge complex algorithms with intuitive design.

@@ -4,6 +4,8 @@ import { setCsrfCookie, validateServerCsrfToken, isRateLimited } from '@/lib/sec
 import { sanitizeInput } from '@/lib/utils';
 import dbConnect from '@/lib/mongodb';
 import ContactSubmission from '@/models/ContactSubmission';
+import { sendContactFormNotificationEmail, sendContactAutoReplyEmail } from '@/lib/email-service';
+import { logger } from '@/lib/logger';
 
 /**
  * Refreshes or sets the CSRF token cookie and returns the token to the client.
@@ -54,16 +56,35 @@ export async function submitContactForm(formData: FormData) {
   try {
     await dbConnect();
     
+    const submissionDate = new Date().toISOString();
     await ContactSubmission.create({
       id: crypto.randomUUID(),
       senderName: name,
       senderEmail: email,
       subject: subject || 'No Subject',
       message: message,
-      submissionDate: new Date().toISOString(),
+      submissionDate,
       isRead: false,
       apiVersion: 2 // Updated to server-side action
     });
+
+    // 6. Send Email Notifications (Owner Notification + Sender Auto-Reply)
+    try {
+      await sendContactFormNotificationEmail({
+        name,
+        email,
+        subject: subject || 'No Subject',
+        message,
+        submissionDate,
+      });
+
+      // Send auto-reply to the submitter (non-blocking)
+      sendContactAutoReplyEmail(name, email).catch((err) => {
+        logger.error('Auto-reply email error', { error: String(err) });
+      });
+    } catch (emailError) {
+      logger.error('Failed to send contact email notification', { error: String(emailError) });
+    }
 
     return { success: true };
   } catch (error) {
@@ -71,3 +92,4 @@ export async function submitContactForm(formData: FormData) {
     return { success: false, error: 'Failed to send message. Please try again later.' };
   }
 }
+

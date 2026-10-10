@@ -62,6 +62,42 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
         disallow: ['/api/', '/admin/', '/monitoring/'],
       },
+      // ChatGPT-User: OpenAI live browsing requests
+      {
+        userAgent: 'ChatGPT-User',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/monitoring/'],
+      },
+      // OAI-SearchBot: OpenAI search feature crawler
+      {
+        userAgent: 'OAI-SearchBot',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/monitoring/'],
+      },
+      // ClaudeBot: Anthropic Claude web indexing bot
+      {
+        userAgent: 'ClaudeBot',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/monitoring/'],
+      },
+      // DeepSeek-Bot: DeepSeek AI assistant crawler
+      {
+        userAgent: 'DeepSeek-Bot',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/monitoring/'],
+      },
+      // Cohere-ai: Cohere AI search crawler
+      {
+        userAgent: 'Cohere-ai',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/monitoring/'],
+      },
+      // YouBot: You.com AI Search crawler
+      {
+        userAgent: 'YouBot',
+        allow: '/',
+        disallow: ['/api/', '/admin/', '/monitoring/'],
+      },
       // DuckDuckBot: DuckDuckGo AI answers
       {
         userAgent: 'DuckDuckBot',

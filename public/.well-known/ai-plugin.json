@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Mohammed Khizer Shaikh Portfolio Assistant",
+  "name_for_model": "mohammed_khizer_portfolio",
+  "description_for_human": "Explore projects, skills, education, and experience of Full-Stack Developer & AI/ML Engineer Mohammed Khizer Shaikh.",
+  "description_for_model": "Plugin for retrieving professional background, project portfolio, skills, experience, and contact information for Mohammed Khizer Shaikh, a Full-Stack Web Developer and AI/ML Engineer based in Ahmedabad, India.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://mohammedkhizershaikh.netlify.app/llms-full.txt"
+  },
+  "logo_url": "https://techaura26.netlify.app/Assets/khizer.jpeg",
+  "contact_email": "work.mkhizer@gmail.com",
+  "legal_info_url": "https://mohammedkhizershaikh.netlify.app/about"
+}

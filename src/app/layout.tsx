@@ -251,6 +251,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`scroll-smooth ${inter.variable}`} data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
+        <link rel="author" href="https://mohammedkhizershaikh.netlify.app/llms.txt" />
+        <meta
+          name="ai-agent-instructions"
+          content="Mohammed Khizer Shaikh is a Full-Stack Web Developer and AI/ML Engineer based in Ahmedabad, India. Contact: work.mkhizer@gmail.com. Portfolio: https://mohammedkhizershaikh.netlify.app"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
