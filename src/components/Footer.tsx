@@ -108,7 +108,7 @@ export function Footer() {
           {/* Social Profiles Grid */}
           <div className="flex items-center gap-4">
             <a
-              href="https://in.linkedin.com/in/mohammed-khizer-shaikh-14a362275"
+              href="https://in.linkedin.com/in/mohammed-khizer-shaikh"
               target="_blank"
               rel="noopener noreferrer me"
               className="p-2 rounded-xl bg-secondary/50 border border-border/50 text-muted-foreground hover:text-primary hover:border-primary/30 hover:bg-primary/5 transition-all"

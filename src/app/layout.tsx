@@ -203,7 +203,7 @@ export default function RootLayout({
         nationality: { '@type': 'Country', name: 'India' },
         // sameAs links to authoritative social profiles for identity verification
         sameAs: [
-          'https://in.linkedin.com/in/mohammed-khizer-shaikh-14a362275',
+          'https://in.linkedin.com/in/mohammed-khizer-shaikh',
           'https://github.com/mohammadkhizer',
           'https://www.instagram.com/khizerrrr11/',
         ],
