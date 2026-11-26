@@ -19,14 +19,13 @@ export const metadata: Metadata = {
     icon: '/favicon.ico',
   },
   title: {
-    default: 'Mohammed Khizer Shaikh | Full-Stack Developer & AI/ML Engineer',
+    default: 'Mohammed Khizer Shaikh | Web & Mobile Systems for Businesses',
     template: '%s | Mohammed Khizer Shaikh',
   },
   // Entity-rich description for AI extraction and knowledge graph alignment
   description:
-    'Mohammed Khizer Shaikh is a Full-Stack Web Developer and AI/ML engineer from Ahmedabad, India. Expert in React, Next.js, Python, Django, and MongoDB. View projects, skills, and career timeline.',
+    'Full-Stack Web & Mobile Developer building web and mobile systems for businesses.',
   keywords: [
-    '3rd Year CSE Student',
     'Shaikh Mohammed Khizer',
     'M. khizer',
     'Mohammed Khizer Shaikh',
@@ -39,9 +38,8 @@ export const metadata: Metadata = {
     'Shaikh Khizer',
     'Khizer',
     'Full-Stack Developer',
-    'AI/ML Enthusiast',
-    'AI ML Developer India',
     'Web Development',
+    'Mobile App Development',
     'React Developer',
     'Next.js Developer',
     'Next.js Developer India',
@@ -54,9 +52,7 @@ export const metadata: Metadata = {
     'Portfolio',
     'Ahmedabad Developer',
     'Gujarat Developer',
-    'SVGU CSE Student',
     'Full Stack Developer Portfolio',
-    'Machine Learning Engineer',
   ],
   authors: [{ name: 'Mohammed Khizer Shaikh', url: baseUrl }],
   creator: 'Mohammed Khizer Shaikh',
@@ -72,9 +68,9 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: baseUrl,
-    title: 'Mohammed Khizer Shaikh | Full-Stack Developer & AI/ML Engineer',
+    title: 'Mohammed Khizer Shaikh | Web & Mobile Systems for Businesses',
     description:
-      'Mohammed Khizer Shaikh is a Full-Stack Web Developer and AI/ML engineer from Ahmedabad, India, specializing in React, Next.js, Python, and MongoDB.',
+      'Full-Stack Web & Mobile Developer building web and mobile systems for businesses.',
     siteName: 'Mohammed Khizer Shaikh Portfolio',
     images: [
       {
@@ -82,16 +78,16 @@ export const metadata: Metadata = {
         url: '/opengraph-image',
         width: 1200,
         height: 630,
-        alt: 'Mohammed Khizer Shaikh Full-Stack Developer & AI/ML Engineer Portfolio',
+        alt: 'Mohammed Khizer Shaikh | Web & Mobile Systems for Businesses',
         type: 'image/png',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Mohammed Khizer Shaikh | Full-Stack Developer & AI/ML Engineer',
+    title: 'Mohammed Khizer Shaikh | Web & Mobile Systems for Businesses',
     description:
-      'Full-Stack Developer & AI/ML Engineer specializing in React, Next.js, Python, and Machine Learning. Based in Ahmedabad, India.',
+      'Full-Stack Web & Mobile Developer building web and mobile systems for businesses.',
     creator: '@mkhizershaikh',
     images: ['/opengraph-image'],
   },
@@ -146,9 +142,9 @@ export default function RootLayout({
           url: 'https://techaura26.netlify.app/Assets/khizer.jpeg',
           description: 'Mohammed Khizer Shaikh — Full-Stack Web Developer',
         },
-        jobTitle: 'Full-Stack Web Developer',
+        jobTitle: 'Full-Stack Web & Mobile Developer',
         description:
-          'Mohammed Khizer Shaikh is a Full-Stack Web Developer and AI/ML enthusiast based in Ahmedabad, India, specializing in React, Next.js, Python, Django, and MongoDB. Currently pursuing a Bachelor of Engineering in Computer Science at SVGU.',
+          'Mohammed Khizer Shaikh is a Full-Stack Web & Mobile Developer based in Ahmedabad, India, building web and mobile systems for businesses using React, Next.js, TypeScript, Python, Django, Firebase, and MongoDB.',
         email: 'work.mkhizer@gmail.com',
         telephone: '+91-9510865651',
         address: {
@@ -192,9 +188,8 @@ export default function RootLayout({
           'MongoDB',
           'Node.js',
           'Tailwind CSS',
-          'Machine Learning',
-          'Artificial Intelligence',
           'Full-Stack Web Development',
+          'Mobile App Development',
           'REST API Development',
           'Computer Science',
           'Database Design',
@@ -214,9 +209,9 @@ export default function RootLayout({
         '@type': 'WebSite',
         '@id': `${baseUrl}/#website`,
         url: baseUrl,
-        name: 'Mohammed Khizer Shaikh | Full-Stack Developer Portfolio',
+        name: 'Mohammed Khizer Shaikh | Web & Mobile Systems for Businesses',
         description:
-          'Official portfolio website of Mohammed Khizer Shaikh, a Full-Stack Web Developer and AI/ML engineer from Ahmedabad, India.',
+          'Full-Stack Web & Mobile Developer building web and mobile systems for businesses.',
         author: { '@id': `${baseUrl}/#person` },
         publisher: { '@id': `${baseUrl}/#person` },
         inLanguage: 'en-US',
@@ -235,9 +230,9 @@ export default function RootLayout({
         '@type': 'ProfilePage',
         '@id': `${baseUrl}/#profilepage`,
         url: baseUrl,
-        name: 'Mohammed Khizer Shaikh — Full-Stack Developer & AI/ML Engineer Portfolio',
+        name: 'Mohammed Khizer Shaikh | Web & Mobile Systems for Businesses',
         description:
-          'The official portfolio and professional profile of Mohammed Khizer Shaikh, a Full-Stack Web Developer specializing in React, Next.js, Python, Django, and AI/ML applications.',
+          'Full-Stack Web & Mobile Developer building web and mobile systems for businesses.',
         mainEntity: { '@id': `${baseUrl}/#person` },
         author: { '@id': `${baseUrl}/#person` },
         datePublished: '2024-01-01',
@@ -254,7 +249,7 @@ export default function RootLayout({
         <link rel="author" href="https://mohammedkhizershaikh.netlify.app/llms.txt" />
         <meta
           name="ai-agent-instructions"
-          content="Mohammed Khizer Shaikh is a Full-Stack Web Developer and AI/ML Engineer based in Ahmedabad, India. Contact: work.mkhizer@gmail.com. Portfolio: https://mohammedkhizershaikh.netlify.app"
+          content="Mohammed Khizer Shaikh is a Full-Stack Web & Mobile Developer building web and mobile systems for businesses. Based in Ahmedabad, India. Contact: work.mkhizer@gmail.com. Portfolio: https://mohammedkhizershaikh.netlify.app"
         />
         <script
           type="application/ld+json"

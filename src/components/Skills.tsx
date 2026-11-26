@@ -16,13 +16,7 @@ const ICON_MAP: Record<string, React.ReactNode> = {
   "Specialization": <Sparkles className="h-6 w-6 text-accent" />,
 };
 
-const PROFICIENCY_MAP: Record<string, number> = {
-  "Expert": 100,
-  "Advanced": 85,
-  "Intermediate": 70,
-  "Basic": 50,
-};
-
+const EXCLUDED_SKILLS = new Set(['pc building', 'raspberry pi']);
 
 export interface Skill {
   id: string;
@@ -49,32 +43,26 @@ export function Skills({
       title: string;
       icon: React.ReactNode;
       skills: string[];
-      proficiencyTotal: number;
-      count: number;
     }
 
     const groups: Record<string, GroupData> = {};
     
     skills.forEach((skill) => {
+      if (EXCLUDED_SKILLS.has(skill.name.trim().toLowerCase())) {
+        return;
+      }
       const category = skill.category || "General";
       if (!groups[category]) {
         groups[category] = {
           title: category,
           icon: ICON_MAP[category] || <Code2 className="h-6 w-6 text-primary" />,
           skills: [],
-          proficiencyTotal: 0,
-          count: 0,
         };
       }
       groups[category].skills.push(skill.name);
-      groups[category].proficiencyTotal += PROFICIENCY_MAP[skill.proficiency] || 85;
-      groups[category].count += 1;
     });
 
-    return Object.values(groups).map((group) => ({
-      ...group,
-      proficiency: Math.round(group.proficiencyTotal / group.count),
-    }));
+    return Object.values(groups).filter((group) => group.skills.length > 0);
   }, [skills]);
 
   return (
@@ -108,26 +96,13 @@ export function Skills({
                   </div>
                   <CardTitle className="text-lg md:text-xl font-bold">{category.title}</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-6 p-5 md:p-6 pt-2">
+                <CardContent className="p-5 md:p-6 pt-2">
                   <div className="flex flex-wrap gap-2">
                     {category.skills.map((skill: string) => (
                       <Badge key={skill} variant="secondary" className="bg-secondary/50 text-[10px] md:text-xs py-0.5 px-3 rounded-full font-medium">
                         {skill}
                       </Badge>
                     ))}
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">
-                      <span>Group Proficiency</span>
-                      <span className="text-primary">{category.proficiency}%</span>
-                    </div>
-                    <div className="h-1.5 md:h-2 w-full bg-secondary rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-primary shadow-[0_0_10px_rgba(var(--primary),0.3)]"
-                        style={{ width: `${category.proficiency}%` }}
-                      />
-                    </div>
                   </div>
                 </CardContent>
               </Card>

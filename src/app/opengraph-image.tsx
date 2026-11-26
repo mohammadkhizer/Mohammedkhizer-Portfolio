@@ -4,7 +4,7 @@ import { ImageResponse } from 'next/og';
 // Next.js automatically serves this at /opengraph-image (used in layout.tsx metadata).
 // Using Edge runtime for fastest cold-start — important for social crawlers.
 export const runtime = 'edge';
-export const alt = 'Mohammed Khizer Shaikh — Full-Stack Developer & AI/ML Engineer';
+export const alt = 'Mohammed Khizer Shaikh | Web & Mobile Systems for Businesses';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -95,7 +95,7 @@ export default function OpenGraphImage() {
             letterSpacing: '0.5px',
           }}
         >
-          Full-Stack Developer &amp; AI/ML Engineer
+          Full-Stack Web &amp; Mobile Developer
         </div>
 
         {/* Tech badges */}

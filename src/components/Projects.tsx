@@ -2,10 +2,11 @@
 
 import * as React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Github, LayoutGrid, Layers } from "lucide-react";
+import { ArrowRight, ExternalLink, Github, LayoutGrid, Layers } from "lucide-react";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 export interface Project {
@@ -72,9 +73,9 @@ export function Projects({
               </h1>
             )}
             <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto md:mx-0 leading-relaxed">
-              Practical engineering solutions applying full-stack web development, Artificial Intelligence, machine
-              learning integrations, and backend architectures. Each project is structured to document the specific
-              technical problem, system architecture, selected tech stack, and key performance results.
+              Practical engineering solutions applying full-stack web development, mobile applications, and scalable
+              backend architectures. Each project documents the problem, what was built, the selected tech stack, and
+              key outcomes.
             </p>
           </div>
         </div>
@@ -228,6 +229,12 @@ export function Projects({
                       </Button>
                     )}
                   </div>
+                  <Link
+                    href={`/projects/${project.id}`}
+                    className="text-[10px] font-black uppercase tracking-widest text-primary/80 hover:text-primary flex items-center gap-1 transition-colors"
+                  >
+                    Read More <ArrowRight className="h-3 w-3" aria-hidden="true" />
+                  </Link>
                 </CardFooter>
               </Card>
             ))}

@@ -3,54 +3,57 @@ import { FAQSection } from '@/components/FAQSection';
 import { Achievements, type AchievementItem } from "@/components/Achievements";
 import { Metadata } from 'next';
 import { getUserProfile, getAchievements } from '@/lib/db';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
 
 const baseUrl = 'https://mohammedkhizershaikh.netlify.app';
 
 // Entity-rich title and description — includes real technology names and location
 // for knowledge graph alignment and AI extraction
 export const metadata: Metadata = {
-  title: 'About Mohammed Khizer Shaikh — Full-Stack Developer & AI/ML Enthusiast',
+  title: 'About Mohammed Khizer Shaikh — Full-Stack Web & Mobile Developer',
   description:
-    'Mohammed Khizer Shaikh is a Full-Stack Web Developer and AI/ML enthusiast currently pursuing a B.E. in Computer Science at SVGU, Ahmedabad. He specializes in React, Next.js, Python, Django, and MongoDB.',
+    'Mohammed Khizer Shaikh is a Full-Stack Web & Mobile Developer based in Ahmedabad, Gujarat, India, specializing in React, Next.js, TypeScript, Python, Django, and MongoDB.',
   alternates: {
     canonical: `${baseUrl}/about`,
   },
   openGraph: {
-    title: 'About Mohammed Khizer Shaikh — Full-Stack Developer',
+    title: 'About Mohammed Khizer Shaikh — Full-Stack Web & Mobile Developer',
     description:
-      'Learn about Mohammed Khizer Shaikh, a Full-Stack Developer and AI/ML enthusiast from Ahmedabad, India. Discover his educational background, skills, and technical passion.',
+      'Learn about Mohammed Khizer Shaikh, a Full-Stack Web & Mobile Developer from Ahmedabad, India building custom web and mobile systems for businesses.',
     url: `${baseUrl}/about`,
   },
 };
 
 export const dynamic = 'force-dynamic';
 
-// FAQ content — Answer-first structure for AI citation and Google AI Overviews
+// FAQ content — Answer-first structure
 const FAQ_ITEMS = [
   {
     question: 'Who is Mohammed Khizer Shaikh?',
     answer:
-      'Mohammed Khizer Shaikh is a Full-Stack Web Developer and AI/ML enthusiast based in Ahmedabad, Gujarat, India. He is currently pursuing a Bachelor of Engineering in Computer Science at Sumandeep Vidyapeeth General University (SVGU) and holds a Diploma in AI/ML from LJ University. He specializes in building high-performance web applications using React, Next.js, Python, and MongoDB.',
+      'Mohammed Khizer Shaikh is a Full-Stack Web & Mobile Developer based in Ahmedabad, Gujarat, India. He specializes in building high-performance web and mobile systems using React, Next.js, TypeScript, Python, Django, Firebase, and MongoDB.',
   },
   {
     question: 'What technologies does Mohammed Khizer Shaikh specialize in?',
     answer:
-      'Mohammed Khizer Shaikh specializes in React, Next.js, TypeScript, Python, Django, MongoDB, Node.js, and Tailwind CSS for full-stack web development. In the AI/ML domain, he works with machine learning algorithms, Python AI/ML libraries, and AI-powered application development. He has professional experience from a Python Developer internship at Way to Web.',
+      'Mohammed Khizer Shaikh specializes in React, Next.js, TypeScript, Python, Django, MongoDB, Firebase, Node.js, and Tailwind CSS for full-stack web and mobile application development.',
   },
   {
-    question: 'Is Mohammed Khizer Shaikh available for freelance projects?',
+    question: 'Is Mohammed Khizer Shaikh available for project engagements?',
     answer:
-      'Yes, Mohammed Khizer Shaikh is open to freelance web development projects, full-time opportunities, and technical collaborations. He can be reached at work.mkhizer@gmail.com or via the contact form on this website. He is particularly interested in full-stack web development, AI/ML integration projects, and innovative technology solutions.',
+      'Yes, Mohammed Khizer Shaikh is taking on new custom web and mobile development projects. He can be reached at work.mkhizer@gmail.com or via the contact form on this website.',
   },
   {
     question: 'Where did Mohammed Khizer Shaikh study?',
     answer:
-      'Mohammed Khizer Shaikh is currently studying for a Bachelor of Engineering in Computer Science (B.E. CSE) at Sumandeep Vidyapeeth General University (SVGU) in Ahmedabad, Gujarat, India. He also completed a Diploma in Artificial Intelligence and Machine Learning (AI/ML) from LJ University, Ahmedabad.',
+      'Mohammed Khizer Shaikh is pursuing a Bachelor of Engineering in Computer Science (B.E. CSE) at Sumandeep Vidyapeeth General University (SVGU) in Ahmedabad, Gujarat, India, and completed a technical diploma from LJ University, Ahmedabad.',
   },
   {
-    question: 'What kind of projects has Mohammed Khizer Shaikh built?',
+    question: 'What kind of systems has Mohammed Khizer Shaikh built?',
     answer:
-      "Mohammed Khizer Shaikh has built full-stack web applications, AI-powered assistants and chatbots, Django REST API backends, event management platforms, and portfolio websites. He worked on the Tripboss travel platform at Way to Web. You can explore all his projects at mohammedkhizershaikh.netlify.app/projects.",
+      'Mohammed Khizer Shaikh has built inventory and billing systems, event registration platforms, business websites with admin panels, and mobile applications. You can explore his projects at mohammedkhizershaikh.netlify.app/projects.',
   },
 ];
 
@@ -67,7 +70,6 @@ export default async function AboutPage() {
         professionalSummary: rawProfile.professionalSummary,
         introductionSummary: rawProfile.introductionSummary,
         cvDownloadUrl: rawProfile.cvDownloadUrl,
-        yearsOfExperience: rawProfile.yearsOfExperience ?? 2,
         projectsCount: rawProfile.projectsCount ?? 10,
         certificationsCount: rawProfile.certificationsCount ?? 8,
         skillsCount: rawProfile.skillsCount ?? 15,
@@ -93,9 +95,9 @@ export default async function AboutPage() {
         '@type': 'WebPage',
         '@id': `${baseUrl}/about#webpage`,
         url: `${baseUrl}/about`,
-        name: 'About Mohammed Khizer Shaikh — Full-Stack Developer & AI/ML Enthusiast',
+        name: 'About Mohammed Khizer Shaikh — Full-Stack Web & Mobile Developer',
         description:
-          'Mohammed Khizer Shaikh is a Full-Stack Web Developer and AI/ML enthusiast from Ahmedabad, India, specializing in React, Next.js, Python, Django, and MongoDB.',
+          'Mohammed Khizer Shaikh is a Full-Stack Web & Mobile Developer from Ahmedabad, India, specializing in React, Next.js, Python, Django, and MongoDB.',
         inLanguage: 'en-US',
         isPartOf: { '@id': `${baseUrl}/#website` },
         author: { '@id': `${baseUrl}/#person` },
@@ -128,7 +130,74 @@ export default async function AboutPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }}
       />
-      <About profileData={profileData} />
+
+      {/* Moved Hero Section at the top of About */}
+      <section
+        aria-label="About — Introduction"
+        className="relative overflow-hidden pt-10 pb-20 md:pt-16 md:pb-24"
+      >
+        <div className="absolute top-1/4 left-1/4 w-72 h-72 md:w-96 md:h-96 bg-primary/10 rounded-full blur-[80px] md:blur-[120px] -z-10 animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-72 h-72 md:w-96 md:h-96 bg-accent/10 rounded-full blur-[80px] md:blur-[120px] -z-10 animate-pulse delay-700" />
+
+        <div className="container mx-auto px-4 sm:px-6 text-center max-w-4xl space-y-6 md:space-y-8 motion-safe:animate-fade-in-up">
+          {/* Pill badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-wider uppercase border border-primary/20">
+            Mohammed Khizer Shaikh &bull; Gujarat, India
+          </div>
+
+          {/* Headline with last line in orange */}
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tight leading-[1.1]">
+            I build systems that save businesses{' '}
+            <span className="block text-primary">hours every week.</span>
+          </h1>
+
+          {/* Subline */}
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground font-medium max-w-2xl mx-auto leading-relaxed">
+            Web and mobile apps for businesses across industries.
+          </p>
+
+          {/* Chips */}
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+            {[
+              'End-to-end custom systems',
+              'Clean, maintainable architecture',
+              '30 days dedicated post-launch support',
+            ].map((chip) => (
+              <span
+                key={chip}
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-secondary/50 border border-border/50 text-xs md:text-sm font-medium text-foreground/90"
+              >
+                <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0" aria-hidden="true" />
+                {chip}
+              </span>
+            ))}
+          </div>
+
+          {/* Two CTA Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+            <Button
+              size="lg"
+              className="w-full sm:w-auto px-8 rounded-full text-base font-bold shadow-lg shadow-primary/20"
+              asChild
+            >
+              <Link href="/contact" className="flex items-center gap-2">
+                Discuss your project
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="w-full sm:w-auto px-8 rounded-full text-base font-bold"
+              asChild
+            >
+              <Link href="/projects">See my work</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      <About profileData={profileData} headingAs="h2" />
       <Achievements initialData={achievements} />
       <FAQSection
         title="Frequently Asked Questions About Mohammed Khizer Shaikh"

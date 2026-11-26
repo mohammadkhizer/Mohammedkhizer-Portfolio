@@ -16,6 +16,15 @@ export interface Testimonial {
   rating?: number;
 }
 
+// {{TODO}}: Replace placeholder values with a real quote from an unrelated client
+const PLACEHOLDER_TESTIMONIAL: Testimonial = {
+  id: 'placeholder-client-2',
+  clientName: '{{TODO: NAME}}',
+  clientTitle: '{{TODO: ROLE}}, {{TODO: BUSINESS}}',
+  testimonialText: '{{TODO: QUOTE}}',
+  rating: 5,
+};
+
 export function Testimonials({ 
   isPreview = false,
   initialData = []
@@ -26,7 +35,9 @@ export function Testimonials({
   const testimonials = initialData;
   const isLoading = false;
 
-  const displayTestimonials = isPreview ? testimonials.slice(0, 3) : testimonials;
+  const displayTestimonials = isPreview
+    ? [...testimonials.slice(0, 2), PLACEHOLDER_TESTIMONIAL]
+    : testimonials;
 
 
   if (!isLoading && (!displayTestimonials || displayTestimonials.length === 0)) {
@@ -46,7 +57,7 @@ export function Testimonials({
           </h2>
           <div className="w-16 md:w-24 h-2 bg-primary rounded-full mx-auto" />
           <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto pt-4 font-medium">
-            Trusted by founders and tech leaders across the industry for delivering exceptional technical solutions.
+            Real feedback from clients I&apos;ve built for.
           </p>
         </div>
 
@@ -55,7 +66,11 @@ export function Testimonials({
             <Loader2 className="h-10 w-10 animate-spin text-primary" />
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div
+            className={`grid grid-cols-1 md:grid-cols-2 ${
+              displayTestimonials.length >= 3 ? 'lg:grid-cols-3' : 'max-w-5xl mx-auto'
+            } gap-8`}
+          >
             {displayTestimonials?.map((testimonial) => (
               <Card key={testimonial.id} className="glass border border-border/40 shadow-none bg-secondary/5 relative overflow-hidden flex flex-col pt-12 pb-8">
                 <div className="absolute -top-4 -left-2 text-primary/10 select-none">

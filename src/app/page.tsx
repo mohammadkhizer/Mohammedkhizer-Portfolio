@@ -1,82 +1,28 @@
-
 import { Hero } from "@/components/Hero";
-import { About } from "@/components/About";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { ArrowRight, Code2, Award, Briefcase, Sparkles, Send } from "lucide-react";
-import { Skills, type Skill } from "@/components/Skills";
-import { Projects, type Project } from "@/components/Projects";
-import { Experience, type ExperienceItem, type EducationItem } from "@/components/Experience";
-import { Achievements, type AchievementItem } from "@/components/Achievements";
+import { Services } from "@/components/Services";
+import { HowIWork } from "@/components/HowIWork";
 import { Testimonials, type Testimonial } from "@/components/Testimonials";
-import { getProjects, getSkills, getExperience, getEducation, getTestimonials, getUserProfile, getAchievements } from "@/lib/db";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import Link from "next/link";
+import { Code2, Award, ShieldCheck, Sparkles, Send } from "lucide-react";
+import { getTestimonials, getUserProfile } from "@/lib/db";
 
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
-  const [rawProjects, rawSkills, rawExperience, rawEducation, rawTestimonials, rawProfile, rawAchievements] = await Promise.all([
-    getProjects(),
-    getSkills(),
-    getExperience(),
-    getEducation(),
+  const [rawTestimonials, rawProfile] = await Promise.all([
     getTestimonials(),
     getUserProfile(),
-    getAchievements(),
   ]);
 
   const profileData = rawProfile ? {
-    fullName: rawProfile.fullName,
-    tagline: rawProfile.tagline,
-    professionalSummary: rawProfile.professionalSummary,
-    introductionSummary: rawProfile.introductionSummary,
-    cvDownloadUrl: rawProfile.cvDownloadUrl,
-    // Stats counter fields — editable via Admin > Profile
-    yearsOfExperience: rawProfile.yearsOfExperience ?? 2,
     projectsCount: rawProfile.projectsCount ?? 10,
     certificationsCount: rawProfile.certificationsCount ?? 8,
     skillsCount: rawProfile.skillsCount ?? 15,
   } : null;
 
-
-  // Serialize to plain objects that are safe to pass to client components
-  const skills: Skill[] = rawSkills.map((s: any) => ({
-    id: String(s._id || s.id),
-    name: s.name,
-    category: s.category,
-    proficiency: s.proficiency,
-  }));
-
-  const projects: Project[] = rawProjects.map((p: any) => ({
-    id: String(p._id || p.id),
-    title: p.title,
-    description: p.description,
-    projectImageUrl: p.projectImageUrl,
-    liveDemoUrl: p.liveDemoUrl,
-    githubRepoUrl: p.githubRepoUrl,
-    skillIds: p.skillIds,
-    categorySlug: p.categorySlug,
-    createdAt: p.createdAt,
-  }));
-
-  const experience: ExperienceItem[] = rawExperience.map((e: any) => ({
-    id: String(e._id || e.id),
-    jobTitle: e.jobTitle,
-    companyName: e.companyName,
-    startDate: e.startDate,
-    endDate: e.endDate,
-    description: e.description,
-  }));
-
-  const education: EducationItem[] = rawEducation.map((e: any) => ({
-    id: String(e._id || e.id),
-    degree: e.degree,
-    institutionName: e.institutionName,
-    startDate: e.startDate,
-    endDate: e.endDate,
-    description: e.description,
-  }));
-
+  // Serialize to plain objects safe to pass to client components
   const testimonials: Testimonial[] = rawTestimonials.map((t: any) => ({
     id: String(t._id || t.id),
     clientName: t.clientName,
@@ -86,33 +32,27 @@ export default async function HomePage() {
     rating: t.rating,
   }));
 
-  const achievements: AchievementItem[] = rawAchievements.map((a: any) => ({
-    id: a.id || String(a._id),
-    title: a.title,
-    issuer: a.issuer,
-    date: a.date,
-    description: a.description,
-    images: a.images || [],
-  }));
-
   return (
     <main className="overflow-x-hidden">
+      {/* a) Hero */}
       <Hero />
-      
-      <div className="container mx-auto px-4 sm:px-6 space-y-16 md:space-y-32 pb-24">
-        {/* Stats Bar Section — High-Value Facts for AI Crawlers */}
+
+      <div className="container mx-auto px-4 sm:px-6 space-y-16 md:space-y-28 pb-24">
+        {/* Stats Row */}
         <section aria-label="Key professional metrics" className="pt-4">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             <Card className="glass border-border/40 bg-secondary/5">
               <CardContent className="p-6 flex items-center gap-4">
                 <div className="p-3 bg-primary/10 rounded-xl text-primary shrink-0">
-                  <Briefcase className="h-6 w-6" aria-hidden="true" />
+                  <ShieldCheck className="h-6 w-6" aria-hidden="true" />
                 </div>
                 <div>
                   <p className="text-2xl md:text-3xl font-black tracking-tight text-primary">
-                    {profileData?.yearsOfExperience ?? 2}+
+                    30 Days
                   </p>
-                  <p className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest font-bold">Years Experience</p>
+                  <p className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest font-bold">
+                    Post-launch Support
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -158,83 +98,37 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* About Section */}
-        <section className="space-y-8 md:space-y-12">
-          <About isPreview={true} profileData={profileData} />
-          <div className="flex justify-center px-4">
-            <Button asChild variant="outline" className="w-full sm:w-auto rounded-full h-12 px-8">
-              <Link href="/about" className="flex items-center justify-center gap-2">
-                More About Me <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-        </section>
+        {/* b) Services */}
+        <Services />
 
-        {/* Skills Section */}
-        <section className="space-y-8 md:space-y-12">
-          <Skills isPreview={true} initialData={skills} />
-          <div className="flex justify-center px-4">
-            <Button asChild variant="outline" className="w-full sm:w-auto rounded-full h-12 px-8">
-              <Link href="/skills" className="flex items-center justify-center gap-2">
-                Full Tech Stack <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-        </section>
+        {/* c) How I Work */}
+        <HowIWork />
 
-        {/* Projects Section */}
-        <section className="space-y-8 md:space-y-12">
-          <Projects isPreview={true} initialData={projects} />
-          <div className="flex justify-center px-4">
-            <Button asChild variant="outline" className="w-full sm:w-auto rounded-full h-12 px-8">
-              <Link href="/projects" className="flex items-center justify-center gap-2">
-                All Portfolio Projects <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-        </section>
-
-        {/* Experience & Education Section */}
-        <section className="space-y-8 md:space-y-12">
-          <Experience isPreview={true} initialExperiences={experience} initialEducation={education} />
-          <div className="flex justify-center px-4">
-            <Button asChild variant="outline" className="w-full sm:w-auto rounded-full h-12 px-8">
-              <Link href="/experience" className="flex items-center justify-center gap-2">
-                Career Timeline <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-        </section>
-
-        {/* Achievements Preview Section */}
-        {achievements.length > 0 && (
-          <section className="space-y-8 md:space-y-12">
-            <Achievements isPreview={true} initialData={achievements} />
-          </section>
-        )}
-
-        {/* Testimonials Section */}
-        <section className="space-y-8 md:space-y-12">
-          <Testimonials isPreview={true} initialData={testimonials} />
-        </section>
-
-        {/* Contact CTA Section — Essential Internal Linking for Conversion & GEO */}
-        <section aria-labelledby="cta-heading" className="py-12 border-t border-border/20">
+        {/* d) Closing CTA Band */}
+        <section aria-labelledby="cta-heading" className="py-8">
           <div className="glass border border-border/40 rounded-3xl p-8 md:p-12 text-center space-y-6 max-w-4xl mx-auto">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-primary/10 text-primary text-[10px] md:text-xs font-bold uppercase tracking-widest border border-primary/20">
+              Taking on new projects
+            </div>
             <h2 id="cta-heading" className="text-3xl md:text-4xl font-extrabold tracking-tight">
               Let&apos;s Build Something <span className="text-primary">Exceptional</span> Together
             </h2>
             <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              If you are seeking a dedicated full-stack developer who bridges the gap between clean, performant frontend user interfaces and robust, scalable backend APIs, let&apos;s connect and discuss your project.
+              Need a custom web or mobile system built cleanly from start to finish? Let&apos;s talk through your requirements and scope.
             </p>
             <div className="flex justify-center pt-4">
               <Button asChild size="lg" className="rounded-full px-8 font-bold shadow-lg shadow-primary/20 h-12">
                 <Link href="/contact" className="flex items-center gap-2">
-                  Get in Touch <Send className="h-4 w-4" />
+                  Discuss your project <Send className="h-4 w-4" aria-hidden="true" />
                 </Link>
               </Button>
             </div>
           </div>
+        </section>
+
+        {/* e) Testimonials (LAST section before footer) */}
+        <section className="space-y-8 md:space-y-12">
+          <Testimonials isPreview={true} initialData={testimonials} />
         </section>
       </div>
     </main>

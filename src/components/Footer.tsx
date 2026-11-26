@@ -31,7 +31,7 @@ export function Footer() {
               MK<span className="text-primary">.</span>
             </Link>
             <p className="text-sm text-muted-foreground max-w-sm leading-relaxed">
-              Mohammed Khizer Shaikh is a Full-Stack Web Developer and AI/ML engineer specializing in building high-performance web applications using React, Next.js, Django, and MongoDB.
+              Full-Stack Web &amp; Mobile Developer building web and mobile systems for businesses.
             </p>
             <div className="flex flex-wrap items-center gap-2">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-500/10 text-green-500 text-[10px] font-bold uppercase tracking-wider border border-green-500/20">

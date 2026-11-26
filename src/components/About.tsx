@@ -21,12 +21,15 @@ export interface ProfileData {
 
 export function About({ 
   isPreview = false,
-  profileData
+  profileData,
+  headingAs
 }: { 
   isPreview?: boolean;
   profileData?: ProfileData | null;
+  headingAs?: 'h1' | 'h2';
 }) {
   const profileImg = PlaceHolderImages.find(img => img.id === 'profile-pic');
+  const useH2 = isPreview || headingAs === 'h2';
 
   return (
     <section id="about" className={`${isPreview ? 'rounded-3xl overflow-hidden' : 'py-24'} bg-transparent py-0`}>
@@ -59,7 +62,7 @@ export function About({
                 <User className="h-3 w-3" aria-hidden="true" />
                 Who I Am
               </div>
-              {isPreview ? (
+              {useH2 ? (
                 <h2 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">
                   About <span className="text-primary">Me</span>
                 </h2>
@@ -75,9 +78,8 @@ export function About({
               <p>
                 {profileData?.introductionSummary || (
                   <>
-                    I am a passionate <span className="text-foreground font-semibold underline decoration-primary/40 decoration-4 underline-offset-4">Full-Stack Web Developer</span> and AI/ML enthusiast based in <span className="text-foreground font-medium">Ahmedabad, Gujarat, India</span>.
-                    Currently in my <span className="text-foreground font-medium">3rd Year of CSE at SVGU</span>, I specialize in building
-                    highly performant, user-centric web applications that bridge the gap between complex algorithms and intuitive design.
+                    I am a passionate <span className="text-foreground font-semibold underline decoration-primary/40 decoration-4 underline-offset-4">Full-Stack Web &amp; Mobile Developer</span> based in <span className="text-foreground font-medium">Ahmedabad, Gujarat, India</span>.
+                    I specialize in building highly performant, user-centric web and mobile systems that connect complex backend logic with intuitive design.
                   </>
                 )}
               </p>
@@ -85,9 +87,7 @@ export function About({
               <p className="hidden md:block">
                 {profileData?.professionalSummary || (
                   <>
-                    My technical journey is driven by a curiosity for emerging technologies and a commitment to
-                    delivering clean, maintainable code. From engineering official event websites to developing
-                    AI-powered assistants, I thrive on solving real-world challenges through technology.
+                    My technical journey is driven by a commitment to delivering clean, maintainable code. From engineering official event websites to building custom business applications, I thrive on solving real-world challenges through software.
                   </>
                 )}
               </p>
@@ -101,7 +101,7 @@ export function About({
                   </div>
                   <div>
                     <h3 className="text-2xl md:text-3xl font-black text-primary">{profileData?.studentYear || "3rd"}</h3>
-                    <p className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest font-bold">Year CSE Student</p>
+                    <p className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest font-bold">Year B.E. CSE</p>
                   </div>
                 </CardContent>
               </Card>
@@ -126,7 +126,7 @@ export function About({
               <div className="hidden sm:block text-border" aria-hidden="true">|</div>
               <div className="flex items-center gap-2">
                 <Award className="h-4 w-4 text-primary" aria-hidden="true" />
-                Open for Opportunities
+                Taking on new projects
               </div>
             </div>
           </div>

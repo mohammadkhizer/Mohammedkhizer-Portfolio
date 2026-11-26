@@ -4,18 +4,18 @@ import { getProjects, getProjectCategories } from '@/lib/db';
 
 const baseUrl = 'https://mohammedkhizershaikh.netlify.app';
 
-// Entity-rich metadata — domain keywords (web apps, AI/ML, Django) for topic authority
+// Entity-rich metadata — domain keywords for topic authority
 export const metadata: Metadata = {
-  title: 'Portfolio Projects — Full-Stack Web & AI/ML Applications',
+  title: 'Portfolio Projects — Full-Stack Web & Mobile Applications',
   description:
-    'Explore the technical project portfolio of Mohammed Khizer Shaikh: full-stack web applications, AI-powered tools, Django REST API backends, React frontends, and MongoDB-powered systems built in Ahmedabad, India.',
+    'Explore the technical project portfolio of Mohammed Khizer Shaikh: full-stack web applications, mobile apps, Django REST API backends, React frontends, and MongoDB-powered systems built in Ahmedabad, India.',
   alternates: {
     canonical: `${baseUrl}/projects`,
   },
   openGraph: {
     title: 'Portfolio Projects — Mohammed Khizer Shaikh',
     description:
-      'Full-stack web applications, AI-powered tools, and Django backends built by Mohammed Khizer Shaikh, a developer from Ahmedabad, India.',
+      'Full-stack web and mobile applications built by Mohammed Khizer Shaikh, a developer from Ahmedabad, India.',
     url: `${baseUrl}/projects`,
   },
 };
@@ -57,9 +57,9 @@ export default async function ProjectsPage() {
         '@type': 'WebPage',
         '@id': `${baseUrl}/projects#webpage`,
         url: `${baseUrl}/projects`,
-        name: 'Portfolio Projects — Full-Stack Web & AI/ML Applications | Mohammed Khizer Shaikh',
+        name: 'Portfolio Projects — Full-Stack Web & Mobile Applications | Mohammed Khizer Shaikh',
         description:
-          'Technical project portfolio of Mohammed Khizer Shaikh including full-stack web applications, AI-powered tools, Django backends, and React frontends.',
+          'Technical project portfolio of Mohammed Khizer Shaikh including full-stack web applications, mobile systems, Django backends, and React frontends.',
         inLanguage: 'en-US',
         isPartOf: { '@id': `${baseUrl}/#website` },
         author: { '@id': `${baseUrl}/#person` },
@@ -88,7 +88,7 @@ export default async function ProjectsPage() {
         '@type': 'ItemList',
         name: 'Portfolio Projects by Mohammed Khizer Shaikh',
         description:
-          'A collection of full-stack web applications, AI/ML tools, and backend systems built by Mohammed Khizer Shaikh.',
+          'A collection of full-stack web applications, mobile systems, and backend architectures built by Mohammed Khizer Shaikh.',
         url: `${baseUrl}/projects`,
         author: { '@id': `${baseUrl}/#person` },
         numberOfItems: projects.length,

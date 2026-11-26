@@ -53,6 +53,32 @@ export async function getProjects(limit: number = 20, offset: number = 0) {
 }
 
 /**
+ * Fetches a single project by ID.
+ */
+export async function getProject(id: string) {
+  try {
+    await dbConnect();
+    let doc = await Project.findOne({ id }).lean();
+    if (!doc) {
+      try {
+        doc = await Project.findById(id).lean();
+      } catch {
+        // id is not a valid ObjectId
+      }
+    }
+    if (!doc) return null;
+    return {
+      ...doc,
+      _id: doc._id.toString(),
+      id: doc.id || doc._id.toString(),
+    };
+  } catch (error) {
+    console.error(`Error fetching project ${id}:`, error);
+    return null;
+  }
+}
+
+/**
  * Fetches skills from MongoDB server-side.
  */
 export async function getSkills() {
