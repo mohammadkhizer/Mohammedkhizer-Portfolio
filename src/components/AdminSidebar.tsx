@@ -22,7 +22,12 @@ import {
   Tag,
   Trophy,
   DatabaseBackup,
-  X
+  X,
+  Sparkles,
+  Sliders,
+  Layers,
+  ListOrdered,
+  Megaphone
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -30,16 +35,20 @@ import { useSession } from "@/hooks/use-session";
 
 const NAV_ITEMS = [
   { name: "Overview", href: "/admin", icon: LayoutDashboard },
+  { name: "Home Hero", href: "/admin/home-hero", icon: Sparkles },
+  { name: "About Hero", href: "/admin/about-hero", icon: UserCircle },
+  { name: "Services", href: "/admin/services", icon: Layers },
+  { name: "How I Work", href: "/admin/how-i-work", icon: ListOrdered },
+  { name: "Closing CTA", href: "/admin/closing-cta", icon: Megaphone },
+  { name: "Testimonials", href: "/admin/testimonials", icon: Quote },
+  { name: "Projects & Cases", href: "/admin/projects", icon: FolderKanban },
+  { name: "Site Settings", href: "/admin/site-settings", icon: Sliders },
   { name: "Inquiries", href: "/admin/contact", icon: Mail },
-  { name: "Profile Settings", href: "/admin/profile", icon: Settings },
   { name: "Technical Skills", href: "/admin/skills", icon: Code2 },
-  { name: "Projects", href: "/admin/projects", icon: FolderKanban },
-  { name: "Project Categories", href: "/admin/project-categories", icon: Tag },
   { name: "Experience", href: "/admin/experience", icon: Briefcase },
   { name: "Education", href: "/admin/education", icon: GraduationCap },
   { name: "Certifications", href: "/admin/certifications", icon: Award },
   { name: "Achievements", href: "/admin/achievements", icon: Trophy },
-  { name: "Testimonials", href: "/admin/testimonials", icon: Quote },
   { name: "Backup & Restore", href: "/admin/backup", icon: DatabaseBackup },
 ];
 

@@ -13,41 +13,56 @@ import {
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
-interface Step {
-  number: string;
+export interface HowIWorkStepProp {
+  stepNumber: string;
   title: string;
   description: string;
-  icon: React.ReactNode;
+  order?: number;
 }
 
-const STEPS: Step[] = [
+const STATIC_STEPS: HowIWorkStepProp[] = [
   {
-    number: '01',
+    stepNumber: '01',
     title: 'Discovery call: understand your needs and goals',
     description: 'We review how your business operates today, where time is lost, and what the system needs to deliver.',
-    icon: <PhoneCall className="h-5 w-5 text-primary" aria-hidden="true" />,
   },
   {
-    number: '02',
+    stepNumber: '02',
     title: 'Scope and fixed quote within 48 hours',
     description: 'You receive a written breakdown of features, delivery milestones, and a clear fixed quote within 48 hours.',
-    icon: <FileCheck className="h-5 w-5 text-primary" aria-hidden="true" />,
   },
   {
-    number: '03',
+    stepNumber: '03',
     title: 'Weekly build demos',
     description: 'Development moves in weekly iterations so you can test live progress and confirm every detail early.',
-    icon: <CalendarCheck className="h-5 w-5 text-primary" aria-hidden="true" />,
   },
   {
-    number: '04',
+    stepNumber: '04',
     title: 'Launch and 30 days of support',
     description: 'Full production launch, walkthrough for your team, and 30 days of dedicated post-launch support.',
-    icon: <Rocket className="h-5 w-5 text-primary" aria-hidden="true" />,
   },
 ];
 
-export function HowIWork() {
+function getStepIcon(index: number) {
+  if (index === 0) return <PhoneCall className="h-5 w-5 text-primary" aria-hidden="true" />;
+  if (index === 1) return <FileCheck className="h-5 w-5 text-primary" aria-hidden="true" />;
+  if (index === 2) return <CalendarCheck className="h-5 w-5 text-primary" aria-hidden="true" />;
+  return <Rocket className="h-5 w-5 text-primary" aria-hidden="true" />;
+}
+
+export function HowIWork({
+  initialData,
+}: {
+  initialData?: {
+    steps?: HowIWorkStepProp[];
+    communicationLine?: string;
+  };
+}) {
+  const steps = initialData?.steps && initialData.steps.length > 0 ? initialData.steps : STATIC_STEPS;
+  const commLine =
+    initialData?.communicationLine ||
+    'One point of contact, WhatsApp/email updates, weekly demo call.';
+
   return (
     <section id="process" className="scroll-mt-20">
       <div className="container mx-auto px-4 md:px-6">
@@ -68,55 +83,40 @@ export function HowIWork() {
 
         {/* 4 Steps Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-          {STEPS.map((step) => (
+          {steps.map((step, idx) => (
             <Card
-              key={step.number}
-              className="glass border border-border/40 bg-secondary/5 relative overflow-hidden rounded-3xl p-6 flex flex-col justify-between hover:border-primary/30 transition-all duration-300"
+              key={step.stepNumber || idx}
+              className="relative p-6 bg-card/50 border-border/50 hover:border-border hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
             >
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-3xl font-black text-primary/30 font-mono">
-                    {step.number}
-                  </span>
-                  <div className="p-2.5 bg-primary/10 rounded-xl text-primary border border-primary/20">
-                    {step.icon}
+                  <div className="p-2.5 bg-primary/10 rounded-xl w-fit border border-primary/20">
+                    {getStepIcon(idx)}
                   </div>
+                  <span className="text-3xl font-black text-muted-foreground/30 font-mono">
+                    {step.stepNumber}
+                  </span>
                 </div>
 
-                <h3 className="text-lg font-bold tracking-tight text-foreground">
-                  {step.title}
-                </h3>
-
-                <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">
-                  {step.description}
-                </p>
+                <div className="space-y-2">
+                  <h3 className="text-base font-bold tracking-tight leading-snug">
+                    {step.title}
+                  </h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    {step.description}
+                  </p>
+                </div>
               </div>
             </Card>
           ))}
         </div>
 
-        {/* Communication Commitment Line */}
-        <div className="max-w-3xl mx-auto mt-10 p-5 rounded-2xl bg-secondary/20 border border-border/50 text-center">
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-sm md:text-base font-semibold text-foreground">
-            <span className="inline-flex items-center gap-2 text-primary font-bold">
-              <MessageSquare className="h-4 w-4" aria-hidden="true" /> Communication:
-            </span>
-            <span>One point of contact, WhatsApp/email updates, weekly demo call.</span>
+        {/* Communication & Guarantee line */}
+        <div className="mt-12 text-center">
+          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-secondary/50 border border-border/60 text-xs md:text-sm text-muted-foreground">
+            <MessageSquare className="h-4 w-4 text-primary shrink-0" aria-hidden="true" />
+            <span>{commLine}</span>
           </div>
-        </div>
-
-        {/* Process CTA */}
-        <div className="flex justify-center pt-10">
-          <Button
-            asChild
-            size="lg"
-            className="rounded-full px-8 font-bold shadow-lg shadow-primary/20 gap-2"
-          >
-            <Link href="/contact">
-              Discuss your project
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-          </Button>
         </div>
       </div>
     </section>

@@ -13,63 +13,66 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-interface ServicePackage {
+export interface ServiceItemProp {
   id: string;
   title: string;
-  icon: React.ReactNode;
-  tagline: string;
+  shortDescription?: string;
   bullets: string[];
   timeline: string;
+  buttonText?: string;
+  buttonUrl?: string;
   featured?: boolean;
 }
 
-const SERVICE_PACKAGES: ServicePackage[] = [
+const STATIC_SERVICES: ServiceItemProp[] = [
   {
     id: 'inventory-billing',
     title: 'Inventory & Billing Systems',
-    icon: <Package className="h-6 w-6 text-primary" aria-hidden="true" />,
-    tagline: 'Replace spreadsheets and manual billing with one reliable system for your business.',
+    shortDescription: 'Replace spreadsheets and manual billing with one reliable system for your business.',
     bullets: [
       'Real-time stock tracking across items, categories, and variants',
       'Clean invoicing, order records, and payment tracking',
       'Sales and inventory reports in one place',
       'Role-based admin dashboard for daily operations',
     ],
-    // {{TODO: Replace with your typical delivery range in weeks for Inventory & Billing Systems}}
     timeline: 'Typical timeline: {{TODO: weeks}} weeks',
     featured: true,
   },
   {
     id: 'website-admin',
     title: 'Business Website + Admin Panel',
-    icon: <Layers className="h-6 w-6 text-accent" aria-hidden="true" />,
-    tagline: 'A fast, responsive website paired with a private panel to manage everything yourself.',
+    shortDescription: 'A fast, responsive website paired with a private panel to manage everything yourself.',
     bullets: [
       'Fast, mobile-responsive site built to turn visitors into enquiries',
       'Admin panel to manage pages, content, products, and services',
       'Structured enquiry inbox so no customer lead is missed',
       'Search-friendly structure, performance tuning, and SSL setup',
     ],
-    // {{TODO: Replace with your typical delivery range in weeks for Business Website + Admin Panel}}
     timeline: 'Typical timeline: {{TODO: weeks}} weeks',
   },
   {
     id: 'mobile-app',
     title: 'Mobile App Development',
-    icon: <Smartphone className="h-6 w-6 text-primary" aria-hidden="true" />,
-    tagline: 'Android and iOS apps built for customer login, orders or bookings, and management.',
+    shortDescription: 'Android and iOS apps built for customer login, orders or bookings, and management.',
     bullets: [
       'Android & iOS app with smooth, responsive performance',
       'Secure user login, profiles, and saved activity',
       'Order placement or booking management with status updates',
       'Admin panel to manage users, listings, and requests',
     ],
-    // {{TODO: Replace with your typical delivery range in weeks for Mobile App Development}}
     timeline: 'Typical timeline: {{TODO: weeks}} weeks',
   },
 ];
 
-export function Services() {
+function getServiceIcon(index: number) {
+  if (index === 0) return <Package className="h-6 w-6 text-primary" aria-hidden="true" />;
+  if (index === 1) return <Layers className="h-6 w-6 text-accent" aria-hidden="true" />;
+  return <Smartphone className="h-6 w-6 text-primary" aria-hidden="true" />;
+}
+
+export function Services({ initialData }: { initialData?: ServiceItemProp[] }) {
+  const items = initialData && initialData.length > 0 ? initialData : STATIC_SERVICES;
+
   return (
     <section id="services" className="scroll-mt-20">
       <div className="container mx-auto px-4 md:px-6">
@@ -80,82 +83,82 @@ export function Services() {
             Services
           </div>
           <h2 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">
-            What I <span className="text-primary">Build</span>
+            How I Can <span className="text-primary">Help You</span>
           </h2>
           <div className="w-16 md:w-24 h-1.5 bg-primary rounded-full mx-auto" />
           <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto pt-2 font-medium">
-            Custom web and mobile systems built for businesses across domains—with clear scope, predictable delivery, and dedicated post-launch support.
+            Custom-built systems tailored to your business operations. No generic templates.
           </p>
         </div>
 
-        {/* 3 Service Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch">
-          {SERVICE_PACKAGES.map((pkg) => (
+        {/* 3 Service Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
+          {items.map((pkg, idx) => (
             <Card
-              key={pkg.id}
-              className={`glass flex flex-col justify-between transition-all duration-300 relative overflow-hidden rounded-3xl ${
+              key={pkg.id || idx}
+              className={`relative flex flex-col justify-between transition-all duration-300 hover:shadow-xl ${
                 pkg.featured
-                  ? 'border-2 border-primary/50 bg-primary/[0.02] shadow-2xl shadow-primary/10 lg:-translate-y-2'
-                  : 'border border-border/40 bg-secondary/5 hover:border-primary/30'
+                  ? 'border-primary/50 shadow-primary/10 shadow-lg bg-card/80'
+                  : 'border-border/50 hover:border-border bg-card/50'
               }`}
             >
               {pkg.featured && (
-                <div className="bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-wider py-1 px-4 text-center">
-                  Most Requested
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                  <span className="bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest px-3.5 py-1 rounded-full shadow-md">
+                    Most Requested
+                  </span>
                 </div>
               )}
 
-              <div>
-                <CardHeader className="p-6 md:p-8 pb-4 space-y-4">
-                  <div className="p-3 bg-primary/10 rounded-2xl w-fit text-primary border border-primary/20">
-                    {pkg.icon}
-                  </div>
-                  <div>
-                    <CardTitle className="text-xl md:text-2xl font-black tracking-tight">
-                      {pkg.title}
-                    </CardTitle>
-                    <p className="text-xs md:text-sm text-muted-foreground mt-2 leading-relaxed">
-                      {pkg.tagline}
+              <CardHeader className="space-y-4 pt-8">
+                <div className="p-3 bg-secondary/50 rounded-2xl w-fit border border-border/50">
+                  {getServiceIcon(idx)}
+                </div>
+                <div>
+                  <CardTitle className="text-xl font-bold tracking-tight">
+                    {pkg.title}
+                  </CardTitle>
+                  {pkg.shortDescription && (
+                    <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
+                      {pkg.shortDescription}
                     </p>
-                  </div>
-                </CardHeader>
+                  )}
+                </div>
+              </CardHeader>
 
-                <CardContent className="p-6 md:p-8 pt-2 space-y-6">
-                  {/* Timeline Badge */}
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-secondary/60 text-foreground text-xs font-semibold border border-border/50">
-                    <Clock className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
-                    <span>{pkg.timeline}</span>
-                  </div>
+              <CardContent className="space-y-6 flex-1">
+                {/* Bullets */}
+                <ul className="space-y-3" role="list">
+                  {pkg.bullets.map((bullet, i) => (
+                    <li key={i} className="flex items-start gap-2.5 text-xs text-muted-foreground">
+                      <CheckCircle2
+                        className="h-4 w-4 text-primary shrink-0 mt-0.5"
+                        aria-hidden="true"
+                      />
+                      <span className="leading-relaxed">{bullet}</span>
+                    </li>
+                  ))}
+                </ul>
 
-                  {/* Bullet Inclusions */}
-                  <div className="space-y-3">
-                    <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                      What&apos;s Included:
-                    </p>
-                    <ul className="space-y-2.5">
-                      {pkg.bullets.map((bullet, idx) => (
-                        <li key={idx} className="flex items-start gap-2.5 text-sm text-foreground/90 font-medium">
-                          <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" aria-hidden="true" />
-                          <span>{bullet}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </CardContent>
-              </div>
+                {/* Timeline */}
+                <div className="flex items-center gap-2 pt-2 border-t border-border/40 text-xs text-muted-foreground">
+                  <Clock className="h-4 w-4 text-primary shrink-0" aria-hidden="true" />
+                  <span className="font-medium">{pkg.timeline}</span>
+                </div>
+              </CardContent>
 
-              <CardFooter className="p-6 md:p-8 pt-0 mt-4">
+              <CardFooter className="pt-2 pb-6">
                 <Button
-                  asChild
-                  className={`w-full py-6 rounded-2xl font-bold text-sm shadow-md transition-all gap-2 group ${
+                  className={`w-full rounded-xl font-bold text-xs h-11 flex items-center justify-center gap-2 ${
                     pkg.featured
-                      ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-primary/20'
-                      : 'bg-secondary text-foreground hover:bg-primary hover:text-white'
+                      ? 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-md shadow-primary/20'
+                      : 'bg-secondary hover:bg-secondary/80 text-foreground border border-border/50'
                   }`}
+                  asChild
                 >
-                  <Link href="/contact">
-                    Discuss your project
-                    <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+                  <Link href={pkg.buttonUrl || '/contact'}>
+                    {pkg.buttonText || 'Discuss your project'}
+                    <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                   </Link>
                 </Button>
               </CardFooter>

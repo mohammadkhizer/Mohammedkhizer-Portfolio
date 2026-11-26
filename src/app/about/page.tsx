@@ -3,6 +3,7 @@ import { FAQSection } from '@/components/FAQSection';
 import { Achievements, type AchievementItem } from "@/components/Achievements";
 import { Metadata } from 'next';
 import { getUserProfile, getAchievements } from '@/lib/db';
+import { getAboutHeroData } from '@/lib/cms';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
@@ -58,9 +59,10 @@ const FAQ_ITEMS = [
 ];
 
 export default async function AboutPage() {
-  const [rawProfile, rawAchievements] = await Promise.all([
+  const [rawProfile, rawAchievements, aboutHero] = await Promise.all([
     getUserProfile(),
     getAchievements(),
+    getAboutHeroData(),
   ]);
 
   const profileData = rawProfile
@@ -142,27 +144,23 @@ export default async function AboutPage() {
         <div className="container mx-auto px-4 sm:px-6 text-center max-w-4xl space-y-6 md:space-y-8 motion-safe:animate-fade-in-up">
           {/* Pill badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-wider uppercase border border-primary/20">
-            Mohammed Khizer Shaikh &bull; Gujarat, India
+            {aboutHero.pillText}
           </div>
 
           {/* Headline with last line in orange */}
           <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tight leading-[1.1]">
-            I build systems that save businesses{' '}
-            <span className="block text-primary">hours every week.</span>
+            {aboutHero.headline}{' '}
+            <span className="block text-primary">{aboutHero.headlineHighlight}</span>
           </h1>
 
           {/* Subline */}
           <p className="text-base sm:text-lg md:text-xl text-muted-foreground font-medium max-w-2xl mx-auto leading-relaxed">
-            Web and mobile apps for businesses across industries.
+            {aboutHero.subline}
           </p>
 
           {/* Chips */}
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-            {[
-              'End-to-end custom systems',
-              'Clean, maintainable architecture',
-              '30 days dedicated post-launch support',
-            ].map((chip) => (
+            {(aboutHero.chips || []).map((chip: string) => (
               <span
                 key={chip}
                 className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-secondary/50 border border-border/50 text-xs md:text-sm font-medium text-foreground/90"
@@ -180,8 +178,8 @@ export default async function AboutPage() {
               className="w-full sm:w-auto px-8 rounded-full text-base font-bold shadow-lg shadow-primary/20"
               asChild
             >
-              <Link href="/contact" className="flex items-center gap-2">
-                Discuss your project
+              <Link href={aboutHero.primaryButtonUrl || "/contact"} className="flex items-center gap-2">
+                {aboutHero.primaryButtonText || "Discuss your project"}
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
             </Button>
@@ -191,7 +189,9 @@ export default async function AboutPage() {
               className="w-full sm:w-auto px-8 rounded-full text-base font-bold"
               asChild
             >
-              <Link href="/projects">See my work</Link>
+              <Link href={aboutHero.secondaryButtonUrl || "/projects"}>
+                {aboutHero.secondaryButtonText || "See my work"}
+              </Link>
             </Button>
           </div>
         </div>

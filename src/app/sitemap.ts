@@ -1,11 +1,13 @@
 import { MetadataRoute } from 'next';
+import { getProjectsData } from '@/lib/cms';
 
 const baseUrl = 'https://mohammedkhizershaikh.netlify.app';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
-  return [
+  // Public static pages
+  const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
       lastModified: now,
@@ -19,8 +21,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
-      // /skills was previously missing — AI crawlers and Google use sitemap
-      // priority to allocate crawl budget; 0.85 reflects high content value
       url: `${baseUrl}/skills`,
       lastModified: now,
       changeFrequency: 'monthly',
@@ -45,4 +45,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     },
   ];
+
+  try {
+    const projects = await getProjectsData();
+    const projectRoutes: MetadataRoute.Sitemap = (projects || [])
+      .filter((p) => p.isPublished !== false)
+      .map((p) => ({
+        url: `${baseUrl}/projects/${p.id}`,
+        lastModified: now,
+        changeFrequency: 'monthly',
+        priority: 0.8,
+      }));
+
+    return [...staticRoutes, ...projectRoutes];
+  } catch {
+    return staticRoutes;
+  }
 }

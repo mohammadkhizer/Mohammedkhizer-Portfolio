@@ -271,6 +271,115 @@ function ArchitectureDiagram() {
   );
 }
 
+function StructuredArchitectureSvg({
+  diagram,
+}: {
+  diagram: { title?: string; caption?: string; nodes: any[]; arrows: any[] };
+}) {
+  const nodes = diagram.nodes || [];
+  const nodeWidth = 150;
+  const nodeHeight = 85;
+  const gap = 50;
+  const totalWidth = Math.max(700, nodes.length * (nodeWidth + gap) + 40);
+
+  return (
+    <section className="space-y-4 pt-4 border-t border-border/40">
+      <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-primary">
+        <Layers className="h-4 w-4 text-primary" aria-hidden="true" />
+        <h2>{diagram.title || 'Architecture & Flow'}</h2>
+      </div>
+      {diagram.caption && (
+        <p className="text-xs text-muted-foreground">{diagram.caption}</p>
+      )}
+      <div className="w-full overflow-x-auto rounded-xl border border-border/40 bg-secondary/10 p-4">
+        <svg viewBox={`0 0 ${totalWidth} 140`} className="min-w-[650px] w-full h-auto">
+          <defs>
+            <linearGradient id="structPrimaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="hsl(var(--primary) / 0.15)" />
+              <stop offset="100%" stopColor="hsl(var(--primary) / 0.05)" />
+            </linearGradient>
+            <marker
+              id="structArrowHead"
+              viewBox="0 0 10 10"
+              refX="6"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="hsl(var(--primary))" />
+            </marker>
+          </defs>
+          {nodes.map((node, i) => {
+            const x = 30 + i * (nodeWidth + gap);
+            const y = 25;
+            return (
+              <g key={node.id || i} transform={`translate(${x}, ${y})`}>
+                <rect
+                  width={nodeWidth}
+                  height={nodeHeight}
+                  rx="12"
+                  fill="url(#structPrimaryGrad)"
+                  stroke="hsl(var(--primary))"
+                  strokeWidth="1.5"
+                />
+                <text
+                  x={nodeWidth / 2}
+                  y="38"
+                  textAnchor="middle"
+                  fill="currentColor"
+                  className="text-[12px] font-bold"
+                >
+                  {node.label}
+                </text>
+                {node.sublabel && (
+                  <text
+                    x={nodeWidth / 2}
+                    y="53"
+                    textAnchor="middle"
+                    fill="hsl(var(--muted-foreground))"
+                    className="text-[10px]"
+                  >
+                    {node.sublabel}
+                  </text>
+                )}
+                {node.tech && (
+                  <text
+                    x={nodeWidth / 2}
+                    y="68"
+                    textAnchor="middle"
+                    fill="hsl(var(--primary))"
+                    className="text-[9px] font-mono"
+                  >
+                    {node.tech}
+                  </text>
+                )}
+              </g>
+            );
+          })}
+          {nodes.slice(0, -1).map((_, i) => {
+            const startX = 30 + i * (nodeWidth + gap) + nodeWidth;
+            const endX = startX + gap;
+            const y = 25 + nodeHeight / 2;
+            return (
+              <line
+                key={i}
+                x1={startX}
+                y1={y}
+                x2={endX}
+                y2={y}
+                stroke="hsl(var(--primary))"
+                strokeWidth="2"
+                markerEnd="url(#structArrowHead)"
+              />
+            );
+          })}
+        </svg>
+      </div>
+    </section>
+  );
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params;
   const project = await getProject(id);
@@ -311,6 +420,16 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
   const details = getCaseStudyDetails(project);
   const displayTitle = details.displayTitle || project.title;
+  const overviewText = project.overview || details.overview;
+  const problemText = project.problem || details.problem;
+  const whatIBuiltText = project.whatIBuilt || details.built;
+  const resultText = project.result || details.result;
+  const stackItems =
+    project.skillIds && project.skillIds.length > 0 ? project.skillIds : details.stack;
+  const hasCustomDiagram = !!(
+    project.architectureDiagram?.nodes && project.architectureDiagram.nodes.length > 0
+  );
+
   const liveUrl =
     details.externalUrl ||
     (project.liveDemoUrl && project.liveDemoUrl !== '#' ? project.liveDemoUrl : undefined);
@@ -444,7 +563,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               <h2>Overview</h2>
             </div>
             <p className="text-sm md:text-base text-foreground/90 leading-relaxed pl-6">
-              {details.overview}
+              {overviewText}
             </p>
           </section>
 
@@ -455,7 +574,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               <h2>Problem</h2>
             </div>
             <p className="text-sm md:text-base text-foreground/90 leading-relaxed pl-6">
-              {details.problem}
+              {problemText}
             </p>
           </section>
 
@@ -466,7 +585,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               <h2>What I built</h2>
             </div>
             <p className="text-sm md:text-base text-foreground/90 leading-relaxed pl-6">
-              {details.built}
+              {whatIBuiltText}
             </p>
           </section>
 
@@ -477,18 +596,18 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               <h2>Result</h2>
             </div>
             <p className="text-sm md:text-base text-foreground font-semibold pl-6">
-              {details.result}
+              {resultText}
             </p>
           </section>
 
           {/* 5. Stack */}
-          {details.stack.length > 0 && (
+          {stackItems.length > 0 && (
             <section className="space-y-3">
               <h2 className="text-xs font-black uppercase tracking-widest text-muted-foreground">
                 Stack
               </h2>
               <div className="flex flex-wrap gap-2">
-                {details.stack.map((tech) => (
+                {stackItems.map((tech: string) => (
                   <Badge
                     key={tech}
                     variant="secondary"
@@ -501,8 +620,12 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             </section>
           )}
 
-          {/* 6. Architecture diagram (where listed) */}
-          {details.showArchitectureDiagram && <ArchitectureDiagram />}
+          {/* 6. Architecture diagram */}
+          {hasCustomDiagram ? (
+            <StructuredArchitectureSvg diagram={project.architectureDiagram!} />
+          ) : (
+            details.showArchitectureDiagram && <ArchitectureDiagram />
+          )}
         </article>
       </div>
     </main>

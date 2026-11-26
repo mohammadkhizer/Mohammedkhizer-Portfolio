@@ -7,21 +7,30 @@ import { ChevronDown, Download } from 'lucide-react';
 import Link from 'next/link';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
-// Static fallback values shown on first paint and used by crawlers.
-// These are the SSR-visible values before the client-side API call resolves.
 const STATIC_NAME = 'Mohammed Khizer Shaikh';
 const STATIC_TAGLINE = 'Full-Stack Web & Mobile Developer';
 const STATIC_CV_URL =
   'https://portfolioimageskhizer.netlify.app/Mohammed-Khizer-Shaikh-CV-2.pdf';
 
-export function Hero() {
-  const [displayText, setDisplayText] = React.useState('');
-  const fullText = STATIC_TAGLINE;
+export interface HeroProps {
+  initialData?: {
+    tagline?: string;
+    subtitle?: string;
+    primaryButtonText?: string;
+    primaryButtonUrl?: string;
+    secondaryButtonText?: string;
+    secondaryButtonUrl?: string;
+    cvDownloadUrl?: string;
+    stats?: Array<{ label: string; value: string }>;
+  };
+}
 
+export function Hero({ initialData }: HeroProps) {
+  const fullText = initialData?.subtitle || STATIC_TAGLINE;
+  const [displayText, setDisplayText] = React.useState('');
   const [profile, setProfile] = React.useState<any>(null);
   const profileImg = PlaceHolderImages.find((img) => img.id === 'profile-pic');
 
-  // Fetch live profile data (CV link, custom name) from the admin CMS
   React.useEffect(() => {
     fetch('/api/v1/profile')
       .then((res) => res.json())
@@ -33,7 +42,7 @@ export function Hero() {
       .catch((err) => console.error('Error fetching profile:', err));
   }, []);
 
-  // Typewriter animation — runs on client only (displayText starts empty)
+  // Typewriter animation
   React.useEffect(() => {
     let current = 0;
     const interval = setInterval(() => {
@@ -45,7 +54,12 @@ export function Hero() {
   }, [fullText]);
 
   const personName = profile?.fullName || STATIC_NAME;
-  const cvUrl = profile?.cvDownloadUrl || STATIC_CV_URL;
+  const cvUrl = initialData?.cvDownloadUrl || profile?.cvDownloadUrl || STATIC_CV_URL;
+  const tagline = initialData?.tagline || 'Welcome to my space';
+  const primaryText = initialData?.primaryButtonText || 'Discuss your project';
+  const primaryUrl = initialData?.primaryButtonUrl || '/contact';
+  const secondaryText = initialData?.secondaryButtonText || 'View Projects';
+  const secondaryUrl = initialData?.secondaryButtonUrl || '/projects';
 
   return (
     <section
@@ -62,11 +76,11 @@ export function Hero() {
           <div className="lg:col-span-7 space-y-6 md:space-y-8 text-center lg:text-left motion-safe:animate-fade-in-up">
             {/* Eyebrow label */}
             <p className="text-primary text-xs md:text-sm font-bold tracking-[0.3em] uppercase opacity-80">
-              Welcome to my space
+              {tagline}
             </p>
 
             {/* H1 — Primary heading */}
-            <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight leading-[1.08]">
+            <h1 className="text-4xl sm:6xl md:text-7xl font-black tracking-tight leading-[1.08]">
               {personName.split(' ').slice(0, -1).join(' ')}{' '}
               <span className="text-primary">{personName.split(' ').slice(-1)}</span>
             </h1>
@@ -75,10 +89,10 @@ export function Hero() {
             <div
               className="text-lg md:text-2xl text-muted-foreground font-medium min-h-[3.5rem] sm:min-h-[2.5rem] flex items-center justify-center lg:justify-start"
               aria-live="polite"
-              aria-label={`Role: ${STATIC_TAGLINE}`}
+              aria-label={`Role: ${fullText}`}
             >
               <p>
-                {displayText || STATIC_TAGLINE}
+                {displayText || fullText}
                 <span
                   className="animate-blink inline-block w-1 h-6 md:h-7 bg-primary ml-1 align-middle"
                   aria-hidden="true"
@@ -93,7 +107,7 @@ export function Hero() {
                 className="w-full sm:w-auto px-8 rounded-full text-base font-bold shadow-lg shadow-primary/20"
                 asChild
               >
-                <Link href="/contact">Discuss your project</Link>
+                <Link href={primaryUrl}>{primaryText}</Link>
               </Button>
               <Button
                 size="lg"
@@ -101,7 +115,7 @@ export function Hero() {
                 className="w-full sm:w-auto px-8 rounded-full text-base font-bold"
                 asChild
               >
-                <Link href="/projects">View Projects</Link>
+                <Link href={secondaryUrl}>{secondaryText}</Link>
               </Button>
               <Button
                 size="lg"
@@ -140,7 +154,7 @@ export function Hero() {
                 <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/85 via-black/40 to-transparent text-white">
                   <p className="font-bold text-base tracking-tight">{personName}</p>
                   <p className="text-xs text-primary font-semibold uppercase tracking-widest mt-0.5">
-                    Full-Stack Web &amp; Mobile Developer
+                    {fullText}
                   </p>
                 </div>
               </div>
