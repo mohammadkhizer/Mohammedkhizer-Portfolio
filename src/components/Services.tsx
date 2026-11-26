@@ -12,6 +12,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import Link from 'next/link';
+import { isFilled } from '@/lib/content-guard';
 
 export interface ServiceItemProp {
   id: string;
@@ -33,9 +34,9 @@ const STATIC_SERVICES: ServiceItemProp[] = [
       'Real-time stock tracking across items, categories, and variants',
       'Clean invoicing, order records, and payment tracking',
       'Sales and inventory reports in one place',
-      'Role-based admin dashboard for daily operations',
+      'Admin dashboard for daily operations',
     ],
-    timeline: 'Typical timeline: {{TODO: weeks}} weeks',
+    timeline: '',
     featured: true,
   },
   {
@@ -46,9 +47,9 @@ const STATIC_SERVICES: ServiceItemProp[] = [
       'Fast, mobile-responsive site built to turn visitors into enquiries',
       'Admin panel to manage pages, content, products, and services',
       'Structured enquiry inbox so no customer lead is missed',
-      'Search-friendly structure, performance tuning, and SSL setup',
+      'Responsive, fast-loading and secure by default',
     ],
-    timeline: 'Typical timeline: {{TODO: weeks}} weeks',
+    timeline: '',
   },
   {
     id: 'mobile-app',
@@ -60,7 +61,7 @@ const STATIC_SERVICES: ServiceItemProp[] = [
       'Order placement or booking management with status updates',
       'Admin panel to manage users, listings, and requests',
     ],
-    timeline: 'Typical timeline: {{TODO: weeks}} weeks',
+    timeline: '',
   },
 ];
 
@@ -140,11 +141,13 @@ export function Services({ initialData }: { initialData?: ServiceItemProp[] }) {
                   ))}
                 </ul>
 
-                {/* Timeline */}
-                <div className="flex items-center gap-2 pt-2 border-t border-border/40 text-xs text-muted-foreground">
-                  <Clock className="h-4 w-4 text-primary shrink-0" aria-hidden="true" />
-                  <span className="font-medium">{pkg.timeline}</span>
-                </div>
+                {/* Timeline — only shown when a real value is provided */}
+                {isFilled(pkg.timeline) && (
+                  <div className="flex items-center gap-2 pt-2 border-t border-border/40 text-xs text-muted-foreground">
+                    <Clock className="h-4 w-4 text-primary shrink-0" aria-hidden="true" />
+                    <span className="font-medium">{pkg.timeline}</span>
+                  </div>
+                )}
               </CardContent>
 
               <CardFooter className="pt-2 pb-6">

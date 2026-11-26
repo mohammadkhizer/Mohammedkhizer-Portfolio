@@ -28,8 +28,8 @@ const STATIC_STEPS: HowIWorkStepProp[] = [
   },
   {
     stepNumber: '02',
-    title: 'Scope and fixed quote within 48 hours',
-    description: 'You receive a written breakdown of features, delivery milestones, and a clear fixed quote within 48 hours.',
+    title: 'Clear written scope and quote after the discovery call',
+    description: 'You receive a written breakdown of features, delivery milestones, and a clear fixed quote after the discovery call.',
   },
   {
     stepNumber: '03',

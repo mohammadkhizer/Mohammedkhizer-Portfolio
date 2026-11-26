@@ -54,7 +54,7 @@ export default function ServicesAdmin() {
   const [title, setTitle] = React.useState("");
   const [shortDescription, setShortDescription] = React.useState("");
   const [bullets, setBullets] = React.useState<string[]>([""]);
-  const [timeline, setTimeline] = React.useState("Typical timeline: {{TODO: weeks}} weeks");
+  const [timeline, setTimeline] = React.useState("");
   const [buttonText, setButtonText] = React.useState("Discuss your project");
   const [buttonUrl, setButtonUrl] = React.useState("/contact");
   const [featured, setFeatured] = React.useState(false);
@@ -90,7 +90,7 @@ export default function ServicesAdmin() {
     setTitle("");
     setShortDescription("");
     setBullets(["Feature bullet 1", "Feature bullet 2", "Feature bullet 3"]);
-    setTimeline("Typical timeline: {{TODO: weeks}} weeks");
+    setTimeline("");
     setButtonText("Discuss your project");
     setButtonUrl("/contact");
     setFeatured(false);
@@ -432,7 +432,7 @@ export default function ServicesAdmin() {
                       id="svc-timeline"
                       value={timeline}
                       onChange={(e) => setTimeline(e.target.value)}
-                      placeholder="Typical timeline: {{TODO: weeks}} weeks"
+                      placeholder="e.g. 4–6 weeks depending on scope"
                       required
                     />
                   </div>

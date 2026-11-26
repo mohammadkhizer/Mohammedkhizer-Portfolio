@@ -2,7 +2,7 @@ import { Projects, type Project, type ProjectCategory } from '@/components/Proje
 import { Metadata } from 'next';
 import { getProjects, getProjectCategories } from '@/lib/db';
 
-const baseUrl = 'https://mohammedkhizershaikh.netlify.app';
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mohammedkhizershaikh.netlify.app';
 
 // Entity-rich metadata — domain keywords for topic authority
 export const metadata: Metadata = {

@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 import { getProjectsData } from '@/lib/cms';
 
-const baseUrl = 'https://mohammedkhizershaikh.netlify.app';
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mohammedkhizershaikh.netlify.app';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();

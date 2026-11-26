@@ -11,7 +11,7 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
-const baseUrl = 'https://mohammedkhizershaikh.netlify.app';
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mohammedkhizershaikh.netlify.app';
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
@@ -92,11 +92,11 @@ export const metadata: Metadata = {
     images: ['/opengraph-image'],
   },
   robots: {
-    index: true,
-    follow: true,
+    index: process.env.NEXT_PUBLIC_NOINDEX !== 'true',
+    follow: process.env.NEXT_PUBLIC_NOINDEX !== 'true',
     googleBot: {
-      index: true,
-      follow: true,
+      index: process.env.NEXT_PUBLIC_NOINDEX !== 'true',
+      follow: process.env.NEXT_PUBLIC_NOINDEX !== 'true',
       'max-video-preview': -1,
       'max-image-preview': 'large',
       'max-snippet': -1,

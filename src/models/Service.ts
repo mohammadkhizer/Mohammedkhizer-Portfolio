@@ -21,7 +21,7 @@ const ServiceSchema: Schema = new Schema(
     title: { type: String, required: true },
     shortDescription: { type: String, default: '' },
     bullets: { type: [String], default: [] },
-    timeline: { type: String, default: 'Typical timeline: {{TODO: weeks}} weeks' },
+    timeline: { type: String, default: '' },
     buttonText: { type: String, default: 'Discuss your project' },
     buttonUrl: { type: String, default: '/contact' },
     order: { type: Number, default: 0 },

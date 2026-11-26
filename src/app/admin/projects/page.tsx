@@ -561,7 +561,7 @@ export default function ProjectsAdmin() {
                     id="proj-result"
                     value={result}
                     onChange={(e) => setResult(e.target.value)}
-                    placeholder="e.g. {{TODO: Cut inventory discrepancy rate and reduced billing time from hours to minutes}}."
+                    placeholder="e.g. Cut inventory discrepancy rate and reduced billing time from hours to minutes."
                     rows={3}
                   />
                 </div>

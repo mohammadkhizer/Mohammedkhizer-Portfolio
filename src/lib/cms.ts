@@ -21,9 +21,9 @@ export const DEFAULT_HOME_HERO = {
   cvDownloadUrl: 'https://portfolioimageskhizer.netlify.app/Mohammed-Khizer-Shaikh-CV-2.pdf',
   stats: [
     { label: 'Post-launch Support', value: '30 Days' },
-    { label: 'Projects Built', value: '10+' },
-    { label: 'Certifications', value: '8+' },
-    { label: 'Tech Stack Entities', value: '15+' },
+    { label: 'Full-Stack', value: 'Web & Mobile' },
+    // TO RE-ENABLE: Add back { label: 'Projects Built', value: 'X+' } after user confirms number
+    // TO RE-ENABLE: Add back { label: 'Certifications', value: 'X+' } after user confirms number
   ],
   isPublished: true,
 };
@@ -54,10 +54,10 @@ export const DEFAULT_SERVICES = [
       'Real-time stock tracking across items, categories, and variants',
       'Clean invoicing, order records, and payment tracking',
       'Sales and inventory reports in one place',
-      'Role-based admin dashboard for daily operations',
+      'Admin dashboard for daily operations',
     ],
-    // {{TODO: Replace with your typical delivery range in weeks}}
-    timeline: 'Typical timeline: {{TODO: weeks}} weeks',
+    // Set timeline via the admin panel once your typical delivery range is confirmed
+    timeline: '',
     buttonText: 'Discuss your project',
     buttonUrl: '/contact',
     order: 1,
@@ -72,10 +72,10 @@ export const DEFAULT_SERVICES = [
       'Fast, mobile-responsive site built to turn visitors into enquiries',
       'Admin panel to manage pages, content, products, and services',
       'Structured enquiry inbox so no customer lead is missed',
-      'Search-friendly structure, performance tuning, and SSL setup',
+      'Responsive, fast-loading and secure by default',
     ],
-    // {{TODO: Replace with your typical delivery range in weeks}}
-    timeline: 'Typical timeline: {{TODO: weeks}} weeks',
+    // Set timeline via the admin panel once your typical delivery range is confirmed
+    timeline: '',
     buttonText: 'Discuss your project',
     buttonUrl: '/contact',
     order: 2,
@@ -92,8 +92,8 @@ export const DEFAULT_SERVICES = [
       'Order placement or booking management with status updates',
       'Admin panel to manage users, listings, and requests',
     ],
-    // {{TODO: Replace with your typical delivery range in weeks}}
-    timeline: 'Typical timeline: {{TODO: weeks}} weeks',
+    // Set timeline via the admin panel once your typical delivery range is confirmed
+    timeline: '',
     buttonText: 'Discuss your project',
     buttonUrl: '/contact',
     order: 3,
@@ -113,8 +113,8 @@ export const DEFAULT_HOW_I_WORK = {
     },
     {
       stepNumber: '02',
-      title: 'Scope and fixed quote within 48 hours',
-      description: 'You receive a written breakdown of features, delivery milestones, and a clear fixed quote within 48 hours.',
+      title: 'Clear written scope and quote after the discovery call',
+      description: 'You receive a written breakdown of features, delivery milestones, and a clear fixed quote after the discovery call.',
       order: 2,
       isPublished: true,
     },
@@ -147,19 +147,8 @@ export const DEFAULT_CLOSING_CTA = {
   isPublished: true,
 };
 
-export const DEFAULT_TESTIMONIALS = [
-  {
-    id: 'placeholder-client-2',
-    clientName: '{{TODO: NAME}}',
-    clientTitle: '{{TODO: ROLE}}, {{TODO: BUSINESS}}',
-    role: '{{TODO: ROLE}}',
-    business: '{{TODO: BUSINESS}}',
-    testimonialText: '{{TODO: QUOTE}}',
-    clientImageUrl: '',
-    rating: 5,
-    order: 1,
-    isPublished: true,
-  },
+export const DEFAULT_TESTIMONIALS: never[] = [
+  // No default placeholder testimonials — add real ones via /admin/testimonials
 ];
 
 export const DEFAULT_SITE_SETTINGS = {

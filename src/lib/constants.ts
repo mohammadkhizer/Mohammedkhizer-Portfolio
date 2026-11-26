@@ -59,7 +59,7 @@ export const SECURITY_CONFIG = {
 // Portfolio Assistant system prompt
 export const PORTFOLIO_ASSISTANT_CONFIG = {
   NAME: 'Mohammed Khizer Shaikh',
-  TITLE: 'Full-Stack Web Developer & AI/ML Enthusiast',
+  TITLE: 'Full-Stack Web & Mobile Developer',
   EDUCATION: '2nd Year CSE at SVGU (Bachelor\'s), Diploma in AI/ML from LJ University',
   EXPERIENCE: 'Python Developer Intern at Way to Web (Django, Tripboss project)',
   LOCATION: 'Ahmedabad, Gujarat, India',

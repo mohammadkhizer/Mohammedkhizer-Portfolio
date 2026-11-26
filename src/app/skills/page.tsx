@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import { Certifications, type Certification } from "@/components/Certifications";
 import { getSkills, getCertifications } from '@/lib/db';
 
-const baseUrl = 'https://mohammedkhizershaikh.netlify.app';
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mohammedkhizershaikh.netlify.app';
 
 // Metadata: technology entity names in title and description for semantic search
 export const metadata: Metadata = {

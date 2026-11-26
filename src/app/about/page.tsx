@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 
-const baseUrl = 'https://mohammedkhizershaikh.netlify.app';
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mohammedkhizershaikh.netlify.app';
 
 // Entity-rich title and description — includes real technology names and location
 // for knowledge graph alignment and AI extraction
@@ -54,8 +54,7 @@ const FAQ_ITEMS = [
   {
     question: 'What kind of systems has Mohammed Khizer Shaikh built?',
     answer:
-      'Mohammed Khizer Shaikh has built inventory and billing systems, event registration platforms, business websites with admin panels, and mobile applications. You can explore his projects at mohammedkhizershaikh.netlify.app/projects.',
-  },
+      'Mohammed Khizer Shaikh has built inventory and billing systems, event registration platforms, business websites with admin panels, and mobile applications. You can explore his projects at mohammedkhizershaikh.netlify.app/projects.',  },
 ];
 
 export default async function AboutPage() {

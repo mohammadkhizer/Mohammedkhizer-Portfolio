@@ -2,12 +2,12 @@ import { Contact } from "@/components/Contact";
 import { FAQSection } from "@/components/FAQSection";
 import { Metadata } from 'next';
 
-const baseUrl = 'https://mohammedkhizershaikh.netlify.app';
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mohammedkhizershaikh.netlify.app';
 
 // Entity-rich metadata for contact page
 export const metadata: Metadata = {
   title: 'Contact Mohammed Khizer Shaikh — Hire a Full-Stack Developer in Ahmedabad',
-  description: 'Get in touch with Mohammed Khizer Shaikh for full-stack web development projects, AI/ML integrations, freelance opportunities, or technical collaborations. Based in Ahmedabad, India.',
+  description: 'Get in touch with Mohammed Khizer Shaikh for full-stack web and mobile development projects, freelance opportunities, or technical collaborations. Based in Ahmedabad, India.',
   alternates: {
     canonical: `${baseUrl}/contact`,
   },
@@ -34,7 +34,7 @@ const FAQ_ITEMS = [
   },
   {
     question: 'Are you open to contract or freelance opportunities?',
-    answer: 'Yes, Mohammed Khizer Shaikh is open to freelance web development contracts, full-stack development roles, AI/ML application prototyping, and technical collaborations. Please use the contact form to share details about your project.'
+    answer: 'Yes, Mohammed Khizer Shaikh is open to freelance web and mobile development contracts and technical collaborations. Please use the contact form to share details about your project.'
   }
 ];
 

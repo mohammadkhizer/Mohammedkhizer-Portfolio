@@ -38,7 +38,7 @@ export function Footer() {
                 <ShieldCheck className="h-3.5 w-3.5" />
                 Secure, SSL Protected
               </div>
-              <LastUpdatedDate date="October 2026" />
+              <LastUpdatedDate date="November 2026" />
             </div>
           </div>
 

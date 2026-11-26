@@ -1,11 +1,10 @@
 
 "use client";
 
-import { Quote, Loader2, Star, User } from "lucide-react";
-
+import { Quote, Star, User } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
+import { isFilled } from "@/lib/content-guard";
 
 export interface Testimonial {
   id: string;
@@ -16,36 +15,26 @@ export interface Testimonial {
   rating?: number;
 }
 
-// {{TODO}}: Replace placeholder values with a real quote from an unrelated client
-const PLACEHOLDER_TESTIMONIAL: Testimonial = {
-  id: 'placeholder-client-2',
-  clientName: '{{TODO: NAME}}',
-  clientTitle: '{{TODO: ROLE}}, {{TODO: BUSINESS}}',
-  testimonialText: '{{TODO: QUOTE}}',
-  rating: 5,
-};
+// NOTE: The existing testimonial has the same surname as the developer (Shaikh).
+// Add a second unrelated client testimonial via the admin panel at /admin/testimonials
 
-export function Testimonials({ 
-  isPreview = false,
-  initialData = []
-}: { 
-  isPreview?: boolean;
+export function Testimonials({
+  initialData = [],
+}: {
+  isPreview?: boolean; // kept for API compat; no longer used
   initialData?: Testimonial[];
 }) {
-  const testimonials = initialData;
-  const isLoading = false;
+  // Only render cards where all required fields are genuinely filled
+  const displayTestimonials = initialData.filter(
+    (t) => isFilled(t.clientName) && isFilled(t.testimonialText)
+  );
 
-  const displayTestimonials = isPreview
-    ? [...testimonials.slice(0, 2), PLACEHOLDER_TESTIMONIAL]
-    : testimonials;
+  if (displayTestimonials.length === 0) return null;
 
-
-  if (!isLoading && (!displayTestimonials || displayTestimonials.length === 0)) {
-    return null;
-  }
+  const isSingle = displayTestimonials.length === 1;
 
   return (
-    <section id="testimonials" className={`${isPreview ? '' : 'py-24'} bg-transparent`}>
+    <section id="testimonials" className="bg-transparent">
       <div className="container mx-auto px-4 md:px-6">
         <div className="text-center space-y-4 mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest border border-primary/20">
@@ -61,54 +50,57 @@ export function Testimonials({
           </p>
         </div>
 
-        {isLoading ? (
-          <div className="flex justify-center py-20">
-            <Loader2 className="h-10 w-10 animate-spin text-primary" />
-          </div>
-        ) : (
-          <div
-            className={`grid grid-cols-1 md:grid-cols-2 ${
-              displayTestimonials.length >= 3 ? 'lg:grid-cols-3' : 'max-w-5xl mx-auto'
-            } gap-8`}
-          >
-            {displayTestimonials?.map((testimonial) => (
-              <Card key={testimonial.id} className="glass border border-border/40 shadow-none bg-secondary/5 relative overflow-hidden flex flex-col pt-12 pb-8">
-                <div className="absolute -top-4 -left-2 text-primary/10 select-none">
-                  <Quote className="h-24 w-24 fill-current rotate-180" />
-                </div>
-                
-                <CardContent className="flex-grow flex flex-col space-y-8 relative z-10">
-                  <div className="flex gap-1 mb-2">
-                    {[...Array(testimonial.rating || 5)].map((_, i) => (
-                      <Star key={i} className="h-3.5 w-3.5 fill-primary text-primary" />
-                    ))}
-                  </div>
+        <div
+          className={`grid grid-cols-1 ${
+            isSingle
+              ? "max-w-xl mx-auto"
+              : displayTestimonials.length >= 3
+              ? "md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto"
+              : "md:grid-cols-2 max-w-5xl mx-auto"
+          } gap-8`}
+        >
+          {displayTestimonials.map((testimonial) => (
+            <Card
+              key={testimonial.id}
+              className="glass border border-border/40 shadow-none bg-secondary/5 relative overflow-hidden flex flex-col pt-12 pb-8"
+            >
+              <div className="absolute -top-4 -left-2 text-primary/10 select-none">
+                <Quote className="h-24 w-24 fill-current rotate-180" />
+              </div>
 
-                  <p className="text-base md:text-lg text-foreground/80 leading-relaxed font-medium italic">
-                    &ldquo;{testimonial.testimonialText}&rdquo;
-                  </p>
-                  
-                  <div className="flex items-center gap-4 pt-6 border-t border-border/40 mt-auto">
-                    <Avatar className="h-14 w-14 border-2 border-primary/20 shrink-0 shadow-sm">
-                      <AvatarImage src={testimonial.clientImageUrl} alt={testimonial.clientName} />
-                      <AvatarFallback className="bg-primary/5 text-primary">
-                        <User className="h-6 w-6" />
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-black text-sm text-foreground uppercase tracking-tight truncate">
-                        {testimonial.clientName}
-                      </h4>
+              <CardContent className="flex-grow flex flex-col space-y-8 relative z-10">
+                <div className="flex gap-1 mb-2">
+                  {[...Array(testimonial.rating || 5)].map((_, i) => (
+                    <Star key={i} className="h-3.5 w-3.5 fill-primary text-primary" />
+                  ))}
+                </div>
+
+                <p className="text-base md:text-lg text-foreground/80 leading-relaxed font-medium italic">
+                  &ldquo;{testimonial.testimonialText}&rdquo;
+                </p>
+
+                <div className="flex items-center gap-4 pt-6 border-t border-border/40 mt-auto">
+                  <Avatar className="h-14 w-14 border-2 border-primary/20 shrink-0 shadow-sm">
+                    <AvatarImage src={testimonial.clientImageUrl} alt={testimonial.clientName} />
+                    <AvatarFallback className="bg-primary/5 text-primary">
+                      <User className="h-6 w-6" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-black text-sm text-foreground uppercase tracking-tight truncate">
+                      {testimonial.clientName}
+                    </h4>
+                    {isFilled(testimonial.clientTitle) && (
                       <p className="text-[10px] text-primary font-bold uppercase tracking-[0.2em] truncate mt-1">
                         {testimonial.clientTitle}
                       </p>
-                    </div>
+                    )}
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     </section>
   );

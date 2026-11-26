@@ -9,7 +9,7 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-const baseUrl = 'https://mohammedkhizershaikh.netlify.app';
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mohammedkhizershaikh.netlify.app';
 
 // ─── Generate Metadata dynamically ──────────────────────────────────────────
 

@@ -9,7 +9,7 @@ interface LastUpdatedDateProps {
 }
 
 export function LastUpdatedDate({
-  date = "October 2026",
+  date = "November 2026",
   className = "",
 }: LastUpdatedDateProps) {
   return (

@@ -2,7 +2,7 @@ import { Experience, type ExperienceItem, type EducationItem } from "@/component
 import { Metadata } from 'next';
 import { getExperience, getEducation } from "@/lib/db";
 
-const baseUrl = 'https://mohammedkhizershaikh.netlify.app';
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mohammedkhizershaikh.netlify.app';
 
 // Entity-dense metadata for career and education
 export const metadata: Metadata = {
