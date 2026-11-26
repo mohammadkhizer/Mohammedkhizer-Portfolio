@@ -104,6 +104,11 @@ export default async function HomePage() {
         {/* c) How I Work */}
         <HowIWork />
 
+        {/* e) Testimonials (LAST section before footer) */}
+        <section className="space-y-8 md:space-y-12">
+          <Testimonials isPreview={true} initialData={testimonials} />
+        </section>
+
         {/* d) Closing CTA Band */}
         <section aria-labelledby="cta-heading" className="py-8">
           <div className="glass border border-border/40 rounded-3xl p-8 md:p-12 text-center space-y-6 max-w-4xl mx-auto">
@@ -126,10 +131,6 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* e) Testimonials (LAST section before footer) */}
-        <section className="space-y-8 md:space-y-12">
-          <Testimonials isPreview={true} initialData={testimonials} />
-        </section>
       </div>
     </main>
   );
